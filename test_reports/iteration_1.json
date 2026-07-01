@@ -1,0 +1,38 @@
+{
+  "summary": "First full test pass on ClearRun Records (built from scratch). Tested backend leads API (9 pytest cases, all passing after a fix) and frontend across ~25 routes: homepage, navbar dropdowns, mobile nav, lead capture forms (trial/mockup/pilot/partner), proof list+search+filters, proof detail (copy link, photo evidence, empty states), recovery, import, export, dashboard, FAQ accordion, roadmap pages (CityView/ProofGraph/Intelligence), footer links, and NotFound page. Found and fixed 2 real bugs (see below). No leftover 'ProofOps' branding, no lorem ipsum found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "RoadmapCard.jsx (h2 title)", "issue": "FIXED: Global CSS rule (index.css `h1,h2,h3,h4 { text-navy-950 }`) overrode the inherited white text color on RoadmapCard's <h2> title, making titles like 'CityView', 'ProofGraph', 'Infrastructure Intelligence' nearly invisible (dark navy text on dark navy gradient background) on the homepage roadmap teaser and on all 3 standalone roadmap pages. Fixed by adding explicit `text-white` class to the h2.", "selector": "h2 inside [data-testid^='roadmap-card-']", "priority": "HIGH (fixed)"}
+    ],
+    "integration_issues": [
+      {"flow": "Proof Detail - Copy Proof Link", "issue": "FIXED: `navigator.clipboard.writeText()` call in ProofDetail.jsx had no try/catch. In restrictive/sandboxed browser contexts (e.g. headless testing, some browser permission policies) this throws a NotAllowedError which was uncaught, crashing the page with a React error overlay ('Uncaught runtime errors'). Fixed by wrapping in try/catch with a document.execCommand fallback.", "affected_selectors": ["[data-testid='proof-detail-copy-link-btn']"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_leads.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "No action items - both discovered bugs were fixed and re-verified during this test pass.",
+    "Recommend a broader audit of other dark-background components for the same h1-h4 global CSS override pattern if new dark-bg sections are added in future (CTASection.jsx and Footer.jsx were checked and already correctly override text color explicitly)."
+  ],
+  "critical_code_review_comments": [
+    "server.py: response_model_by_alias defaulted to True in FastAPI, causing POST /api/leads to leak MongoDB-style '_id' key instead of 'id' to API consumers - fixed by setting response_model_by_alias=False.",
+    "Global base CSS rule forcing text-navy-950 on all h1-h4 tags is risky for any future dark-background component that doesn't explicitly override; consider scoping that rule or using a utility class instead of a global element selector.",
+    "Code is well organized: mock data centralized in mockData.js, shared components (PageHeader, EmptyState, RoadmapCard, DisclaimerBanner, CTASection, StatCard) are reused consistently across ~28 pages, data-testid attributes are thorough and consistent."
+  ],
+  "updated_files": [
+    "/app/backend/server.py",
+    "/app/frontend/src/pages/ProofDetail.jsx",
+    "/app/frontend/src/components/shared/RoadmapCard.jsx",
+    "/app/backend/tests/test_leads.py"
+  ],
+  "success_rate": {"backend": "100% (9/9 pytest cases passing)", "frontend": "~95% (2 bugs found and fixed, all other tested flows working: nav dropdowns, mobile nav, lead forms x4, proof search/filter, import/export demo flows, FAQ accordion, footer links, NotFound page, roadmap pages)"},
+  "seed_data_creation": "Created TEST_ prefixed lead submissions via POST /api/leads during testing (lead_type=trial/mockup/pilot/partner) - these persist in MongoDB 'leads' collection as expected, verified via GET /api/leads/count increment.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "This was iteration 1 (brand new build). Backend leads API fully tested (health, create with all lead_types, invalid lead_type rejection, missing/invalid email validation, count endpoint) - all passing. Frontend broadly tested across all ~25 routes including forms, filters, dropdowns, mobile nav, and roadmap placeholder pages. Two bugs were found and fixed in this pass: (1) MongoDB _id leaking in lead API response, (2) uncaught clipboard error crashing ProofDetail page, (3) contrast bug in RoadmapCard h2 title (globally affected all roadmap pages + homepage teaser). All three verified fixed via re-test. Did not test: Field.jsx capture form details, Requests.jsx table content deeply, Customer.jsx sidebar interaction deeply, Disposal/Audit page content details - these loaded fine in bulk page load check (correct body length, correct title) but weren't interaction-tested in depth. Recommend spot-checking those interactions in next pass if time permits.",
+  "rca_of_issues": "1) Lead API _id leak: FastAPI's response_model_by_alias defaults to True, so even though BaseDocument uses populate_by_name with alias '_id' for the 'id' field, the outgoing JSON serialized using the alias instead of the field name. Fix: explicit response_model_by_alias=False on the route decorator. 2) Clipboard crash: browser Clipboard API's writeText() can throw NotAllowedError depending on permissions/context (common in automated/sandboxed browsers, or non-HTTPS/non-focused contexts); code assumed it always resolves. Fix: wrap in try/catch with execCommand('copy') fallback. 3) Contrast bug: index.css sets a base-layer rule forcing all h1-h4 elements to text-navy-950 color; RoadmapCard's h2 relied on inherited text-white from a parent div, but the element-level base rule has higher specificity than inherited color, overriding it. Fix: added explicit text-white utility class directly on the h2."
+}
