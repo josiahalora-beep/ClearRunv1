@@ -1,12 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Building2, Target, HelpCircle } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { pricingTiers } from "@/data/mockData";
+
+const clarity = [
+  { icon: Building2, label: "Who it's for", text: "Grease-trap / FOG and liquid-waste haulers and multi-location operators — expanding to septic and portable sanitation." },
+  { icon: Target, label: "What it solves", text: "Scattered service records that can't be produced quickly when a customer, biller, or inspector asks for proof." },
+  { icon: HelpCircle, label: "Why not just spreadsheets", text: "Spreadsheets don't flag missing records, generate branded proof, or export billing-ready formats automatically." },
+];
 
 export default function Pricing() {
   return (
@@ -18,6 +24,16 @@ export default function Pricing() {
           description="Every plan includes proof packets, missing-record recovery, and import/export. Scale up as your record volume grows."
           align="center"
         />
+
+        <div className="mt-10 grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {clarity.map((c) => (
+            <div key={c.label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900/5 text-navy-900 mb-3"><c.icon className="h-4 w-4" /></span>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{c.label}</p>
+              <p className="text-sm text-navy-800 mt-1.5 leading-relaxed">{c.text}</p>
+            </div>
+          ))}
+        </div>
         <div className="mt-14 grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
           {pricingTiers.map((tier) => (
             <div

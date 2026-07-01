@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
+import { CTASection } from "@/components/shared/CTASection";
 import { proofPackets, auditLog } from "@/data/mockData";
 
 export default function ProofDetail() {
@@ -150,6 +151,10 @@ export default function ProofDetail() {
 
         <DisclaimerBanner className="max-w-4xl mt-6" />
       </section>
+      <CTASection
+        title="See this with your own service records"
+        description="This is a demo proof packet. Start a free records trial or request a free mockup built from your own tickets."
+      />
     </Layout>
   );
 }

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { CTASection } from "@/components/shared/CTASection";
 import { dashboardStats, proofPackets, requests } from "@/data/mockData";
 
 const quickLinks = [
@@ -108,6 +109,10 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+      <CTASection
+        title="This is demo data — see it work with your own records"
+        description="Start a free records trial to connect your own service tickets, or request a free proof packet mockup first."
+      />
     </Layout>
   );
 }

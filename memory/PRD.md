@@ -58,6 +58,23 @@ Home (/), /try-free, /proof-mockup, /checklist, /comparison, /dashboard, /proof,
   (2) uncaught clipboard error crashing Proof Detail page (added try/catch + execCommand fallback),
   (3) roadmap card title contrast bug — dark text on dark background (added explicit `text-white`).
 
+## QA & Strategy Alignment Pass (Feb 2026)
+Full audit performed per explicit request — no new features added, feature development frozen.
+- Replaced all demo data with one consistent fictional company: hauler "Peach State Grease Services"
+  (+ secondary hauler "Southern Route Liquid Waste") serving 10 named facilities across Macon/Warner
+  Robins/Perry, GA (Central Georgia). Removed old disconnected "Millbrook, OH" / "Riverside Bistro" set.
+- Added buyer-clarity strip (Who it's for / What it solves / Why not spreadsheets) to Pricing page.
+- Broadened Resources page copy to explicitly mention liquid-waste + future septic/portable sanitation.
+- Added a bottom CTA band (Start Free Records Trial / Get a Free Proof Packet Mockup) to Dashboard,
+  Proof Detail, and Partners pages for full CTA consistency across all 10 explicitly-audited pages.
+- Backend hardening: fixed MongoDB `_id` leak (response_model_by_alias=False), added 24h idempotent
+  duplicate-lead guard (same email+lead_type returns existing record instead of creating a duplicate),
+  wrapped Mongo writes in try/except with a safe 500 response instead of an uncaught error.
+- Verified: no "ProofOps" naming, no lorem ipsum, no fake certification/compliance/city-approval claims
+  anywhere; all disclaimers use the approved legal-safe wording; all 28 routes return 200 with real content;
+  mobile QA passed on homepage, try-free, proof-mockup, pricing, comparison, proof detail, dashboard,
+  recovery, import/export, and trust pages.
+
 ## Prioritized Backlog
 - P1: Deeper interaction testing of Field, Requests, Customer, Disposal, Audit pages (loaded fine, not
   deeply interaction-tested per iteration 1 report).

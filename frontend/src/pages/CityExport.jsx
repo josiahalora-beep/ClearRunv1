@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
 import { Button } from "@/components/ui/button";
-import { cityExportRecords } from "@/data/mockData";
+import { cityExportRecords, demoHauler } from "@/data/mockData";
 
 export default function CityExport() {
   return (
@@ -23,7 +23,7 @@ export default function CityExport() {
         <div className="mt-10 rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
           <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-100">
             <Building className="h-4 w-4 text-navy-800" />
-            <h2 className="font-display font-semibold text-navy-950">Millbrook, OH — Summary</h2>
+            <h2 className="font-display font-semibold text-navy-950">{demoHauler.county} — Summary</h2>
           </div>
           <table data-testid="city-export-table" className="w-full text-sm">
             <thead>

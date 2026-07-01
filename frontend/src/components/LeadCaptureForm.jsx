@@ -51,7 +51,7 @@ export function LeadCaptureForm({ leadType, submitLabel, showMessage = true, mes
         </div>
         <div>
           <Label htmlFor="business_name">Business name</Label>
-          <Input id="business_name" name="business_name" data-testid="lead-form-business-input" value={form.business_name} onChange={handleChange} placeholder="Founders Grease Co." />
+          <Input id="business_name" name="business_name" data-testid="lead-form-business-input" value={form.business_name} onChange={handleChange} placeholder="Peach State Grease Services" />
         </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">

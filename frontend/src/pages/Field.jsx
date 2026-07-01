@@ -47,7 +47,7 @@ export default function Field() {
             <form data-testid="field-capture-form" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="flex flex-col gap-3.5">
               <div>
                 <Label htmlFor="loc">Customer location</Label>
-                <Input id="loc" data-testid="field-location-input" defaultValue="Riverside Bistro" required />
+                <Input id="loc" data-testid="field-location-input" defaultValue="Creekside Grill" required />
               </div>
               <div>
                 <Label htmlFor="vol">Volume serviced (gallons)</Label>

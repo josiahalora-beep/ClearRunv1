@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { Card, CardContent } from "@/components/ui/card";
+import { CTASection } from "@/components/shared/CTASection";
 import { partners } from "@/data/mockData";
 
 const icons = { "Hauling Companies": Truck, "Pumping & Septic Providers": Truck, "Accountants & Billing Partners": Calculator, "Referral Partners": Share2 };
@@ -47,6 +48,10 @@ export default function Partners() {
           </CardContent>
         </Card>
       </section>
+      <CTASection
+        title="Not ready to partner yet? Start with a trial."
+        description="See ClearRun on your own records first — start a free records trial or request a free proof packet mockup."
+      />
     </Layout>
   );
 }

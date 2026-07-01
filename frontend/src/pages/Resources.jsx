@@ -14,7 +14,7 @@ export default function Resources() {
         <PageHeader
           eyebrow="Resources"
           title="Guides for regulated field-service record-keeping"
-          description="Practical reading on grease-trap / FOG compliance readiness, missing-record risk, and preparing for inspections."
+          description="Practical reading on grease-trap / FOG and liquid-waste compliance readiness, missing-record risk, and preparing for inspections — the same record discipline extends to septic and portable sanitation as ClearRun grows."
         />
         <div className="mt-12 grid sm:grid-cols-2 gap-5">
           {resources.map((r) => {
