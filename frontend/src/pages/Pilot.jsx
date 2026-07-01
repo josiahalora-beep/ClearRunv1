@@ -1,5 +1,5 @@
 import React from "react";
-import { Users2, ShieldCheck } from "lucide-react";
+import { Users2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";

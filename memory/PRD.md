@@ -75,6 +75,21 @@ Full audit performed per explicit request — no new features added, feature dev
   mobile QA passed on homepage, try-free, proof-mockup, pricing, comparison, proof detail, dashboard,
   recovery, import/export, and trust pages.
 
+## Feature: Resend Email Confirmation + Internal Notification (Feb 2026)
+Added transactional email on the 4 lead-capture forms (Try Free, Proof Packet Mockup, Pilot, Partners):
+- New `/app/backend/email_service.py` — sends a lead confirmation + internal owner notification via
+  Resend, fired via FastAPI `BackgroundTasks` (never blocks the HTTP response).
+- New env vars: `EMAIL_ENABLED` (default `false`), `RESEND_API_KEY` (empty by default — no account yet),
+  `RESEND_FROM_EMAIL` (defaults to Resend sandbox sender `onboarding@resend.dev`),
+  `CLEAR_RUN_OWNER_EMAIL` (set to the address provided by the user).
+- Fixed a real bug found during implementation: `email_service` was being imported before
+  `load_dotenv()` ran in `server.py`, so env vars silently failed to load — fixed by having
+  `email_service.py` load its own `.env` at import time.
+- Fully fails safe: disabled/unconfigured/failed sends never affect lead saving (17/17 backend tests
+  passing, including 7 new email-specific unit tests with a mocked Resend client).
+- No real Resend account configured yet — `EMAIL_ENABLED=false` by default. See README.md "Email Setup
+  Notes" for activation steps once a Resend API key + (optionally) verified domain are available.
+
 ## Prioritized Backlog
 - P1: Deeper interaction testing of Field, Requests, Customer, Disposal, Audit pages (loaded fine, not
   deeply interaction-tested per iteration 1 report).

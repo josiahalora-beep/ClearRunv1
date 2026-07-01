@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from datetime import datetime, UTC, timedelta
 
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import PyMongoError
@@ -13,6 +13,8 @@ from models import LeadSubmission, LeadSubmissionCreate
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
+
+from email_service import send_lead_emails
 
 mongo_url = os.environ["MONGO_URL"]
 db_name = os.environ["DB_NAME"]
@@ -34,7 +36,7 @@ async def health_check():
 
 
 @api_router.post("/leads", response_model=LeadSubmission, status_code=201, response_model_by_alias=False)
-async def create_lead(payload: LeadSubmissionCreate):
+async def create_lead(payload: LeadSubmissionCreate, background_tasks: BackgroundTasks):
     if payload.lead_type not in VALID_LEAD_TYPES:
         raise HTTPException(status_code=400, detail="Invalid lead_type")
 
@@ -48,12 +50,18 @@ async def create_lead(payload: LeadSubmissionCreate):
             "created_at": {"$gte": window_start},
         })
         if existing:
-            return LeadSubmission.from_mongo(existing)
+            lead = LeadSubmission.from_mongo(existing)
+            # Emails are only sent for new submissions, never for duplicates.
+            background_tasks.add_task(send_lead_emails, lead, True)
+            return lead
 
         lead = LeadSubmission(**payload.model_dump())
         result = await db.leads.insert_one(lead.to_mongo())
         created = await db.leads.find_one({"_id": result.inserted_id})
-        return LeadSubmission.from_mongo(created)
+        new_lead = LeadSubmission.from_mongo(created)
+        # Fired after the HTTP response is sent - never blocks or breaks lead submission.
+        background_tasks.add_task(send_lead_emails, new_lead, False)
+        return new_lead
     except PyMongoError:
         logger.exception("Failed to persist lead submission")
         raise HTTPException(status_code=500, detail="Unable to save your submission right now. Please try again.")

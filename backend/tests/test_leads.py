@@ -49,9 +49,25 @@ class TestLeads:
         assert data["name"] == payload["name"]
         assert "id" in data
         assert isinstance(data["id"], str)
+        assert "_id" not in data  # MongoDB internal id must never leak in the API response
 
         after = api_client.get(f"{BASE_URL}/api/leads/count").json()["total_leads"]
         assert after == before + 1
+
+    def test_duplicate_submission_within_24h_returns_same_lead(self, api_client):
+        payload = self._payload("trial", uuid.uuid4().hex[:8])
+        first = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        assert first.status_code == 201
+        first_id = first.json()["id"]
+
+        before = api_client.get(f"{BASE_URL}/api/leads/count").json()["total_leads"]
+        second = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        assert second.status_code == 201
+        assert second.json()["id"] == first_id
+        assert "_id" not in second.json()
+
+        after = api_client.get(f"{BASE_URL}/api/leads/count").json()["total_leads"]
+        assert after == before  # no new document created for the duplicate
 
     def test_create_lead_mockup(self, api_client):
         payload = self._payload("mockup", uuid.uuid4().hex[:8])
