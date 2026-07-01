@@ -10,7 +10,7 @@ jobs:
   apply-pr2:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Create/Update files via GitHub API
@@ -21,17 +21,15 @@ jobs:
             const repo = context.repo.repo;
             const branch = 'enhancement/market-domination-implementation';
 
-            // Helper to get default branch's latest commit sha
-            const repoInfo = await github.rest.repos.get({
-              owner, repo
-            });
+            // Get default branch SHA
+            const repoInfo = await github.rest.repos.get({ owner, repo });
             const defaultBranch = repoInfo.data.default_branch;
             const branchInfo = await github.rest.repos.getBranch({
               owner, repo, branch: defaultBranch
             });
             const baseSha = branchInfo.data.commit.sha;
 
-            // Create branch if it doesn't exist
+            // Create branch if missing
             try {
               await github.rest.git.createRef({
                 owner,
@@ -39,17 +37,16 @@ jobs:
                 ref: `refs/heads/${branch}`,
                 sha: baseSha
               });
-              core && core.info && core.info(`Created branch ${branch}`);
+              console.log(`Created branch ${branch}`);
             } catch (err) {
               if (err.status === 422) {
-                // already exists
-                // console.log('Branch already exists, continuing');
+                console.log(`Branch ${branch} already exists`);
               } else {
                 throw err;
               }
             }
 
-            // Files to create/update (path -> content)
+            // Files to create/update
             const files = {
               "web/components/NavMobile.tsx": `import Link from 'next/link'
 import { useState } from 'react'
@@ -381,12 +378,12 @@ Next steps for contributors and reviewers:
 `
             };
 
-            // Create/update each file on the branch
+            // Create or update files on the branch
             for (const [path, content] of Object.entries(files)) {
               const message = `chore(pr-2): add ${path}`;
               const encoded = Buffer.from(content, 'utf8').toString('base64');
 
-              // Check whether file exists on the branch
+              // Check if file exists on the branch to get sha
               let sha;
               try {
                 const existing = await github.rest.repos.getContent({
@@ -397,10 +394,8 @@ Next steps for contributors and reviewers:
                 }
               } catch (err) {
                 if (err.status !== 404) throw err;
-                // file does not exist — will create
               }
 
-              // create or update
               await github.rest.repos.createOrUpdateFileContents({
                 owner,
                 repo,
@@ -410,7 +405,8 @@ Next steps for contributors and reviewers:
                 branch,
                 sha
               });
-              core && core.info && core.info(`Wrote ${path}`);
+
+              console.log(`Wrote ${path}`);
             }
 
-            core && core.info && core.info(`All files written to branch ${branch}.`);
+            console.log(`All files written to branch ${branch}.`);
