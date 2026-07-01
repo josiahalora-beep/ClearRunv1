@@ -1,0 +1,14 @@
+node_modules/
+frontend/build/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+*.pyc
+
+.env
+backend/.env
+frontend/.env
+!*.env.example
+
+.DS_Store
+*.log

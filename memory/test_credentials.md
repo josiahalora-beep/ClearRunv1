@@ -9,3 +9,6 @@ The only backend endpoints are:
 - GET  /api/leads/count    (public counter — no auth required)
 
 No admin accounts, test users, or API keys were created for this build.
+
+Note: `/admin/leads` (Admin Lead Inbox) also has no authentication yet — it is explicitly
+labeled "Internal demo view — protect before production launch" on the page itself.

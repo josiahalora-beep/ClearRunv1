@@ -90,6 +90,30 @@ Added transactional email on the 4 lead-capture forms (Try Free, Proof Packet Mo
 - No real Resend account configured yet — `EMAIL_ENABLED=false` by default. See README.md "Email Setup
   Notes" for activation steps once a Resend API key + (optionally) verified domain are available.
 
+## Feature: Lead Capture Completion + Admin Lead Inbox (Feb 2026)
+Expanded lead forms to capture real buyer-qualification data + built an internal admin inbox:
+- New form components: `LeadQualificationForm.jsx` (Try Free + Pilot — business/contact/email/
+  phone/service_type/current_workflow/trucks/accounts/optional file+notes), `MockupRequestForm.jsx`
+  (Proof Mockup — reduced field set), `PartnerInquiryForm.jsx` (Partners — partner_type/service_area).
+  Shared `useLeadSubmit` hook + `Select` UI primitive + `LeadFormSuccess`. Old generic
+  `LeadCaptureForm.jsx` removed (fully replaced).
+- Backend `LeadSubmission`/`LeadSubmissionCreate` models expanded with `current_workflow`,
+  `number_of_trucks`, `active_customer_accounts`, `partner_type`, `service_area`, `notes`,
+  `source_page`, `status` (default `"New"`). Legacy `message` field kept only for backward
+  compatibility with pre-existing documents.
+- New admin endpoints: `GET /api/admin/leads` (list, no auth yet) and
+  `PATCH /api/admin/leads/{id}/status` (validated against the 6 lead statuses).
+- New `/admin/leads` page — filterable/searchable lead table, inline status updates, CSV export,
+  clearly labeled "Internal demo view — protect before production launch" (no auth exists yet).
+  Discoverable via a small footer link, not the main nav.
+- `email_service.py` internal notification now shows real values for newly-captured fields, with
+  a per-lead-type relevance map producing "Not applicable" (field not collected by that form) vs
+  "Not provided" (collected but left blank) — replacing the old "Not captured in current form".
+- Env safety: added `.gitignore` (was missing) + `backend/.env.example` + `frontend/.env.example`;
+  confirmed `.env` was never committed to git history.
+- 26/26 backend tests passing (10 new tests added: 3 field-saving tests per lead type, admin list/
+  status-update/invalid-status/404 tests, and a legacy-document backward-compatibility test).
+
 ## Prioritized Backlog
 - P1: Deeper interaction testing of Field, Requests, Customer, Disposal, Audit pages (loaded fine, not
   deeply interaction-tested per iteration 1 report).

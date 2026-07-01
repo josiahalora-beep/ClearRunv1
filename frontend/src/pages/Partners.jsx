@@ -3,7 +3,7 @@ import { Handshake, Truck, Calculator, Share2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { PartnerInquiryForm } from "@/components/PartnerInquiryForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { CTASection } from "@/components/shared/CTASection";
 import { partners } from "@/data/mockData";
@@ -44,7 +44,7 @@ export default function Partners() {
                 <p className="text-xs text-slate-500">We'll follow up within 2 business days</p>
               </div>
             </div>
-            <LeadCaptureForm leadType="partner" submitLabel="Submit Partner Inquiry" messageLabel="Tell us about your business" />
+            <PartnerInquiryForm sourcePage="/partners" submitLabel="Submit Partner Inquiry" />
           </CardContent>
         </Card>
       </section>

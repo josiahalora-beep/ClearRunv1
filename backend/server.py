@@ -7,9 +7,12 @@ from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import PyMongoError
+from pymongo import ReturnDocument
+from bson import ObjectId
+from bson.errors import InvalidId
 from dotenv import load_dotenv
 
-from models import LeadSubmission, LeadSubmissionCreate
+from models import LeadSubmission, LeadSubmissionCreate, LeadStatusUpdate
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -28,6 +31,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 VALID_LEAD_TYPES = {"trial", "mockup", "contact", "partner", "pilot", "checklist"}
+VALID_LEAD_STATUSES = {"New", "Reviewed", "Followed Up", "Trial Started", "Not Fit", "Closed"}
 
 
 @api_router.get("/health")
@@ -71,6 +75,41 @@ async def create_lead(payload: LeadSubmissionCreate, background_tasks: Backgroun
 async def count_leads():
     count = await db.leads.count_documents({})
     return {"total_leads": count}
+
+
+@api_router.get("/admin/leads", response_model=list[LeadSubmission], response_model_by_alias=False)
+async def list_leads_admin():
+    """
+    Internal demo endpoint powering the /admin/leads inbox. No authentication yet -
+    intentionally simple for internal use only; must be protected before production launch.
+    """
+    cursor = db.leads.find().sort("created_at", -1).limit(500)
+    docs = await cursor.to_list(length=500)
+    return [LeadSubmission.from_mongo(doc) for doc in docs]
+
+
+@api_router.patch("/admin/leads/{lead_id}/status", response_model=LeadSubmission, response_model_by_alias=False)
+async def update_lead_status(lead_id: str, payload: LeadStatusUpdate):
+    if payload.status not in VALID_LEAD_STATUSES:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    try:
+        object_id = ObjectId(lead_id)
+    except (InvalidId, TypeError):
+        raise HTTPException(status_code=404, detail="Lead not found")
+
+    try:
+        result = await db.leads.find_one_and_update(
+            {"_id": object_id},
+            {"$set": {"status": payload.status}},
+            return_document=ReturnDocument.AFTER,
+        )
+    except PyMongoError:
+        logger.exception("Failed to update lead status")
+        raise HTTPException(status_code=500, detail="Unable to update lead status right now.")
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    return LeadSubmission.from_mongo(result)
 
 
 app.include_router(api_router)

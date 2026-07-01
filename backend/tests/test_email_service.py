@@ -23,7 +23,10 @@ def make_lead(lead_type="trial", **overrides):
         email="jordan@example.com",
         phone="555-0100",
         service_type="Grease trap / FOG",
-        message="Looking to organize our records",
+        current_workflow="Spreadsheet",
+        number_of_trucks="3",
+        active_customer_accounts="25",
+        notes="Looking to organize our records",
         created_at=datetime.now(UTC),
     )
     data.update(overrides)
@@ -88,7 +91,15 @@ async def test_internal_notification_payload_includes_required_fields(monkeypatc
     monkeypatch.setattr(email_service, "EMAIL_ENABLED", True)
     monkeypatch.setattr(email_service, "RESEND_API_KEY", "re_test_key")
     monkeypatch.setattr(email_service, "CLEAR_RUN_OWNER_EMAIL", "owner@example.com")
-    lead = make_lead(lead_type="partner", business_name="Peach State Grease Services")
+    lead = make_lead(
+        lead_type="partner",
+        business_name="Peach State Grease Services",
+        partner_type="Hood cleaning company",
+        service_area="Central Georgia",
+        phone=None,
+        service_type=None,
+        current_workflow=None,
+    )
     with patch("email_service.resend.Emails.send") as mock_send:
         await email_service.send_lead_emails(lead, is_duplicate=False)
         internal_call = next(c for c in mock_send.call_args_list if c.args[0]["to"] == ["owner@example.com"])
@@ -97,10 +108,35 @@ async def test_internal_notification_payload_includes_required_fields(monkeypatc
         assert "Partner Inquiry" in subject
         assert "Peach State Grease Services" in subject
         for expected in [
-            "Jordan Reyes", "jordan@example.com", "555-0100", "Grease trap / FOG",
+            "Jordan Reyes", "jordan@example.com",
+            "Hood cleaning company", "Central Georgia",
             "Looking to organize our records", "New", "/partners",
         ]:
             assert expected in html
+        # Fields irrelevant to a partner lead must show "Not applicable", not raw values.
+        assert html.count("Not applicable") >= 3
+
+
+@pytest.mark.asyncio
+async def test_internal_notification_shows_not_provided_for_blank_relevant_fields(monkeypatch):
+    monkeypatch.setattr(email_service, "EMAIL_ENABLED", True)
+    monkeypatch.setattr(email_service, "RESEND_API_KEY", "re_test_key")
+    monkeypatch.setattr(email_service, "CLEAR_RUN_OWNER_EMAIL", "owner@example.com")
+    lead = make_lead(
+        lead_type="trial",
+        current_workflow=None,
+        number_of_trucks=None,
+        active_customer_accounts=None,
+        phone=None,
+    )
+    with patch("email_service.resend.Emails.send") as mock_send:
+        await email_service.send_lead_emails(lead, is_duplicate=False)
+        internal_call = next(c for c in mock_send.call_args_list if c.args[0]["to"] == ["owner@example.com"])
+        html = internal_call.args[0]["html"]
+        # These are relevant to "trial" leads but left blank -> "Not provided", never
+        # "Not captured in current form" and never "Not applicable".
+        assert "Not captured in current form" not in html
+        assert html.count("Not provided") >= 4
 
 
 @pytest.mark.asyncio

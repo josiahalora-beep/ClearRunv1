@@ -3,6 +3,40 @@
 // grease-trap / FOG and liquid-waste customers across Central Georgia / the Southeast.
 // This is illustrative sample data for demo/preview purposes only — not real customer records.
 
+// Lead form dropdown options (used by TryFree, Pilot, ProofMockup, Partners forms)
+export const SERVICE_TYPE_OPTIONS = [
+  "Grease trap / FOG",
+  "Septic pumping",
+  "Portable sanitation",
+  "Liquid waste",
+  "Other regulated service",
+];
+
+export const CURRENT_WORKFLOW_OPTIONS = [
+  "Paper tickets",
+  "Spreadsheet",
+  "QuickBooks",
+  "ServiceCore",
+  "PumpDocket",
+  "Tank Track",
+  "Other software",
+];
+
+export const PARTNER_TYPE_OPTIONS = [
+  "Hood cleaning company",
+  "Commercial plumber",
+  "Restaurant bookkeeper",
+  "Restaurant consultant",
+  "Grease trap installer",
+  "Disposal facility",
+  "Food truck commissary",
+  "Environmental consultant",
+  "Property manager",
+  "Other",
+];
+
+export const LEAD_STATUS_OPTIONS = ["New", "Reviewed", "Followed Up", "Trial Started", "Not Fit", "Closed"];
+
 export const brand = {
   name: "ClearRun Records",
   tagline: "Field proof. Clear records.",

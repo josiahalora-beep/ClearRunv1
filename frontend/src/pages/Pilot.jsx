@@ -3,7 +3,7 @@ import { Users2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { LeadQualificationForm } from "@/components/LeadQualificationForm";
 import { Card, CardContent } from "@/components/ui/card";
 
 const phases = [
@@ -45,7 +45,7 @@ export default function Pilot() {
                 <p className="text-xs text-slate-500">Limited pilot slots per quarter</p>
               </div>
             </div>
-            <LeadCaptureForm leadType="pilot" submitLabel="Apply for Pilot Program" messageLabel="How many locations or routes would this cover?" />
+            <LeadQualificationForm leadType="pilot" sourcePage="/pilot" submitLabel="Apply for Pilot Program" />
           </CardContent>
         </Card>
       </section>

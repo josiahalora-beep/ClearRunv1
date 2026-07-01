@@ -34,13 +34,21 @@ class BaseDocument(BaseModel):
 
 
 class LeadSubmission(BaseDocument):
-    lead_type: str  # "trial" | "mockup" | "contact" | "partner" | "pilot"
+    lead_type: str  # "trial" | "mockup" | "contact" | "partner" | "pilot" | "checklist"
     name: str
     business_name: Optional[str] = None
     email: EmailStr
     phone: Optional[str] = None
     service_type: Optional[str] = None
-    message: Optional[str] = None
+    current_workflow: Optional[str] = None
+    number_of_trucks: Optional[str] = None
+    active_customer_accounts: Optional[str] = None
+    partner_type: Optional[str] = None
+    service_area: Optional[str] = None
+    notes: Optional[str] = None
+    message: Optional[str] = None  # legacy field name, kept only to read pre-existing documents
+    source_page: Optional[str] = None
+    status: str = "New"
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
@@ -51,4 +59,14 @@ class LeadSubmissionCreate(BaseModel):
     email: EmailStr
     phone: Optional[str] = None
     service_type: Optional[str] = None
-    message: Optional[str] = None
+    current_workflow: Optional[str] = None
+    number_of_trucks: Optional[str] = None
+    active_customer_accounts: Optional[str] = None
+    partner_type: Optional[str] = None
+    service_area: Optional[str] = None
+    notes: Optional[str] = None
+    source_page: Optional[str] = None
+
+
+class LeadStatusUpdate(BaseModel):
+    status: str

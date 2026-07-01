@@ -3,7 +3,7 @@ import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { LeadQualificationForm } from "@/components/LeadQualificationForm";
 import { Card, CardContent } from "@/components/ui/card";
 
 const included = [
@@ -43,7 +43,7 @@ export default function TryFree() {
                 <p className="text-xs text-slate-500">Takes about 2 minutes</p>
               </div>
             </div>
-            <LeadCaptureForm leadType="trial" submitLabel="Start Free Records Trial" messageLabel="What's your biggest record-keeping headache today?" />
+            <LeadQualificationForm leadType="trial" sourcePage="/try-free" submitLabel="Start Free Records Trial" />
           </CardContent>
         </Card>
       </section>

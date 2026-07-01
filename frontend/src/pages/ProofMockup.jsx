@@ -3,7 +3,7 @@ import { FileCheck2, ShieldCheck } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DisclaimerBanner } from "@/components/shared/DisclaimerBanner";
-import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { MockupRequestForm } from "@/components/MockupRequestForm";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { proofPackets } from "@/data/mockData";
@@ -43,7 +43,7 @@ export default function ProofMockup() {
                 <p className="text-xs text-slate-500">We'll follow up within 1 business day</p>
               </div>
             </div>
-            <LeadCaptureForm leadType="mockup" submitLabel="Get a Free Proof Packet Mockup" messageLabel="Describe a recent service ticket (optional)" />
+            <MockupRequestForm sourcePage="/proof-mockup" submitLabel="Get a Free Proof Packet Mockup" />
           </CardContent>
         </Card>
       </section>

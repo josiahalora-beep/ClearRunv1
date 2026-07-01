@@ -28,6 +28,7 @@ import CityExport from "@/pages/CityExport";
 import CityView from "@/pages/CityView";
 import ProofGraph from "@/pages/ProofGraph";
 import Intelligence from "@/pages/Intelligence";
+import AdminLeads from "@/pages/AdminLeads";
 import NotFound from "@/pages/NotFound";
 import "./App.css";
 
@@ -65,6 +66,7 @@ function App() {
         <Route path="/cityview" element={<CityView />} />
         <Route path="/proofgraph" element={<ProofGraph />} />
         <Route path="/intelligence" element={<Intelligence />} />
+        <Route path="/admin/leads" element={<AdminLeads />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

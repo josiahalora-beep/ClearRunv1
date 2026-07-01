@@ -30,7 +30,9 @@ and liquid-waste service records.
 |---|---|
 | `REACT_APP_BACKEND_URL` | External URL the frontend uses to call the backend API. |
 
-**Never hardcode secrets in source files** — all of the above must come from `.env`.
+**Never hardcode secrets in source files** — all of the above must come from `.env`. Copy
+`backend/.env.example` → `backend/.env` and `frontend/.env.example` → `frontend/.env` to get
+started; both `.env` files are git-ignored and must never be committed.
 
 ## Email Setup Notes (Resend)
 

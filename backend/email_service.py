@@ -43,9 +43,28 @@ SOURCE_FORM_BY_LEAD_TYPE = {
 }
 
 
+# Fields relevant per lead_type - drives "Not applicable" vs "Not provided" in the
+# internal notification email (Part 3 of the lead-capture completion PR).
+FIELD_RELEVANCE = {
+    "trial": {"phone", "service_type", "current_workflow", "number_of_trucks", "active_customer_accounts", "notes"},
+    "pilot": {"phone", "service_type", "current_workflow", "number_of_trucks", "active_customer_accounts", "notes"},
+    "mockup": {"service_type", "current_workflow", "notes"},
+    "partner": {"partner_type", "service_area", "notes"},
+}
+
+
 def is_email_configured() -> bool:
     """True only when EMAIL_ENABLED=true AND a Resend API key + from-address are set."""
     return EMAIL_ENABLED and bool(RESEND_API_KEY) and bool(RESEND_FROM_EMAIL)
+
+
+def _field_display(lead, field_name: str) -> str:
+    """Return the field's value, or 'Not applicable' if this lead_type doesn't collect
+    it, or 'Not provided' if it's relevant but was left blank."""
+    if field_name not in FIELD_RELEVANCE.get(lead.lead_type, set()):
+        return "Not applicable"
+    value = getattr(lead, field_name, None)
+    return value if value else "Not provided"
 
 
 def _confirmation_html(lead) -> str:
@@ -71,15 +90,17 @@ def _confirmation_html(lead) -> str:
 def _internal_notification_html(lead, is_duplicate: bool, source_form: str) -> str:
     rows = [
         ("Lead type", LEAD_TYPE_LABELS.get(lead.lead_type, lead.lead_type)),
-        ("Business name", lead.business_name or "Not provided"),
+        ("Business / organization", lead.business_name or "Not provided"),
         ("Contact name", lead.name),
         ("Email", lead.email),
-        ("Phone", lead.phone or "Not provided"),
-        ("Service type", lead.service_type or "Not provided"),
-        ("Current software/workflow", "Not captured in current form"),
-        ("Number of trucks", "Not captured in current form"),
-        ("Active customer accounts", "Not captured in current form"),
-        ("Notes", lead.message or "Not provided"),
+        ("Phone", _field_display(lead, "phone")),
+        ("Service type", _field_display(lead, "service_type")),
+        ("Current workflow/software", _field_display(lead, "current_workflow")),
+        ("Number of trucks", _field_display(lead, "number_of_trucks")),
+        ("Active customer accounts", _field_display(lead, "active_customer_accounts")),
+        ("Partner type", _field_display(lead, "partner_type")),
+        ("Service area", _field_display(lead, "service_area")),
+        ("Notes", lead.notes or "Not provided"),
         ("Created", lead.created_at.isoformat() if lead.created_at else "Unknown"),
         ("Submission status", "Duplicate (within 24h window)" if is_duplicate else "New"),
         ("Source form/page", source_form),
@@ -130,7 +151,7 @@ async def send_lead_emails(lead, is_duplicate: bool) -> None:
 
     label = LEAD_TYPE_LABELS.get(lead.lead_type, lead.lead_type)
     business = lead.business_name or "Unknown business"
-    source_form = SOURCE_FORM_BY_LEAD_TYPE.get(lead.lead_type, f"/{lead.lead_type}")
+    source_form = lead.source_page or SOURCE_FORM_BY_LEAD_TYPE.get(lead.lead_type, f"/{lead.lead_type}")
 
     try:
         await asyncio.to_thread(
