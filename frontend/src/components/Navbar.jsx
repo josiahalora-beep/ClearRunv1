@@ -10,48 +10,45 @@ const NAV_GROUPS = [
     label: "Product",
     testId: "nav-product",
     items: [
-      { to: "/dashboard", label: "Dashboard", desc: "Command center for records status" },
-      { to: "/proof", label: "Proof Packets", desc: "Branded proof of service records" },
-      { to: "/recovery", label: "Missing-Record Recovery", desc: "Find and close record gaps" },
-      { to: "/import", label: "Import Records", desc: "Bring in existing service data" },
-      { to: "/export", label: "Export Records", desc: "Billing-ready & branded exports" },
-      { to: "/field", label: "Field Capture", desc: "On-site service documentation" },
+      { to: "/dashboard", label: "Dashboard", desc: "Records command center" },
+      { to: "/proof", label: "Proof Packets", desc: "Branded proof of service" },
+      { to: "/recovery", label: "Recovery", desc: "Close missing-record gaps" },
+      { to: "/import", label: "Import", desc: "Bring existing records in" },
+      { to: "/export", label: "Export", desc: "Send billing-ready records out" },
     ],
   },
   {
-    label: "Customers",
-    testId: "nav-customers",
+    label: "Solutions",
+    testId: "nav-solutions",
     items: [
-      { to: "/requests", label: "Proof Requests", desc: "Request loop with haulers" },
-      { to: "/customer", label: "Customer Portal", desc: "Restaurant / customer proof view" },
-      { to: "/disposal", label: "Disposal Certificates", desc: "Confirmed disposal records" },
-      { to: "/reviewer", label: "Reviewer View", desc: "Read-only inspector-style view" },
-      { to: "/city-export", label: "City Export", desc: "Municipal-ready summary export" },
-      { to: "/audit", label: "Audit Log", desc: "Who touched what, and when" },
+      { to: "/try-free", label: "Try Free", desc: "Start with your own records" },
+      { to: "/proof-mockup", label: "Proof Mockup", desc: "See a branded packet first" },
+      { to: "/comparison", label: "Comparison", desc: "Paper, spreadsheets, or ClearRun" },
+      { to: "/compatibility", label: "Compatibility", desc: "Works with existing workflows" },
+      { to: "/pilot", label: "Pilot Program", desc: "Test with one route or location" },
     ],
   },
   {
-    label: "Company",
-    testId: "nav-company",
+    label: "Resources",
+    testId: "nav-resources",
     items: [
       { to: "/pricing", label: "Pricing" },
-      { to: "/compatibility", label: "Compatibility" },
-      { to: "/comparison", label: "Comparison" },
-      { to: "/checklist", label: "Compliance Checklist" },
-      { to: "/partners", label: "Partners" },
+      { to: "/checklist", label: "Readiness Checklist" },
       { to: "/resources", label: "Resources" },
-      { to: "/trust", label: "Trust & Security" },
       { to: "/objections", label: "FAQ" },
-      { to: "/pilot", label: "Pilot Program" },
+      { to: "/partners", label: "Partners" },
     ],
   },
   {
-    label: "Roadmap",
-    testId: "nav-roadmap",
+    label: "Trust",
+    testId: "nav-trust",
     items: [
-      { to: "/cityview", label: "CityView" },
-      { to: "/proofgraph", label: "ProofGraph" },
-      { to: "/intelligence", label: "Infrastructure Intelligence" },
+      { to: "/trust", label: "Trust Center", desc: "Security and record posture" },
+      { to: "/reviewer", label: "Reviewer View", desc: "Read-only external record view" },
+      { to: "/city-export", label: "City Export", desc: "Municipal summary preview" },
+      { to: "/audit", label: "Audit Log", desc: "Record activity history" },
+      { to: "/disposal", label: "Disposal", desc: "Linked disposal confirmation" },
+      { to: "/cityview", label: "Roadmap", desc: "CityView, ProofGraph, and intelligence" },
     ],
   },
 ];
@@ -79,7 +76,7 @@ function DesktopDropdown({ group }) {
         data-testid={group.testId}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-slate-100",
+          "flex items-center gap-1 rounded-md px-2.5 py-2 text-[13px] font-semibold transition-colors hover:bg-slate-100",
           isActive ? "text-navy-950" : "text-slate-600"
         )}
       >
@@ -87,13 +84,13 @@ function DesktopDropdown({ group }) {
         <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-1.5 w-80 rounded-xl border border-slate-200 bg-white p-2 shadow-premium animate-fade-in z-50">
+        <div className="absolute left-0 top-full z-50 mt-1.5 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-slate-200/80 bg-white p-2 shadow-premium animate-fade-in">
           {group.items.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               data-testid={`nav-link-${item.to.replace("/", "")}`}
-              className="flex flex-col gap-0.5 rounded-lg px-3 py-2.5 hover:bg-slate-50 transition-colors"
+              className="flex flex-col gap-0.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50"
             >
               <span className="text-sm font-semibold text-navy-900">{item.label}</span>
               {item.desc && <span className="text-xs text-slate-500">{item.desc}</span>}
@@ -111,10 +108,10 @@ export function Navbar() {
   useEffect(() => setMobileOpen(false), [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
         <Logo />
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-0.5">
           {NAV_GROUPS.map((g) => (
             <DesktopDropdown key={g.label} group={g} />
           ))}
@@ -129,7 +126,7 @@ export function Navbar() {
         </div>
         <button
           data-testid="mobile-menu-toggle"
-          className="lg:hidden p-2 text-navy-900"
+          className="rounded-lg p-2 text-navy-900 transition-colors hover:bg-slate-100 lg:hidden"
           onClick={() => setMobileOpen((o) => !o)}
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -137,18 +134,18 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div data-testid="mobile-nav-panel" className="lg:hidden border-t border-slate-200 bg-white max-h-[80vh] overflow-y-auto">
-          <div className="container-page py-4 flex flex-col gap-5">
+        <div data-testid="mobile-nav-panel" className="max-h-[80vh] overflow-y-auto border-t border-slate-200 bg-white lg:hidden">
+          <div className="container-page flex flex-col gap-4 py-4">
             {NAV_GROUPS.map((g) => (
               <div key={g.label}>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">{g.label}</p>
-                <div className="flex flex-col gap-1">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{g.label}</p>
+                <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                   {g.items.map((item) => (
                     <Link
                       key={item.to}
                       to={item.to}
                       data-testid={`mobile-nav-link-${item.to.replace("/", "")}`}
-                      className="rounded-lg px-2 py-2 text-sm font-medium text-navy-800 hover:bg-slate-50"
+                      className="rounded-lg border border-slate-100 px-3 py-2 text-sm font-medium text-navy-800 hover:bg-slate-50"
                     >
                       {item.label}
                     </Link>
@@ -156,7 +153,7 @@ export function Navbar() {
                 </div>
               </div>
             ))}
-            <div className="flex flex-col gap-2 pt-2 border-t border-slate-200">
+            <div className="flex flex-col gap-2 border-t border-slate-200 pt-3">
               <Link to="/proof-mockup" data-testid="mobile-nav-secondary-cta">
                 <Button variant="secondary" className="w-full">Get a Free Proof Packet Mockup</Button>
               </Link>
