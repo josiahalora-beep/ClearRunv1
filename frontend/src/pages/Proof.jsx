@@ -26,15 +26,15 @@ export default function Proof() {
         <PageHeader
           eyebrow="Proof Packets"
           title="Branded proof of every service"
-          description="Every completed service becomes a report-grade proof packet — searchable, shareable, and export-ready."
+          description="Every completed service becomes a report-grade proof packet that is searchable, shareable, and export-ready."
         />
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-8 mb-6">
-          <div className="relative flex-1 max-w-sm">
+        <div className="surface-card mt-8 mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full min-w-0 sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input data-testid="proof-search-input" placeholder="Search customer or ID…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
+            <Input data-testid="proof-search-input" placeholder="Search customer or ID" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex flex-wrap gap-2">
             {FILTERS.map((f) => (
               <button
                 key={f}
@@ -59,17 +59,17 @@ export default function Proof() {
                 key={p.id}
                 to={`/proof/${p.id}`}
                 data-testid={`proof-card-${p.id}`}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-card-hover hover:border-navy-900/20 transition-all flex flex-col gap-3"
+                className="surface-card surface-card-hover flex min-w-0 flex-col gap-3 p-5"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-slate-400">{p.id}</span>
                   <StatusBadge status={p.status} />
                 </div>
                 <div>
-                  <h3 className="font-display font-semibold text-navy-950">{p.customer}</h3>
+                  <h3 className="mobile-safe-text font-display font-semibold text-navy-950">{p.customer}</h3>
                   <p className="text-xs text-slate-400 mt-0.5">{p.address}</p>
                 </div>
-                <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100">
+                <div className="flex flex-col gap-1 border-t border-slate-100 pt-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
                   <span>{p.serviceType}</span>
                   <span>{p.serviceDate}</span>
                 </div>
