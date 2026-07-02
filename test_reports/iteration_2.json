@@ -21,7 +21,7 @@
   ],
   "updated_files": [],
   "success_rate": {"backend": "100%", "frontend": "100%"},
-  "test_credentials": "ADMIN_ACCESS_KEY read fresh from /app/backend/.env: PLYC-QCCZJd8WGWb71QmeOV8TUWee8aK-iDwIA8u-ho",
+  "test_credentials": "ADMIN_ACCESS_KEY was read from /app/backend/.env during testing. The value is intentionally not stored in tracked files. Rotate any development key that was previously shared or committed.",
   "seed_data_creation": "Test leads created with TEST_ prefix and test_admin_/test_hp_/legacy_ email prefixes via pytest run (not cleaned up, but consistent with existing baseline test data pattern already in DB from iteration_1)",
   "retest_needed": false,
   "main_agent_can_self_test": true,
