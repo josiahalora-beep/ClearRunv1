@@ -12,30 +12,30 @@ export default function ProofMockup() {
   const sample = proofPackets[1];
   return (
     <Layout>
-      <section className="container-page py-16 sm:py-20 grid lg:grid-cols-2 gap-12">
-        <div>
+      <section className="container-page grid grid-cols-1 gap-8 py-14 sm:py-16 lg:grid-cols-2 lg:gap-12">
+        <div className="min-w-0">
           <PageHeader
             eyebrow="Free Proof Packet Mockup"
-            title="See exactly what a branded proof packet looks like — built with your data."
+            title="See exactly what a branded proof packet looks like, built with your data."
             description="Send us a sample service ticket or two, and we'll turn it into a real, branded proof packet mockup so you can see the format before you commit to anything."
           />
-          <p className="text-sm text-slate-500 mt-6 max-w-md leading-relaxed">
+          <p className="mt-6 max-w-full text-sm leading-relaxed text-slate-500 sm:max-w-md">
             This mockup is a preview, not a live product account. It shows the report-grade format ClearRun generates
             automatically once you're onboarded.
           </p>
-          <DisclaimerBanner className="mt-8 max-w-md" />
+          <DisclaimerBanner className="mt-8 max-w-full sm:max-w-md" />
 
-          <div data-testid="mockup-sample-preview" className="mt-8 rounded-xl border border-slate-200 bg-white shadow-card p-5 max-w-md">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-              <span className="flex items-center gap-2 text-sm font-semibold text-navy-950"><FileCheck2 className="h-4 w-4" /> Sample: {sample.id}</span>
+          <div data-testid="mockup-sample-preview" className="surface-card mt-8 max-w-full p-5 sm:max-w-md">
+            <div className="mb-3 flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
+              <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-navy-950"><FileCheck2 className="h-4 w-4 shrink-0" /> Sample: {sample.id}</span>
               <StatusBadge status={sample.status} />
             </div>
-            <p className="text-xs text-slate-400">{sample.customer} · {sample.serviceType} · {sample.serviceDate}</p>
+            <p className="mobile-safe-text text-xs text-slate-400">{sample.customer} - {sample.serviceType} - {sample.serviceDate}</p>
           </div>
         </div>
 
-        <Card className="h-fit">
-          <CardContent className="p-7 sm:p-8">
+        <Card className="form-card h-fit min-w-0">
+          <CardContent className="p-5 sm:p-8">
             <div className="flex items-center gap-2 mb-6">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900 text-white"><ShieldCheck className="h-4 w-4" /></span>
               <div>
