@@ -3,11 +3,11 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Select = React.forwardRef(({ className, children, ...props }, ref) => (
-  <div className="relative">
+  <div className="relative min-w-0">
     <select
       ref={ref}
       className={cn(
-        "flex h-11 w-full appearance-none rounded-lg border border-slate-300 bg-white px-3.5 py-2 pr-9 text-sm text-navy-900 transition-colors focus:outline-none focus:ring-2 focus:ring-navy-800/30 focus:border-navy-800 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-11 w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-3.5 py-2 pr-9 text-sm text-navy-900 transition-colors focus:outline-none focus:ring-2 focus:ring-navy-800/30 focus:border-navy-800 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}

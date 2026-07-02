@@ -59,7 +59,7 @@ export default function ProofDetail() {
           <ArrowLeft className="h-4 w-4" /> Back to Proof Packets
         </Link>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy-900 text-white"><ShieldCheck className="h-5 w-5" /></span>
             <div>
@@ -67,29 +67,29 @@ export default function ProofDetail() {
               <p className="text-sm text-slate-500">{packet.customer}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center">
             <StatusBadge status={packet.status} />
-            <Button variant="secondary" size="sm" data-testid="proof-detail-copy-link-btn" onClick={handleCopy}>
+            <Button variant="secondary" size="sm" data-testid="proof-detail-copy-link-btn" onClick={handleCopy} className="w-full sm:w-auto">
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "Link Copied" : "Copy Proof Link"}
             </Button>
-            <Link to="/export" data-testid="proof-detail-export-link">
-              <Button size="sm"><FolderOutput className="h-3.5 w-3.5" /> Export</Button>
+            <Link to="/export" data-testid="proof-detail-export-link" className="w-full sm:w-auto">
+              <Button size="sm" className="w-full sm:w-auto"><FolderOutput className="h-3.5 w-3.5" /> Export</Button>
             </Link>
           </div>
         </div>
 
         {/* Report-grade document card */}
-        <div data-testid="proof-report-card" className="rounded-2xl border border-slate-200 bg-white shadow-premium overflow-hidden max-w-4xl">
-          <div className="bg-navy-950 text-white px-7 py-6 flex items-center justify-between">
+        <div data-testid="proof-report-card" className="max-w-4xl overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-premium">
+          <div className="flex flex-col gap-3 bg-navy-950 px-5 py-5 text-white sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-6">
             <div>
-              <p className="text-xs uppercase tracking-widest text-slate-400">ClearRun Records — Proof of Service</p>
+              <p className="text-xs uppercase tracking-widest text-slate-400">ClearRun Records: Proof of Service</p>
               <h2 className="font-display font-bold text-xl mt-1">{packet.serviceType}</h2>
             </div>
-            <span className="text-xs text-slate-400 text-right">Packet ID<br /><span className="font-mono text-slate-200">{packet.id}</span></span>
+            <span className="text-left text-xs text-slate-400 sm:text-right">Packet ID<br /><span className="font-mono text-slate-200">{packet.id}</span></span>
           </div>
 
-          <div className="p-7 grid sm:grid-cols-2 gap-x-8 gap-y-6">
+          <div className="grid gap-x-8 gap-y-6 p-5 sm:grid-cols-2 sm:p-7">
             <div className="flex items-start gap-3">
               <MapPin className="h-4 w-4 text-navy-800 mt-1 shrink-0" />
               <div>
@@ -119,7 +119,7 @@ export default function ProofDetail() {
               <div>
                 <p className="text-xs text-slate-400 uppercase tracking-wide">Disposal Confirmation</p>
                 <p className="font-medium text-navy-900">{packet.disposalSite}</p>
-                <Link to="/disposal" data-testid="proof-detail-disposal-link" className="text-xs text-navy-800 font-semibold hover:underline">View disposal certificate →</Link>
+                <Link to="/disposal" data-testid="proof-detail-disposal-link" className="text-xs text-navy-800 font-semibold hover:underline">View disposal certificate</Link>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function ProofDetail() {
                 ))}
               </div>
             ) : (
-              <EmptyState icon={Camera} title="No photo evidence attached" description="This ticket was flagged as incomplete — request photos from the field technician." className="py-8" />
+              <EmptyState icon={Camera} title="No photo evidence attached" description="This ticket was flagged as incomplete. Request photos from the field technician." className="py-8" />
             )}
           </div>
 
@@ -143,7 +143,7 @@ export default function ProofDetail() {
             <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">Record History</p>
             <div className="flex flex-col gap-1.5">
               {relatedAudit.length > 0 ? relatedAudit.map((a) => (
-                <p key={a.id} className="text-xs text-slate-500"><span className="text-slate-400">{a.timestamp}</span> — {a.actor}: {a.action}</p>
+                <p key={a.id} className="text-xs text-slate-500"><span className="text-slate-400">{a.timestamp}</span> - {a.actor}: {a.action}</p>
               )) : <p className="text-xs text-slate-400">No history recorded for this packet yet.</p>}
             </div>
           </div>

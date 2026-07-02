@@ -28,11 +28,11 @@ export default function Import() {
         <PageHeader
           eyebrow="Import Records"
           title="Bring in the records you already have"
-          description="Upload spreadsheets, PDFs, or exports from your existing field-service software — ClearRun maps them into proof packets."
+          description="Upload spreadsheets, PDFs, or exports from your existing field-service software. ClearRun maps them into proof packets."
         />
 
-        <div className="mt-10 grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 rounded-xl border-2 border-dashed border-slate-300 bg-white p-10 flex flex-col items-center text-center gap-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          <div className="flex flex-col items-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center shadow-card sm:p-10 lg:col-span-2">
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-navy-900/5 text-navy-900"><UploadCloud className="h-6 w-6" /></span>
             <p className="font-display font-semibold text-navy-950">Drop a file or browse</p>
             <p className="text-sm text-slate-500 max-w-sm">CSV, XLSX, or PDF service tickets up to 25MB.</p>
@@ -43,8 +43,9 @@ export default function Import() {
               </span>
             </label>
             {fileName && (
-              <div data-testid="import-selected-file" className="mt-3 flex items-center gap-2 text-sm text-navy-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                <FileText className="h-4 w-4" /> {fileName}
+              <div data-testid="import-selected-file" className="mt-3 flex max-w-full min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-navy-800">
+                <FileText className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 truncate">{fileName}</span>
               </div>
             )}
             {!imported ? (
@@ -58,7 +59,7 @@ export default function Import() {
             )}
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-card h-fit">
+          <div className="surface-card h-fit p-6">
             <h3 className="font-display font-semibold text-navy-950 mb-4 flex items-center gap-2">
               <FileSpreadsheet className="h-4 w-4 text-navy-800" /> Supported sources
             </h3>

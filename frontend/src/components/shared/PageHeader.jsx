@@ -7,7 +7,7 @@ export function PageHeader({ eyebrow, title, description, actions, align = "left
     <div
       data-testid="page-header"
       className={cn(
-        "flex flex-col gap-4",
+        "flex w-full min-w-0 flex-col gap-4",
         align === "center" && "items-center text-center",
         className
       )}
@@ -17,15 +17,15 @@ export function PageHeader({ eyebrow, title, description, actions, align = "left
           {eyebrow}
         </span>
       )}
-      <h1 className={cn("text-4xl sm:text-5xl font-bold tracking-tight text-navy-950 max-w-3xl", align === "center" && "mx-auto")}>
+      <h1 className={cn("mobile-safe-text w-full max-w-3xl text-3xl font-bold leading-[1.08] tracking-tight text-navy-950 sm:text-5xl", align === "center" && "mx-auto")}>
         {title}
       </h1>
       {description && (
-        <p className={cn("text-base md:text-lg text-slate-600 max-w-2xl leading-relaxed", align === "center" && "mx-auto")}>
+        <p className={cn("w-full max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg", align === "center" && "mx-auto")}>
           {description}
         </p>
       )}
-      {actions && <div className="flex flex-wrap gap-3 mt-1">{actions}</div>}
+      {actions && <div className={cn("mt-1 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap", align === "center" && "sm:justify-center")}>{actions}</div>}
     </div>
   );
 }

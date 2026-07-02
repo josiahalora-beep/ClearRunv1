@@ -189,9 +189,9 @@ export default function AdminLeads() {
   return (
     <Layout>
       <section className="container-page py-10 sm:py-14">
-        <div data-testid="admin-internal-warning" className="flex items-start gap-2.5 rounded-lg border border-status-attention/30 bg-status-attention-bg px-4 py-3 text-sm text-status-attention mb-8">
+        <div data-testid="admin-internal-warning" className="mb-8 flex items-start gap-2.5 rounded-lg border border-status-attention/30 bg-status-attention-bg px-4 py-3 text-sm text-status-attention">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-          <p><strong>Internal admin view</strong> — protected by access key. Do not share this key outside the team.</p>
+          <p><strong>Internal admin view</strong> - protected by access key. Do not share this key outside the team.</p>
         </div>
 
         <PageHeader
@@ -205,10 +205,10 @@ export default function AdminLeads() {
           }
         />
 
-        <div className="mt-8 flex flex-col lg:flex-row gap-3">
-          <div className="relative flex-1 max-w-sm">
+        <div className="surface-card mt-8 grid grid-cols-1 gap-3 p-4 lg:grid-cols-[minmax(16rem,1fr)_repeat(4,minmax(9rem,12rem))]">
+          <div className="relative min-w-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input data-testid="admin-search-input" placeholder="Search business, email, or contact…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+            <Input data-testid="admin-search-input" placeholder="Search business, email, or contact..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
           </div>
           <Select data-testid="admin-filter-lead-type" value={filters.lead_type} onChange={(e) => setFilters((f) => ({ ...f, lead_type: e.target.value }))} className="lg:w-48">
             <option value="all">All lead types</option>
@@ -231,16 +231,16 @@ export default function AdminLeads() {
         <div className="mt-6">
           {loading ? (
             <div className="flex items-center justify-center gap-2 text-slate-400 py-16">
-              <Loader2 className="h-4 w-4 animate-spin" /> Loading leads…
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading leads...
             </div>
           ) : error ? (
             <EmptyState icon={AlertTriangle} title="Couldn't load leads" description="Something went wrong reaching the admin leads API. Try refreshing." />
           ) : filtered.length === 0 ? (
             <EmptyState icon={Inbox} title="No leads match" description="Try clearing your search or filters, or check back once a form is submitted." />
           ) : (
-            <div className="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table data-testid="admin-leads-table" className="w-full text-sm">
+            <div className="table-shell">
+              <div className="table-scroll">
+                <table data-testid="admin-leads-table" className="w-full min-w-[1040px] text-sm">
                   <thead>
                     <tr className="text-left text-xs text-slate-400 border-b border-slate-100 whitespace-nowrap">
                       <th className="px-4 py-3 font-medium">Type</th>
@@ -262,17 +262,17 @@ export default function AdminLeads() {
                     {filtered.map((l) => (
                       <tr key={l.id} data-testid={`admin-lead-row-${l.id}`} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/70 whitespace-nowrap">
                         <td className="px-4 py-3 font-medium text-navy-900">{LEAD_TYPE_LABELS[l.lead_type] || l.lead_type}</td>
-                        <td className="px-4 py-3 text-navy-900">{l.business_name || "—"}</td>
+                        <td className="px-4 py-3 text-navy-900">{l.business_name || "-"}</td>
                         <td className="px-4 py-3 text-slate-600">{l.name}</td>
                         <td className="px-4 py-3 text-slate-600">{l.email}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.phone || "—"}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.service_type || "—"}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.current_workflow || "—"}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.number_of_trucks || "—"}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.active_customer_accounts || "—"}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.partner_type || "—"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.phone || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.service_type || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.current_workflow || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.number_of_trucks || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.active_customer_accounts || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.partner_type || "-"}</td>
                         <td className="px-4 py-3 text-slate-500">{new Date(l.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-3 text-slate-500">{l.source_page || "—"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.source_page || "-"}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <LeadStatusBadge status={l.status} />

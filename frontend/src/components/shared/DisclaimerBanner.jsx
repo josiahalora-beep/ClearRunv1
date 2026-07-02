@@ -8,7 +8,7 @@ export function DisclaimerBanner({ className, text }) {
     <div
       data-testid="legal-disclaimer-banner"
       className={cn(
-        "flex items-start gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500",
+        "flex w-full min-w-0 items-start gap-2.5 rounded-lg border border-slate-200/80 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-500",
         className
       )}
     >
