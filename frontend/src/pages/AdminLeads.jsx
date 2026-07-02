@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { AlertTriangle, Search, Download, Inbox, Loader2 } from "lucide-react";
+import { AlertTriangle, Search, Download, Inbox, Loader2, Lock, ShieldCheck } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { LeadStatusBadge } from "@/components/LeadStatusBadge";
+import { getAdminKey, setAdminKey, clearAdminKey } from "@/lib/adminAuth";
 import { SERVICE_TYPE_OPTIONS, CURRENT_WORKFLOW_OPTIONS, LEAD_STATUS_OPTIONS } from "@/data/mockData";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -20,7 +22,70 @@ function toCsvValue(v) {
   return `"${s}"`;
 }
 
+/** Gate screen shown until a valid admin key is entered - key lives only in sessionStorage. */
+function AdminAccessGate({ onUnlocked }) {
+  const [keyInput, setKeyInput] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setVerifying(true);
+    setError("");
+    try {
+      const res = await axios.get(`${API}/admin/leads`, { headers: { "X-Admin-Key": keyInput } });
+      setAdminKey(keyInput);
+      onUnlocked(res.data);
+    } catch (err) {
+      if (err.response?.status === 401) setError("Admin key is required.");
+      else if (err.response?.status === 403) setError("Invalid admin key, or admin access is disabled.");
+      else setError("Couldn't verify admin key. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  return (
+    <Layout>
+      <section className="container-page py-20 flex justify-center">
+        <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white shadow-card p-8">
+          <div className="flex items-center gap-2.5 mb-2 text-navy-900">
+            <Lock className="h-5 w-5" />
+            <h1 className="text-lg font-semibold">Admin access</h1>
+          </div>
+          <p className="text-sm text-slate-500 mb-6">
+            Enter the admin access key to view the Lead Inbox. This key is not stored anywhere except your current browser tab.
+          </p>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4" data-testid="admin-gate-form">
+            <div>
+              <Label htmlFor="admin_key">Admin access key</Label>
+              <Input
+                id="admin_key"
+                type="password"
+                data-testid="admin-key-input"
+                required
+                autoFocus
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+                placeholder="Enter access key"
+              />
+            </div>
+            <Button type="submit" data-testid="admin-key-submit-btn" disabled={verifying || !keyInput}>
+              {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              Unlock
+            </Button>
+            {error && (
+              <p data-testid="admin-gate-error" className="text-sm text-status-incomplete">{error}</p>
+            )}
+          </form>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+
 export default function AdminLeads() {
+  const [unlocked, setUnlocked] = useState(false);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -28,28 +93,54 @@ export default function AdminLeads() {
   const [filters, setFilters] = useState({ lead_type: "all", service_type: "all", current_workflow: "all", status: "all" });
   const [updatingId, setUpdatingId] = useState(null);
 
+  const authHeaders = () => ({ headers: { "X-Admin-Key": getAdminKey() } });
+
+  const handleAuthFailure = (err) => {
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      clearAdminKey();
+      setUnlocked(false);
+      return true;
+    }
+    return false;
+  };
+
   const fetchLeads = async () => {
     setLoading(true);
     setError(false);
     try {
-      const res = await axios.get(`${API}/admin/leads`);
+      const res = await axios.get(`${API}/admin/leads`, authHeaders());
       setLeads(res.data);
     } catch (e) {
-      setError(true);
+      if (!handleAuthFailure(e)) setError(true);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchLeads(); }, []);
+  useEffect(() => {
+    const existingKey = getAdminKey();
+    if (existingKey) {
+      setUnlocked(true);
+      fetchLeads();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleUnlocked = (initialLeads) => {
+    setUnlocked(true);
+    setLeads(initialLeads);
+    setLoading(false);
+  };
 
   const handleStatusChange = async (leadId, newStatus) => {
     setUpdatingId(leadId);
     try {
-      await axios.patch(`${API}/admin/leads/${leadId}/status`, { status: newStatus });
+      await axios.patch(`${API}/admin/leads/${leadId}/status`, { status: newStatus }, authHeaders());
       setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l)));
     } catch (e) {
-      // Silently ignore for this internal demo view - a full retry/error UI is out of scope.
+      handleAuthFailure(e);
     } finally {
       setUpdatingId(null);
     }
@@ -91,12 +182,16 @@ export default function AdminLeads() {
     URL.revokeObjectURL(url);
   };
 
+  if (!unlocked) {
+    return <AdminAccessGate onUnlocked={handleUnlocked} />;
+  }
+
   return (
     <Layout>
       <section className="container-page py-10 sm:py-14">
         <div data-testid="admin-internal-warning" className="flex items-start gap-2.5 rounded-lg border border-status-attention/30 bg-status-attention-bg px-4 py-3 text-sm text-status-attention mb-8">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-          <p><strong>Internal demo view</strong> — protect before production launch. No authentication is applied to this page yet.</p>
+          <p><strong>Internal admin view</strong> — protected by access key. Do not share this key outside the team.</p>
         </div>
 
         <PageHeader

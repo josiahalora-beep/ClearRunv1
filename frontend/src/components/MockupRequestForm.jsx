@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { LeadFormSuccess } from "@/components/LeadFormSuccess";
+import { HoneypotField } from "@/components/HoneypotField";
 import { useLeadSubmit } from "@/hooks/useLeadSubmit";
 import { SERVICE_TYPE_OPTIONS, CURRENT_WORKFLOW_OPTIONS } from "@/data/mockData";
 
@@ -15,7 +16,7 @@ export function MockupRequestForm({ leadType = "mockup", sourcePage, submitLabel
   const [form, setForm] = useState({
     business_name: "", name: "", email: "",
     service_type: SERVICE_TYPE_OPTIONS[0], current_workflow: CURRENT_WORKFLOW_OPTIONS[0],
-    notes: "",
+    notes: "", hp_website: "",
   });
   const [sampleFile, setSampleFile] = useState(null);
 
@@ -35,6 +36,7 @@ export function MockupRequestForm({ leadType = "mockup", sourcePage, submitLabel
 
   return (
     <form data-testid={`lead-form-${leadType}`} onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <HoneypotField value={form.hp_website} onChange={handleChange} />
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="business_name">Business name</Label>

@@ -66,6 +66,7 @@ class LeadSubmissionCreate(BaseModel):
     service_area: Optional[str] = None
     notes: Optional[str] = None
     source_page: Optional[str] = None
+    hp_website: Optional[str] = None  # honeypot: must stay empty; a filled value flags a bot
 
 
 class LeadStatusUpdate(BaseModel):

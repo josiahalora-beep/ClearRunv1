@@ -78,10 +78,7 @@ export function Footer() {
         </div>
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} ClearRun Records. All rights reserved. ·{" "}
-            <Link to="/admin/leads" data-testid="footer-admin-link" className="text-slate-600 hover:text-white transition-colors">
-              Internal: Admin Lead Inbox
-            </Link>
+            © {new Date().getFullYear()} ClearRun Records. All rights reserved.
           </p>
           <p className="text-xs text-slate-500 max-w-xl">
             ClearRun helps organize service proof and record visibility. It does not certify legal compliance or guarantee inspection outcomes.

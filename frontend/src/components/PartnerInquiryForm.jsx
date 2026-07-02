@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { LeadFormSuccess } from "@/components/LeadFormSuccess";
+import { HoneypotField } from "@/components/HoneypotField";
 import { useLeadSubmit } from "@/hooks/useLeadSubmit";
 import { PARTNER_TYPE_OPTIONS } from "@/data/mockData";
 
@@ -14,7 +15,7 @@ export function PartnerInquiryForm({ leadType = "partner", sourcePage, submitLab
   const { status, submit } = useLeadSubmit(leadType, sourcePage);
   const [form, setForm] = useState({
     business_name: "", name: "", email: "",
-    partner_type: PARTNER_TYPE_OPTIONS[0], service_area: "", notes: "",
+    partner_type: PARTNER_TYPE_OPTIONS[0], service_area: "", notes: "", hp_website: "",
   });
 
   const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -30,6 +31,7 @@ export function PartnerInquiryForm({ leadType = "partner", sourcePage, submitLab
 
   return (
     <form data-testid={`lead-form-${leadType}`} onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <HoneypotField value={form.hp_website} onChange={handleChange} />
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="business_name">Organization name</Label>

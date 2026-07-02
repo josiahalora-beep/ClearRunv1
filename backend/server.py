@@ -3,7 +3,8 @@ import logging
 from pathlib import Path
 from datetime import datetime, UTC, timedelta
 
-from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks, Depends
+from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import PyMongoError
@@ -33,6 +34,27 @@ logger = logging.getLogger(__name__)
 VALID_LEAD_TYPES = {"trial", "mockup", "contact", "partner", "pilot", "checklist"}
 VALID_LEAD_STATUSES = {"New", "Reviewed", "Followed Up", "Trial Started", "Not Fit", "Closed"}
 
+ADMIN_ACCESS_ENABLED = os.environ.get("ADMIN_ACCESS_ENABLED", "false").lower() == "true"
+ADMIN_ACCESS_KEY = os.environ.get("ADMIN_ACCESS_KEY")
+admin_key_header = APIKeyHeader(name="X-Admin-Key", auto_error=False)
+
+
+async def verify_admin_access(provided_key: str = Depends(admin_key_header)):
+    """
+    Guards every /api/admin/* route with a shared-secret header. Never logs or
+    echoes back the provided or configured key.
+    """
+    if not ADMIN_ACCESS_ENABLED or not ADMIN_ACCESS_KEY:
+        raise HTTPException(status_code=403, detail="Admin access is disabled")
+    if provided_key is None:
+        raise HTTPException(status_code=401, detail="X-Admin-Key header is required")
+    if provided_key != ADMIN_ACCESS_KEY:
+        raise HTTPException(status_code=403, detail="Invalid admin key")
+    return True
+
+
+admin_router = APIRouter(prefix="/api/admin", dependencies=[Depends(verify_admin_access)])
+
 
 @api_router.get("/health")
 async def health_check():
@@ -43,6 +65,12 @@ async def health_check():
 async def create_lead(payload: LeadSubmissionCreate, background_tasks: BackgroundTasks):
     if payload.lead_type not in VALID_LEAD_TYPES:
         raise HTTPException(status_code=400, detail="Invalid lead_type")
+
+    if payload.hp_website:
+        # Honeypot field was filled in - almost certainly a bot. Respond as if the
+        # submission succeeded so the bot gets no signal, but never persist or email it.
+        fake_payload = payload.model_dump(exclude={"hp_website"})
+        return LeadSubmission(id=str(ObjectId()), **fake_payload)
 
     try:
         # Idempotency guard: avoid creating duplicate rows if the same person
@@ -77,18 +105,15 @@ async def count_leads():
     return {"total_leads": count}
 
 
-@api_router.get("/admin/leads", response_model=list[LeadSubmission], response_model_by_alias=False)
+@admin_router.get("/leads", response_model=list[LeadSubmission], response_model_by_alias=False)
 async def list_leads_admin():
-    """
-    Internal demo endpoint powering the /admin/leads inbox. No authentication yet -
-    intentionally simple for internal use only; must be protected before production launch.
-    """
+    """Powers the /admin/leads inbox. Protected by verify_admin_access via admin_router."""
     cursor = db.leads.find().sort("created_at", -1).limit(500)
     docs = await cursor.to_list(length=500)
     return [LeadSubmission.from_mongo(doc) for doc in docs]
 
 
-@api_router.patch("/admin/leads/{lead_id}/status", response_model=LeadSubmission, response_model_by_alias=False)
+@admin_router.patch("/leads/{lead_id}/status", response_model=LeadSubmission, response_model_by_alias=False)
 async def update_lead_status(lead_id: str, payload: LeadStatusUpdate):
     if payload.status not in VALID_LEAD_STATUSES:
         raise HTTPException(status_code=400, detail="Invalid status")
@@ -113,6 +138,7 @@ async def update_lead_status(lead_id: str, payload: LeadStatusUpdate):
 
 
 app.include_router(api_router)
+app.include_router(admin_router)
 
 cors_origins = os.environ.get("CORS_ORIGINS", "*").split(",")
 app.add_middleware(

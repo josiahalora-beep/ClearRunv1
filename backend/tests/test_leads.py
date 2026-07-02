@@ -12,6 +12,8 @@ from pymongo import MongoClient
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL").rstrip("/")
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 DB_NAME = os.environ.get("DB_NAME", "clearrun_records")
+ADMIN_ACCESS_KEY = os.environ.get("ADMIN_ACCESS_KEY")
+ADMIN_HEADERS = {"X-Admin-Key": ADMIN_ACCESS_KEY}
 
 
 @pytest.fixture
@@ -170,7 +172,7 @@ class TestAdminLeads:
         create_resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
         assert create_resp.status_code == 201
 
-        resp = api_client.get(f"{BASE_URL}/api/admin/leads")
+        resp = api_client.get(f"{BASE_URL}/api/admin/leads", headers=ADMIN_HEADERS)
         assert resp.status_code == 200
         leads = resp.json()
         assert isinstance(leads, list)
@@ -181,27 +183,47 @@ class TestAdminLeads:
         assert "id" in match
         assert match["status"] == "New"
 
+    def test_admin_leads_missing_key_returns_401(self, api_client):
+        resp = api_client.get(f"{BASE_URL}/api/admin/leads")
+        assert resp.status_code == 401
+
+    def test_admin_leads_wrong_key_returns_403(self, api_client):
+        resp = api_client.get(f"{BASE_URL}/api/admin/leads", headers={"X-Admin-Key": "definitely-wrong-key"})
+        assert resp.status_code == 403
+
+    def test_admin_key_never_echoed_in_response(self, api_client):
+        resp = api_client.get(f"{BASE_URL}/api/admin/leads", headers=ADMIN_HEADERS)
+        assert ADMIN_ACCESS_KEY not in resp.text
+
     def test_admin_lead_status_update(self, api_client):
         payload = self._payload("trial", uuid.uuid4().hex[:8])
         create_resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
         lead_id = create_resp.json()["id"]
 
-        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/{lead_id}/status", json={"status": "Reviewed"})
+        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/{lead_id}/status", json={"status": "Reviewed"}, headers=ADMIN_HEADERS)
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "Reviewed"
         assert "_id" not in data
+
+    def test_admin_lead_status_update_missing_key_returns_401(self, api_client):
+        payload = self._payload("trial", uuid.uuid4().hex[:8])
+        create_resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        lead_id = create_resp.json()["id"]
+
+        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/{lead_id}/status", json={"status": "Reviewed"})
+        assert resp.status_code == 401
 
     def test_admin_lead_status_update_rejects_invalid_status(self, api_client):
         payload = self._payload("trial", uuid.uuid4().hex[:8])
         create_resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
         lead_id = create_resp.json()["id"]
 
-        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/{lead_id}/status", json={"status": "Bogus"})
+        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/{lead_id}/status", json={"status": "Bogus"}, headers=ADMIN_HEADERS)
         assert resp.status_code == 400
 
     def test_admin_lead_status_update_unknown_id_returns_404(self, api_client):
-        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/507f1f77bcf86cd799439099/status", json={"status": "Reviewed"})
+        resp = api_client.patch(f"{BASE_URL}/api/admin/leads/507f1f77bcf86cd799439099/status", json={"status": "Reviewed"}, headers=ADMIN_HEADERS)
         assert resp.status_code == 404
 
     def test_legacy_document_without_new_fields_does_not_break(self, api_client, mongo_leads_collection):
@@ -219,7 +241,7 @@ class TestAdminLeads:
         }
         mongo_leads_collection.insert_one(legacy_doc)
 
-        resp = api_client.get(f"{BASE_URL}/api/admin/leads")
+        resp = api_client.get(f"{BASE_URL}/api/admin/leads", headers=ADMIN_HEADERS)
         assert resp.status_code == 200
         leads = resp.json()
         match = next((l for l in leads if l["email"] == legacy_email), None)
@@ -229,3 +251,34 @@ class TestAdminLeads:
         assert match["current_workflow"] is None
         assert match["number_of_trucks"] is None
         assert match["partner_type"] is None
+
+
+class TestHoneypot:
+    def _payload(self, suffix):
+        return {
+            "lead_type": "trial",
+            "name": "TEST_Bot Lead",
+            "email": f"test_hp_{suffix}@example.com",
+        }
+
+    def test_honeypot_filled_does_not_create_real_lead(self, api_client, mongo_leads_collection):
+        suffix = uuid.uuid4().hex[:8]
+        payload = self._payload(suffix)
+        payload["hp_website"] = "http://spam.example.com"
+
+        resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        assert resp.status_code == 201  # looks successful to the bot
+
+        stored = mongo_leads_collection.find_one({"email": payload["email"]})
+        assert stored is None  # never persisted
+
+    def test_honeypot_empty_creates_real_lead(self, api_client, mongo_leads_collection):
+        suffix = uuid.uuid4().hex[:8]
+        payload = self._payload(suffix)
+        payload["hp_website"] = ""
+
+        resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        assert resp.status_code == 201
+
+        stored = mongo_leads_collection.find_one({"email": payload["email"]})
+        assert stored is not None
