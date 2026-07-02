@@ -16,12 +16,12 @@ const included = [
 export default function TryFree() {
   return (
     <Layout>
-      <section className="container-page py-16 sm:py-20 grid lg:grid-cols-2 gap-12">
-        <div>
+      <section className="container-page grid grid-cols-1 gap-8 py-14 sm:py-16 lg:grid-cols-2 lg:gap-12">
+        <div className="min-w-0">
           <PageHeader
             eyebrow="Start Free Records Trial"
             title="See your service records the way an inspector would."
-            description="Start a free trial and turn your existing service tickets into branded, report-grade proof packets — no migration required."
+            description="Start a free trial and turn your existing service tickets into branded, report-grade proof packets with no migration required."
           />
           <div className="mt-8 flex flex-col gap-3">
             {included.map((i) => (
@@ -31,11 +31,11 @@ export default function TryFree() {
               </div>
             ))}
           </div>
-          <DisclaimerBanner className="mt-8 max-w-md" />
+          <DisclaimerBanner className="mt-8 max-w-full sm:max-w-md" />
         </div>
 
-        <Card className="h-fit">
-          <CardContent className="p-7 sm:p-8">
+        <Card className="form-card h-fit min-w-0">
+          <CardContent className="p-5 sm:p-8">
             <div className="flex items-center gap-2 mb-6">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900 text-white"><ShieldCheck className="h-4 w-4" /></span>
               <div>
