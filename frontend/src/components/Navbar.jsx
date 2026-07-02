@@ -21,6 +21,7 @@ const NAV_GROUPS = [
     label: "Solutions",
     testId: "nav-solutions",
     items: [
+      { to: "/proof-snapshot", label: "Proof Snapshot", desc: "Free review of one messy record" },
       { to: "/try-free", label: "Try Free", desc: "Start with your own records" },
       { to: "/proof-mockup", label: "Proof Mockup", desc: "See a branded packet first" },
       { to: "/comparison", label: "Comparison", desc: "Paper, spreadsheets, or ClearRun" },
@@ -118,10 +119,10 @@ export function Navbar() {
         </nav>
         <div className="hidden lg:flex items-center gap-3">
           <Link to="/proof-mockup" data-testid="nav-secondary-cta">
-            <Button variant="ghost" size="sm">Get a Free Proof Packet Mockup</Button>
+            <Button variant="ghost" size="sm">See Proof Mockup</Button>
           </Link>
-          <Link to="/try-free" data-testid="nav-primary-cta">
-            <Button size="sm">Start Free Records Trial</Button>
+          <Link to="/proof-snapshot" data-testid="nav-primary-cta">
+            <Button size="sm">Get Free Proof Snapshot</Button>
           </Link>
         </div>
         <button
@@ -155,10 +156,10 @@ export function Navbar() {
             ))}
             <div className="flex flex-col gap-2 border-t border-slate-200 pt-3">
               <Link to="/proof-mockup" data-testid="mobile-nav-secondary-cta">
-                <Button variant="secondary" className="w-full">Get a Free Proof Packet Mockup</Button>
+                <Button variant="secondary" className="w-full">See Proof Mockup</Button>
               </Link>
-              <Link to="/try-free" data-testid="mobile-nav-primary-cta">
-                <Button className="w-full">Start Free Records Trial</Button>
+              <Link to="/proof-snapshot" data-testid="mobile-nav-primary-cta">
+                <Button className="w-full">Get Free Proof Snapshot</Button>
               </Link>
             </div>
           </div>
