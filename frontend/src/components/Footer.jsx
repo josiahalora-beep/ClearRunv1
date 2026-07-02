@@ -8,10 +8,10 @@ const columns = [
     links: [
       { to: "/dashboard", label: "Dashboard" },
       { to: "/proof", label: "Proof Packets" },
+      { to: "/proof-snapshot", label: "Proof Snapshot" },
       { to: "/recovery", label: "Missing-Record Recovery" },
       { to: "/import", label: "Import" },
       { to: "/export", label: "Export" },
-      { to: "/field", label: "Field Capture" },
     ],
   },
   {
