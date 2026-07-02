@@ -18,13 +18,14 @@ const quickLinks = [
 
 export default function Dashboard() {
   const needsAttention = proofPackets.filter((p) => p.status === "attention" || p.status === "incomplete");
+  const openRequests = requests.filter((r) => r.status !== "complete");
   return (
     <Layout>
       <section className="container-page py-12 sm:py-16">
         <PageHeader
           eyebrow="Owner Dashboard"
           title="Records command center"
-          description="A live view of proof packet status, missing records, and requests across every location — demo data shown."
+          description="A live view of proof packet status, missing records, and requests across every location - demo data shown."
           actions={
             <Link to="/proof" data-testid="dashboard-view-all-proof-btn">
               <Button>View All Proof Packets <ArrowRight className="h-4 w-4" /></Button>
@@ -32,20 +33,35 @@ export default function Dashboard() {
           }
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+        <div className="mt-8 grid grid-cols-1 gap-3 lg:grid-cols-3">
+          <div className="surface-card p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Operator focus</p>
+            <p className="mt-1 font-display text-lg font-semibold text-navy-950">Close record gaps first</p>
+          </div>
+          <Link to="/recovery" className="surface-card surface-card-hover p-4" data-testid="dashboard-focus-recovery-link">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Needs attention</p>
+            <p className="mt-1 font-display text-lg font-semibold text-navy-950">{needsAttention.length} proof packets</p>
+          </Link>
+          <Link to="/requests" className="surface-card surface-card-hover p-4" data-testid="dashboard-focus-requests-link">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Open requests</p>
+            <p className="mt-1 font-display text-lg font-semibold text-navy-950">{openRequests.length} active follow-ups</p>
+          </Link>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {dashboardStats.map((s) => (
             <StatCard key={s.label} {...s} />
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 mt-10">
-          <div className="lg:col-span-2 rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="console-card lg:col-span-2">
+            <div className="console-card-header">
               <h2 className="font-display font-semibold text-navy-950">Recent proof packets</h2>
               <Link to="/proof" data-testid="dashboard-proof-table-link" className="text-xs font-semibold text-navy-800 hover:underline">View all</Link>
             </div>
-            <div className="overflow-x-auto">
-              <table data-testid="dashboard-proof-table" className="w-full text-sm">
+            <div className="table-scroll">
+              <table data-testid="dashboard-proof-table" className="table-basic">
                 <thead>
                   <tr className="text-left text-xs text-slate-400 border-b border-slate-100">
                     <th className="px-6 py-3 font-medium">Customer</th>
@@ -70,7 +86,7 @@ export default function Dashboard() {
           </div>
 
           <div className="flex flex-col gap-6">
-            <div className="rounded-xl border border-slate-200 bg-white shadow-card p-6">
+            <div className="surface-card p-5">
               <h2 className="font-display font-semibold text-navy-950 mb-4">Needs attention</h2>
               <div className="flex flex-col gap-3">
                 {needsAttention.map((p) => (
@@ -85,7 +101,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white shadow-card p-6">
+            <div className="surface-card p-5">
               <h2 className="font-display font-semibold text-navy-950 mb-4">Open requests</h2>
               <div className="flex flex-col gap-3">
                 {requests.slice(0, 3).map((r) => (
@@ -95,14 +111,14 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-              <Link to="/requests" data-testid="dashboard-requests-link" className="text-xs font-semibold text-navy-800 hover:underline mt-4 inline-block">View all requests →</Link>
+              <Link to="/requests" data-testid="dashboard-requests-link" className="mt-4 inline-block text-xs font-semibold text-navy-800 hover:underline">View all requests</Link>
             </div>
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {quickLinks.map((q) => (
-            <Link key={q.to} to={q.to} data-testid={`dashboard-quicklink-${q.to.replace("/", "")}`} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-card hover:shadow-card-hover transition-shadow">
+            <Link key={q.to} to={q.to} data-testid={`dashboard-quicklink-${q.to.replace("/", "")}`} className="surface-card surface-card-hover flex items-center gap-3 p-4">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900/5 text-navy-900"><q.icon className="h-4 w-4" /></span>
               <span className="text-sm font-medium text-navy-900">{q.label}</span>
             </Link>
@@ -110,7 +126,7 @@ export default function Dashboard() {
         </div>
       </section>
       <CTASection
-        title="This is demo data — see it work with your own records"
+        title="This is demo data - see it work with your own records"
         description="Start a free records trial to connect your own service tickets, or request a free proof packet mockup first."
       />
     </Layout>
