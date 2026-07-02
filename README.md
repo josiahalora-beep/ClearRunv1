@@ -24,11 +24,14 @@ and liquid-waste service records.
 | `RESEND_API_KEY` | No | From resend.com → Dashboard → API Keys. Leave empty to keep email fully disabled. |
 | `RESEND_FROM_EMAIL` | No | Sender shown to recipients, e.g. `ClearRun Records <hello@updates.yourdomain.com>`. Defaults to Resend's sandbox sender `onboarding@resend.dev`. |
 | `CLEAR_RUN_OWNER_EMAIL` | No | Where internal "new lead" notification emails are sent. |
+| `ADMIN_ACCESS_ENABLED` | No (default `false`) | Enables the shared-secret admin gate for `/api/admin/*`. |
+| `ADMIN_ACCESS_KEY` | Required when admin access is enabled | Shared secret sent as `X-Admin-Key`. Store only in `.env`; never commit it. |
 
 ### Frontend (`/app/frontend/.env`)
 | Variable | Notes |
 |---|---|
 | `REACT_APP_BACKEND_URL` | External URL the frontend uses to call the backend API. |
+| `REACT_APP_ADMIN_SESSION_TTL_HOURS` | Optional client-side admin session timeout. Defaults to `4`. |
 
 **Never hardcode secrets in source files** — all of the above must come from `.env`. Copy
 `backend/.env.example` → `backend/.env` and `frontend/.env.example` → `frontend/.env` to get

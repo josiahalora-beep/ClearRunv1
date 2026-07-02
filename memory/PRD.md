@@ -150,5 +150,6 @@ Secured the previously unauthenticated `/admin/leads` dashboard with a lightweig
   proper per-user auth (OAuth2/JWT) — current key model is intentionally lightweight/internal-only.
 
 ## Test Credentials
-No end-user login exists (all marketing pages are public). Admin dashboard is now key-gated —
-see `/app/memory/test_credentials.md` for the current `ADMIN_ACCESS_KEY` and usage.
+No end-user login exists (all marketing pages are public). Admin dashboard is key-gated.
+Do not track the real `ADMIN_ACCESS_KEY`; see `/app/memory/test_credentials.md` for
+placeholder-based local setup and rotation guidance.
