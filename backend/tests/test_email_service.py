@@ -1,5 +1,5 @@
 """
-Unit tests for email_service.py — the Resend email dispatch used by lead-capture forms.
+Unit tests for email_service.py - the Resend email dispatch used by lead-capture forms.
 These test the module's internal logic directly (with monkeypatched config + a mocked
 Resend client) rather than over HTTP, since email config is loaded once at backend
 process startup and can't be flipped per-request in a black-box HTTP test.
@@ -137,6 +137,34 @@ async def test_internal_notification_shows_not_provided_for_blank_relevant_field
         # "Not captured in current form" and never "Not applicable".
         assert "Not captured in current form" not in html
         assert html.count("Not provided") >= 4
+
+
+@pytest.mark.asyncio
+async def test_proof_snapshot_email_includes_file_and_consent_fields(monkeypatch):
+    monkeypatch.setattr(email_service, "EMAIL_ENABLED", True)
+    monkeypatch.setattr(email_service, "RESEND_API_KEY", "re_test_key")
+    monkeypatch.setattr(email_service, "CLEAR_RUN_OWNER_EMAIL", "owner@example.com")
+    lead = make_lead(
+        lead_type="proof_snapshot",
+        source_page="/proof-snapshot",
+        sample_file_name="ticket-photo.jpg",
+        sample_file_type="image/jpeg",
+        file_received=True,
+        snapshot_status="Requested",
+        consent_status="Review consent granted",
+        deletion_requested=False,
+    )
+    with patch("email_service.resend.Emails.send") as mock_send:
+        await email_service.send_lead_emails(lead, is_duplicate=False)
+        internal_call = next(c for c in mock_send.call_args_list if c.args[0]["to"] == ["owner@example.com"])
+        subject = internal_call.args[0]["subject"]
+        html = internal_call.args[0]["html"]
+        assert "Free Proof Snapshot" in subject
+        for expected in [
+            "ticket-photo.jpg", "image/jpeg", "Yes", "Requested",
+            "Review consent granted", "/proof-snapshot",
+        ]:
+            assert expected in html
 
 
 @pytest.mark.asyncio
