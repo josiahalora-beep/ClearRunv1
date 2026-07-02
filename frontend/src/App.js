@@ -30,11 +30,13 @@ import ProofGraph from "@/pages/ProofGraph";
 import Intelligence from "@/pages/Intelligence";
 import AdminLeads from "@/pages/AdminLeads";
 import NotFound from "@/pages/NotFound";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/try-free" element={<TryFree />} />
@@ -51,7 +53,9 @@ function App() {
         <Route path="/trial" element={<Pilot />} />
         <Route path="/requests" element={<Requests />} />
         <Route path="/restaurant" element={<Customer />} />
+        <Route path="/restaurant/:id" element={<Customer />} />
         <Route path="/customer" element={<Customer />} />
+        <Route path="/customer/:id" element={<Customer />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/compatibility" element={<Compatibility />} />
         <Route path="/objections" element={<Objections />} />
@@ -61,6 +65,7 @@ function App() {
         <Route path="/trust" element={<Trust />} />
         <Route path="/audit" element={<Audit />} />
         <Route path="/disposal" element={<Disposal />} />
+        <Route path="/disposal/:id" element={<Disposal />} />
         <Route path="/reviewer" element={<Reviewer />} />
         <Route path="/city-export" element={<CityExport />} />
         <Route path="/cityview" element={<CityView />} />
