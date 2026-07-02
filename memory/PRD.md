@@ -114,14 +114,41 @@ Expanded lead forms to capture real buyer-qualification data + built an internal
 - 26/26 backend tests passing (10 new tests added: 3 field-saving tests per lead type, admin list/
   status-update/invalid-status/404 tests, and a legacy-document backward-compatibility test).
 
+## Feature: Admin Protection + Production Safety Lockdown (Feb 2026)
+Secured the previously unauthenticated `/admin/leads` dashboard with a lightweight shared-secret key:
+- Backend: `verify_admin_access()` FastAPI dependency (via `integration_playbook_expert_v2` playbook)
+  using `APIKeyHeader("X-Admin-Key", auto_error=False)`. Returns 401 if header missing, 403 if wrong
+  key or `ADMIN_ACCESS_ENABLED`/`ADMIN_ACCESS_KEY` not set. Applied via a dedicated
+  `admin_router = APIRouter(prefix="/api/admin", dependencies=[Depends(verify_admin_access)])` so any
+  future `/api/admin/*` route inherits protection automatically. `GET /leads` and
+  `PATCH /leads/{id}/status` moved onto this router. Key is never logged or echoed in responses.
+- New env vars: `ADMIN_ACCESS_ENABLED=true`, `ADMIN_ACCESS_KEY` (freshly generated, rotated from the
+  one shared mid-session per security best practice), `ADMIN_SESSION_TTL_HOURS=4`.
+- Frontend: `/admin/leads` now shows an `AdminAccessGate` screen first (no lead data fetched/rendered
+  before a key is verified via a live API call). On success the key is stored only in `sessionStorage`
+  (never localStorage, never a public env var) via new `lib/adminAuth.js` helper, with a soft
+  client-side TTL (`REACT_APP_ADMIN_SESSION_TTL_HOURS`). Any later 401/403 from an admin call clears
+  the stored key and re-shows the gate. Removed the public footer link ("Internal: Admin Lead Inbox")
+  entirely — the admin page is no longer discoverable from any nav/footer.
+- Honeypot: added a hidden `hp_website` field (`HoneypotField.jsx`, `data-testid=hp-website-field`) to
+  the 3 public lead forms (`LeadQualificationForm`, `MockupRequestForm`, `PartnerInquiryForm`).
+  Validated server-side only: if `POST /api/leads` receives a non-empty `hp_website`, the backend
+  returns a fake 201 success (so bots get no signal) but never persists the lead or fires emails.
+- Testing: 32/32 backend pytest tests passing (6 new admin-protection tests + 2 new honeypot tests
+  added to `test_leads.py`), full Playwright pass on gate (correct/wrong key), footer, and honeypot
+  invisibility — zero bugs found (see `/app/test_reports/iteration_2.json`).
+
 ## Prioritized Backlog
-- P1: Deeper interaction testing of Field, Requests, Customer, Disposal, Audit pages (loaded fine, not
+- P1: Real PDF/CSV generation for Import/Export flows (currently clearly-labeled UI-only demo flows).
+- P1: Real photo upload/storage for Field Capture and Proof Packet photo evidence (currently icon placeholders).
+- P2: Real Resend account/domain setup (currently `EMAIL_ENABLED=false`, sandbox sender only).
+- P2: Deeper interaction testing of Field, Requests, Customer, Disposal, Audit pages (loaded fine, not
   deeply interaction-tested per iteration 1 report).
-- P2: Real PDF/CSV generation for Import/Export flows (currently clearly-labeled UI-only demo flows).
-- P2: Real photo upload/storage for Field Capture and Proof Packet photo evidence (currently icon placeholders).
 - P3: CityView/ProofGraph/Infrastructure Intelligence — full build-out when prioritized (currently roadmap
   placeholders per explicit instruction not to build these yet).
-- P3: Consider authentication if the product moves from public demo to real multi-tenant accounts.
+- P3: If the product moves from single shared admin key to multiple internal operators, migrate to
+  proper per-user auth (OAuth2/JWT) — current key model is intentionally lightweight/internal-only.
 
 ## Test Credentials
-No authentication exists in this app — all pages are public. No credentials needed.
+No end-user login exists (all marketing pages are public). Admin dashboard is now key-gated —
+see `/app/memory/test_credentials.md` for the current `ADMIN_ACCESS_KEY` and usage.
