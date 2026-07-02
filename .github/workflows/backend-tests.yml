@@ -1,0 +1,94 @@
+name: Backend Tests
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-tests.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-tests.yml"
+  workflow_dispatch:
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      MONGO_URL: mongodb://127.0.0.1:27017
+      DB_NAME: clearrun_records_ci
+      CORS_ORIGINS: "*"
+      EMAIL_ENABLED: "false"
+      RESEND_API_KEY: ""
+      RESEND_FROM_EMAIL: ClearRun Records <onboarding@resend.dev>
+      CLEAR_RUN_OWNER_EMAIL: owner@example.com
+      ADMIN_ACCESS_ENABLED: "true"
+      ADMIN_ACCESS_KEY: ci-admin-key-for-tests-only
+      REACT_APP_BACKEND_URL: http://127.0.0.1:8001
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Start API server
+        run: |
+          python -m uvicorn server:app --host 127.0.0.1 --port 8001 > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for API health check
+        run: |
+          python - <<'PY'
+          import sys
+          import time
+
+          import requests
+
+          url = "http://127.0.0.1:8001/api/health"
+          for attempt in range(30):
+              try:
+                  response = requests.get(url, timeout=2)
+                  if response.status_code == 200:
+                      print("API health check passed")
+                      sys.exit(0)
+              except requests.RequestException:
+                  pass
+              time.sleep(1)
+
+          print("API health check did not pass in time", file=sys.stderr)
+          sys.exit(1)
+          PY
+
+      - name: Run backend tests
+        run: python -m pytest tests/ -v
+
+      - name: Show API server log on failure
+        if: failure()
+        run: cat server.log || true
