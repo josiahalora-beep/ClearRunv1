@@ -15,7 +15,7 @@ const columns = [
     ],
   },
   {
-    title: "Customers",
+    title: "Operations",
     links: [
       { to: "/requests", label: "Proof Requests" },
       { to: "/customer", label: "Customer Portal" },
@@ -26,7 +26,7 @@ const columns = [
     ],
   },
   {
-    title: "Company",
+    title: "Resources",
     links: [
       { to: "/pricing", label: "Pricing" },
       { to: "/compatibility", label: "Compatibility" },
@@ -37,7 +37,7 @@ const columns = [
     ],
   },
   {
-    title: "Roadmap",
+    title: "Trust",
     links: [
       { to: "/cityview", label: "CityView" },
       { to: "/proofgraph", label: "ProofGraph" },
@@ -78,7 +78,7 @@ export function Footer() {
         </div>
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} ClearRun Records. All rights reserved.
+            &copy; {new Date().getFullYear()} ClearRun Records. All rights reserved.
           </p>
           <p className="text-xs text-slate-500 max-w-xl">
             ClearRun helps organize service proof and record visibility. It does not certify legal compliance or guarantee inspection outcomes.
