@@ -5,16 +5,21 @@ backend/**/__pycache__/
 backend/.pytest_cache/
 *.pyc
 
-.env
-backend/.env
-frontend/.env
-!*.env.example
-
 .DS_Store
 *.log
-.env.*
-*.env
 credentials.json
 *.pem
 *.key
 .credentials
+
+# Local secrets and runtime configuration must never be committed.
+.env
+.env.*
+*.env
+backend/.env
+frontend/.env
+
+# Keep placeholder templates tracked.
+!.env.example
+!backend/.env.example
+!frontend/.env.example
