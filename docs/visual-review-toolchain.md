@@ -116,3 +116,5 @@ LIGHTHOUSE_STRICT=1 npm run lighthouse:review
 This toolchain does not change the product model. It does not add payments, storage, PDF automation, public proof libraries, city/EPA approval claims, compliance guarantees, fake integrations, fake testimonials, or competitor assets.
 
 It exists to make the real product easier to inspect before each visual/product PR.
+
+Last reviewed: PR03 visual-review setup.
