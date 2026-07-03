@@ -9,9 +9,6 @@ module.exports = {
         display: ["Manrope", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
-        slate: {
-          400: "#475569",
-        },
         navy: {
           950: "#0A0F1C",
           900: "#0F172A",
