@@ -20,7 +20,8 @@
     "serve:build": "node scripts/serve-build.mjs",
     "visual:screenshots": "playwright test --config=playwright.config.js tests/visual-review.spec.js",
     "lighthouse:review": "node scripts/run-lighthouse.mjs",
-    "review:frontend": "npm run build && npm run visual:screenshots && npm run lighthouse:review"
+    "visual:summary": "node scripts/summarize-visual-review.mjs",
+    "review:frontend": "npm run build && npm run visual:screenshots && npm run lighthouse:review && npm run visual:summary"
   },
   "eslintConfig": {
     "extends": ["react-app"]
