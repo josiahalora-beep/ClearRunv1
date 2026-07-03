@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: frontend
 
-    # Visual review validates production build screenshots, axe, and Lighthouse after contrast fixes.
+    # Artifact-first review: always produce screenshots, axe JSON, Lighthouse, and summary before final gating.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,14 +54,31 @@ jobs:
           exit 1
 
       - name: Capture screenshots and run axe checks
+        id: visual_screenshots
+        continue-on-error: true
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:4173
         run: npm run visual:screenshots
 
       - name: Run Lighthouse review
+        id: lighthouse_review
+        if: always()
+        continue-on-error: true
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:4173
         run: npm run lighthouse:review
+
+      - name: Generate visual review summary
+        if: always()
+        run: npm run visual:summary
+
+      - name: Upload visual review summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-visual-review-summary
+          path: frontend/test-results/visual-review-summary.md
+          if-no-files-found: warn
 
       - name: Upload screenshots and axe artifacts
         if: always()
@@ -95,4 +112,18 @@ jobs:
         run: |
           if [ -f ../frontend-visual-server.pid ]; then
             kill "$(cat ../frontend-visual-server.pid)" || true
+          fi
+
+      - name: Final visual review gate
+        if: always()
+        run: |
+          echo "Screenshots and axe outcome: ${{ steps.visual_screenshots.outcome }}"
+          echo "Lighthouse outcome: ${{ steps.lighthouse_review.outcome }}"
+          if [ "${{ steps.visual_screenshots.outcome }}" != "success" ]; then
+            echo "Visual screenshots or axe checks failed. Review uploaded artifacts."
+            exit 1
+          fi
+          if [ "${{ steps.lighthouse_review.outcome }}" != "success" ]; then
+            echo "Lighthouse review failed. Review uploaded artifacts."
+            exit 1
           fi
