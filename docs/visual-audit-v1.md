@@ -232,51 +232,147 @@ static routes.
   pages.
 - All route transitions should feel fresh and start at the top.
 
-## Recommended PR Sequence After PR01
+## Current PR Direction Update
 
-### PR02 - Global Design System Polish
+As of PR #5 (`PR03: Proof Snapshot Conversion Surface`) on branch
+`pr03-proof-snapshot`, the project direction has changed from broad site polish
+first to proof-led validation first.
 
-- Add route scroll-to-top behavior.
-- Fix mobile overflow on `/try-free`, `/proof-mockup`, `/pilot`, and `/trial`.
-- Condense the top navigation so feature-heavy links are grouped into a smaller
-  set of buyer-friendly menu categories.
-- Tighten typography, spacing, button variants, section widths, and card usage.
-- Add or refine reusable layout components.
-- No new product features.
+Current validated state:
 
-### PR03 - Premium Homepage And Conversion Flow
+- PR #5 is open and still draft, but it is mergeable.
+- Latest known passing head commit: `0e7a857be24215ae4cb7fd3ac3302adc060a09ee`.
+- `Frontend Build` passes.
+- `Backend Tests` pass.
+- `Frontend Visual Review` passes.
+- The visual review workflow now checks the real React/Tailwind app with
+  screenshots, axe JSON, Lighthouse output, a visual summary, and an
+  artifact-based final gate.
+- Serious/critical axe blockers were fixed across the tested routes and
+  viewports.
+- `/proof-snapshot` is now the core free validation surface, not a side feature.
+- The simplified top navigation should stay simplified. Do not reintroduce the
+  previous crowded mega-menu structure.
 
-- Rework the homepage first viewport around the product artifact.
-- Reduce page length and repeated CTAs.
-- Upgrade `/try-free` and `/proof-mockup` into premium conversion flows.
-- Improve success states and buyer reassurance.
+The next PRs should keep the V26 business thesis centered on this path:
 
-### PR04 - Product Console Visual Upgrade
+`messy field record -> clean Proof Snapshot -> missing fields found -> Route Cleanup offer -> Managed Records later`
 
-- Upgrade `/dashboard`, `/proof`, `/recovery`, `/requests`, `/import`, and
-  `/export`.
-- Make the product feel like an operator console rather than a marketing demo.
-- Add stronger empty states and task-first hierarchy.
+Do not restart the product, rebuild the site from scratch, or add broad roadmap
+features before the proof-led conversion path is stronger.
 
-### PR05 - Proof Packet And Reviewer Artifact Polish
+## Recommended PR Sequence From Current Branch
 
-- Upgrade `/proof/:id`, `/reviewer`, `/audit`, `/disposal`, and `/city-export`.
-- Make the proof packet, audit trail, and reviewer views the visual centerpiece
-  of the product.
+### PR03 - Proof Snapshot Conversion Surface And Quality Gate
 
-### PR06 - Route Completeness And Admin Shell
+Status: functionally complete after the latest validation pass.
+
+Completed or now included:
+
+- Adds `/proof-snapshot` as the first-dollar validation route.
+- Wires the route, navbar CTA, footer link, backend lead type, admin lead fields,
+  and internal email context.
+- Adds proof snapshot lead intake and email payload tests.
+- Adds the frontend visual review toolchain.
+- Adds screenshots, axe reports, Lighthouse review output, visual summary, and
+  final artifact-based gate.
+- Fixes contrast issues discovered by the actual artifacts rather than guessing.
+- Keeps safety scope: no payments, no PDF automation, no live storage claim, no
+  public proof library, no city/EPA/compliance approval claim.
+
+Final PR03 cleanup before marking ready:
+
+- Confirm PR #5 stays green at the latest head.
+- Review uploaded screenshots for obvious visual regressions.
+- Confirm PR body reflects that GitHub Actions now passes instead of saying
+  backend pytest was not run.
+- Keep the PR draft until screenshots/artifacts have been manually reviewed.
+
+### PR04 - V26 Homepage And Conversion Alignment
+
+Goal: make the public site sell one clear action: send one messy/redacted record
+and get a Proof Snapshot.
+
+Scope:
+
+- Rework the homepage around the Proof Snapshot -> Route Cleanup path.
+- Replace broad trial/mockup language with proof-led language.
+- Primary CTA: `Get a Free Proof Snapshot` linking to `/proof-snapshot`.
+- Secondary CTA: `See Proof Example` linking to `/proof` or `/proof/PP-10231`.
+- Add a simple transformation story: messy ticket/photo/receipt -> cleaned proof
+  summary -> missing fields -> route cleanup recommendation.
+- Simplify footer structure and remove future-heavy link density.
+- Keep future concepts quieter: CityView, ProofGraph, Infrastructure
+  Intelligence, city exports, reviewer views, and disposal certificates should
+  not dominate the homepage yet.
+
+Do not add:
+
+- Fake integrations.
+- Fake customers or testimonials.
+- Payment flows.
+- PDF automation claims.
+- Secure live file storage claims.
+- Compliance certification or city/EPA approval language.
+
+### PR05 - Owner Command Center And Proof Library
+
+Goal: make the logged-in/demo product feel like an owner/operator console instead
+of a marketing demo.
+
+Scope:
+
+- Upgrade `/dashboard` around the question: "What needs attention today?"
+- Add sharper hierarchy for Proof Snapshots requested, packets delivered, missing
+  records, follow-up needs, and route cleanup opportunity.
+- Upgrade `/proof` into a premium packet library with evidence state, customer,
+  service date, service type, missing count, and status clarity.
+- Keep views mobile-safe at 390 px.
+- Keep action language practical and non-legal.
+
+### PR06 - Proof Detail, Reviewer, And Disposal Artifact Polish
+
+Goal: make ClearRun tangible through report-grade proof artifacts.
+
+Scope:
+
+- Upgrade `/proof/:id` into a more report-grade, printable proof packet.
+- Improve evidence stack, service summary, record history, and missing-item
+  presentation.
+- Upgrade `/reviewer`, `/audit`, `/disposal`, and `/city-export` only as proof
+  and review-support surfaces.
+- Keep all official-sounding surfaces carefully scoped as record organization and
+  review support, not compliance approval.
+
+### PR07 - Route Completeness, Admin Shell, And Conversion Follow-Through
+
+Goal: clean remaining product gaps after the proof-led public and product paths
+are stronger.
+
+Scope:
 
 - Decide whether to support `/customer/:id`, `/restaurant/:id`, and
-  `/disposal/:id`.
-- Upgrade `/admin/leads` to an operator-grade internal page without exposing
+  `/disposal/:id`; either implement them or remove expectations from docs and UI.
+- Upgrade `/admin/leads` into an operator-grade internal page without exposing
   credentials.
+- Add clearer Proof Snapshot submission follow-up states if needed.
+- Preserve the artifact-first visual review workflow for every visual/product PR.
 
-## Safety Check
+## Safety Check For Future PRs
 
-- No product code changed in this PR.
-- No backend code changed in this PR.
-- No customer-facing copy changed in this PR.
-- No secrets were added.
-- No real admin key, Resend key, MongoDB URI, or `.env` content was added.
-- No fake compliance, licensing, security, or government claims were added.
-- The old `ProofOps` name was not reintroduced.
+- Do not reintroduce the old `ProofOps` name.
+- Do not add secrets, API keys, `.env` contents, real admin keys, Resend keys, or
+  MongoDB URIs.
+- Do not add fake compliance, licensing, security, government, city, or EPA
+  claims.
+- Do not add fake customer logos, testimonials, screenshots, integrations, or
+  competitor assets.
+- Do not claim file storage, PDF automation, or payment processing until those
+  systems are actually implemented.
+- Do not expose disposal-site pricing, margins, or proprietary facility revenue
+  intelligence.
+- Use pricing-safe facility language: `Volume Variance Flags`, `Scheduled
+  Drop-Off Confirmation`, and `Disposal Confirmation Certificate`.
+- Keep the quality gate: build, backend tests, screenshots, axe, Lighthouse, and
+  artifact-based final review must pass before visual/product PRs are considered
+  ready.
