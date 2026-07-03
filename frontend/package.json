@@ -16,7 +16,11 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "serve:build": "node scripts/serve-build.mjs",
+    "visual:screenshots": "playwright test tests/visual-review.spec.js",
+    "lighthouse:review": "node scripts/run-lighthouse.mjs",
+    "review:frontend": "npm run build && npm run visual:screenshots && npm run lighthouse:review"
   },
   "eslintConfig": {
     "extends": ["react-app"]
@@ -26,8 +30,12 @@
     "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@craco/craco": "^7.1.0",
+    "@playwright/test": "^1.49.1",
     "autoprefixer": "^10.4.20",
+    "chrome-launcher": "^1.1.2",
+    "lighthouse": "^12.2.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13"
   }
