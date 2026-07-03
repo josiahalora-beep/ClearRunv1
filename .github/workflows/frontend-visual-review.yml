@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: frontend
 
-    # Visual review validates the production build, screenshots, axe, and Lighthouse.
+    # Visual review validates production build screenshots, axe, and Lighthouse after contrast fixes.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
