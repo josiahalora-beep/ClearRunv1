@@ -116,14 +116,4 @@ jobs:
 
       - name: Final visual review gate
         if: always()
-        run: |
-          echo "Screenshots and axe outcome: ${{ steps.visual_screenshots.outcome }}"
-          echo "Lighthouse outcome: ${{ steps.lighthouse_review.outcome }}"
-          if [ "${{ steps.visual_screenshots.outcome }}" != "success" ]; then
-            echo "Visual screenshots or axe checks failed. Review uploaded artifacts."
-            exit 1
-          fi
-          if [ "${{ steps.lighthouse_review.outcome }}" != "success" ]; then
-            echo "Lighthouse review failed. Review uploaded artifacts."
-            exit 1
-          fi
+        run: node scripts/finalize-visual-review.mjs
