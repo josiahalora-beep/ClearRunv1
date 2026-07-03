@@ -83,10 +83,10 @@ export default function ProofDetail() {
         <div data-testid="proof-report-card" className="max-w-4xl overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-premium">
           <div className="flex flex-col gap-3 bg-navy-950 px-5 py-5 text-white sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-6">
             <div>
-              <p className="text-xs uppercase tracking-widest text-slate-400">ClearRun Records: Proof of Service</p>
+              <p className="text-xs uppercase tracking-widest text-slate-200">ClearRun Records: Proof of Service</p>
               <h2 className="font-display font-bold text-xl mt-1">{packet.serviceType}</h2>
             </div>
-            <span className="text-left text-xs text-slate-400 sm:text-right">Packet ID<br /><span className="font-mono text-slate-200">{packet.id}</span></span>
+            <span className="text-left text-xs text-slate-200 sm:text-right">Packet ID<br /><span className="font-mono text-white">{packet.id}</span></span>
           </div>
 
           <div className="grid gap-x-8 gap-y-6 p-5 sm:grid-cols-2 sm:p-7">
