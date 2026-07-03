@@ -18,7 +18,7 @@
     "build": "craco build",
     "test": "craco test",
     "serve:build": "node scripts/serve-build.mjs",
-    "visual:screenshots": "playwright test tests/visual-review.spec.js",
+    "visual:screenshots": "playwright test --config=playwright.config.js tests/visual-review.spec.js",
     "lighthouse:review": "node scripts/run-lighthouse.mjs",
     "review:frontend": "npm run build && npm run visual:screenshots && npm run lighthouse:review"
   },
