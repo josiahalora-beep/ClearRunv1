@@ -1,8 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import lighthouse from "lighthouse";
-import chromeLauncher from "chrome-launcher";
+import lighthouseModule from "lighthouse";
+import chromeLauncherModule from "chrome-launcher";
+
+const lighthouse = lighthouseModule.default || lighthouseModule;
+const chromeLauncher = chromeLauncherModule.default || chromeLauncherModule;
 
 const routes = [
   { name: "home", path: "/" },
