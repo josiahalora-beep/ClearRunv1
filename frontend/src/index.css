@@ -62,29 +62,20 @@
   .stagger > *:nth-child(5) { animation-delay: 0.26s; }
   .stagger > *:nth-child(6) { animation-delay: 0.32s; }
 
-  .text-slate-300,
-  .text-slate-400 {
-    color: #475569 !important;
-  }
-
-  .text-slate-500 {
-    color: #334155 !important;
-  }
-
   .text-status-attention {
-    color: #7A4F00 !important;
+    color: #7A4F00;
   }
 
   .text-status-complete {
-    color: #2F684B !important;
+    color: #2F684B;
   }
 
   .text-status-review {
-    color: #2F5E91 !important;
+    color: #2F5E91;
   }
 
   .text-status-incomplete {
-    color: #98342E !important;
+    color: #98342E;
   }
 }
 
