@@ -1,5 +1,7 @@
 node_modules/
 frontend/build/
+frontend/playwright-report/
+frontend/test-results/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/.pytest_cache/
