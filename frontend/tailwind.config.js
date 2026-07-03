@@ -9,6 +9,9 @@ module.exports = {
         display: ["Manrope", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
+        slate: {
+          400: "#475569",
+        },
         navy: {
           950: "#0A0F1C",
           900: "#0F172A",
@@ -21,7 +24,7 @@ module.exports = {
           DEFAULT: "#E4E1D9",
         },
         status: {
-          complete: "#3F7A5C",
+          complete: "#3B7356",
           "complete-bg": "#EAF3EE",
           attention: "#B2790A",
           "attention-bg": "#FBF3E2",
