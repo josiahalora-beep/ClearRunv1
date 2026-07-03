@@ -127,6 +127,8 @@ export function Navbar() {
         </div>
         <button
           data-testid="mobile-menu-toggle"
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
           className="rounded-lg p-2 text-navy-900 transition-colors hover:bg-slate-100 lg:hidden"
           onClick={() => setMobileOpen((o) => !o)}
         >
