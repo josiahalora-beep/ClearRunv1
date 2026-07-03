@@ -123,7 +123,7 @@ export default function Home() {
                   <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-900 text-white shrink-0">
                     <s.icon className="h-5 w-5" />
                   </span>
-                  <span className="font-display text-sm font-semibold text-slate-300">Step {i + 1}</span>
+                  <span className="font-display text-sm font-semibold text-slate-600">Step {i + 1}</span>
                 </div>
                 <h3 className="font-display font-semibold text-navy-950">{s.title}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
