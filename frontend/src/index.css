@@ -41,7 +41,7 @@
     @apply rounded-xl border border-slate-200/80 bg-white shadow-premium;
   }
   .muted-copy {
-    @apply text-sm leading-relaxed text-slate-500;
+    @apply text-sm leading-relaxed text-slate-600;
   }
   .mobile-safe-text {
     overflow-wrap: anywhere;
@@ -61,6 +61,31 @@
   .stagger > *:nth-child(4) { animation-delay: 0.20s; }
   .stagger > *:nth-child(5) { animation-delay: 0.26s; }
   .stagger > *:nth-child(6) { animation-delay: 0.32s; }
+
+  .text-slate-300,
+  .text-slate-400 {
+    color: #475569 !important;
+  }
+
+  .text-slate-500 {
+    color: #334155 !important;
+  }
+
+  .text-status-attention {
+    color: #7A4F00 !important;
+  }
+
+  .text-status-complete {
+    color: #2F684B !important;
+  }
+
+  .text-status-review {
+    color: #2F5E91 !important;
+  }
+
+  .text-status-incomplete {
+    color: #98342E !important;
+  }
 }
 
 ::selection {
