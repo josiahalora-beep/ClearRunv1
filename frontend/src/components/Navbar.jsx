@@ -19,10 +19,10 @@ export function Navbar() {
   useEffect(() => setMobileOpen(false), [location.pathname, location.hash]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-offwhite/95 backdrop-blur-md">
+      <div className="container-page flex h-14 items-center justify-between gap-4">
         <Logo />
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary navigation">
           {NAV_ITEMS.map((item) => {
             const active = item.to === location.pathname || item.to === `${location.pathname}${location.hash}`;
             return (
@@ -31,7 +31,7 @@ export function Navbar() {
                 to={item.to}
                 data-testid={`nav-link-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                 className={cn(
-                  "rounded-md px-3 py-2 text-[13px] font-semibold transition-colors hover:bg-slate-100",
+                  "rounded-md px-3 py-2 text-[13px] font-medium transition-colors hover:bg-white",
                   active ? "text-navy-950" : "text-slate-600"
                 )}
               >
@@ -57,14 +57,14 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div data-testid="mobile-nav-panel" className="border-t border-slate-200 bg-white lg:hidden">
+        <div data-testid="mobile-nav-panel" className="border-t border-slate-200 bg-offwhite lg:hidden">
           <div className="container-page flex flex-col gap-2 py-4">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 data-testid={`mobile-nav-link-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                className="rounded-lg border border-slate-100 px-3 py-3 text-sm font-semibold text-navy-800 hover:bg-slate-50"
+                className="rounded-md border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-800 hover:bg-slate-50"
               >
                 {item.label}
               </Link>
