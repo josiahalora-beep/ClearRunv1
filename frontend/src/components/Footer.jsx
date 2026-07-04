@@ -32,18 +32,18 @@ const columns = [
 export function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-navy-950 text-slate-300">
-      <div className="container-page py-12">
-        <div className="grid gap-8 md:grid-cols-[1.4fr_2fr]">
+      <div className="container-page py-10">
+        <div className="grid gap-8 md:grid-cols-[1.2fr_2fr]">
           <div className="flex max-w-sm flex-col gap-4">
             <Logo dark />
             <p className="text-sm leading-relaxed text-slate-400">
-              Field proof. Clear records. ClearRun turns messy service records into clean proof packets and missing-field summaries.
+              Field proof. Clear records. ClearRun organizes messy service records into proof packets and missing-field summaries.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {columns.map((col) => (
               <div key={col.title} className="flex flex-col gap-2.5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{col.title}</p>
+                <p className="text-xs font-semibold uppercase text-slate-500">{col.title}</p>
                 {col.links.map((link) => (
                   <Link
                     key={link.to}
@@ -58,7 +58,7 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-10 border-t border-white/10 pt-5">
+        <div className="mt-8 border-t border-white/10 pt-5">
           <p className="max-w-3xl text-xs leading-relaxed text-slate-500">
             ClearRun helps organize service proof and record visibility. It does not certify legal compliance or guarantee inspection outcomes.
           </p>
