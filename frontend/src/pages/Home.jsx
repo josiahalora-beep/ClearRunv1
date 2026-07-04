@@ -1,204 +1,267 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, FileCheck2, SearchX, FolderInput, FolderOutput, Stamp, History,
-  Users, Camera, ShieldCheck, LineChart, Waves,
+  AlertTriangle,
+  ArrowRight,
+  ClipboardList,
+  FileCheck2,
+  Mail,
+  SearchX,
+  ShieldCheck,
+  Wrench,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { CTASection } from "@/components/shared/CTASection";
-import { RoadmapCard } from "@/components/shared/RoadmapCard";
-import { proofPackets, compatibilityList } from "@/data/mockData";
 
-const features = [
-  { icon: FileCheck2, title: "Proof Packets", desc: "Branded, report-grade proof of every service — ready to share.", to: "/proof" },
-  { icon: SearchX, title: "Missing-Record Recovery", desc: "Automatically flag and request gaps before anyone else finds them.", to: "/recovery" },
-  { icon: FolderInput, title: "Import", desc: "Bring in spreadsheets, PDFs, and paper tickets you already have.", to: "/import" },
-  { icon: FolderOutput, title: "Export", desc: "Billing-ready exports mapped for accounting and city requests.", to: "/export" },
-  { icon: Stamp, title: "Disposal Certificates", desc: "Track disposal confirmations tied to every service record.", to: "/disposal" },
-  { icon: History, title: "Audit Log", desc: "See who touched a record, and when, at every step.", to: "/audit" },
+const problems = [
+  {
+    title: "Records are scattered",
+    copy: "Tickets, photos, route sheets, receipts, and spreadsheets rarely live in one clean place.",
+  },
+  {
+    title: "Proof is hard to find",
+    copy: "When a customer asks what happened, someone has to dig through folders and message threads.",
+  },
+  {
+    title: "Missing fields slow the next step",
+    copy: "A missing date, signature, disposal note, or job detail can delay billing, cleanup, or review.",
+  },
 ];
 
 const steps = [
-  { icon: Camera, title: "Field capture", desc: "Techs log service details and photos on-site, even offline." },
-  { icon: FileCheck2, title: "Auto-organized proof packet", desc: "ClearRun assembles a branded, report-grade packet automatically." },
-  { icon: Users, title: "Customer-ready proof link", desc: "Share a clean, branded link — no more digging through folders." },
-  { icon: FolderOutput, title: "Billing-ready export", desc: "Export for accounting, haulers, or a municipal records request." },
+  {
+    icon: Mail,
+    title: "Send one redacted record",
+    copy: "Use a ticket photo, route sheet, disposal receipt, CSV row, or sample record from a recent job.",
+  },
+  {
+    icon: FileCheck2,
+    title: "Get a clean Proof Snapshot",
+    copy: "ClearRun organizes the record into a professional proof packet outline and missing-field summary.",
+  },
+  {
+    icon: Wrench,
+    title: "Decide if cleanup is worth it",
+    copy: "If the gaps matter, ClearRun can recommend a Route Cleanup offer for the next paid step.",
+  },
 ];
 
+const deliverables = [
+  {
+    title: "Proof Snapshot",
+    copy: "A clean view of the service proof you already have.",
+  },
+  {
+    title: "Missing Fields List",
+    copy: "A plain-language list of what is complete, unclear, or missing.",
+  },
+  {
+    title: "Route Cleanup Recommendation",
+    copy: "A practical next step when the record is worth cleaning up.",
+  },
+];
+
+function TransformationVisual() {
+  const messyItems = [
+    ["Ticket photo", "blurred"],
+    ["Route sheet", "partial"],
+    ["Disposal receipt", "loose"],
+    ["CSV row", "missing signature"],
+  ];
+
+  const cleanItems = [
+    ["Service date", "found"],
+    ["Customer/site", "found"],
+    ["Volume", "needs review"],
+    ["Signature", "missing"],
+  ];
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-premium sm:p-6">
+      <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <div className="mb-4 flex items-center gap-2">
+            <ClipboardList className="h-4 w-4 text-slate-500" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Messy field record</p>
+          </div>
+          <div className="space-y-2.5">
+            {messyItems.map(([label, status]) => (
+              <div key={label} className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                <span className="text-slate-700">{label}</span>
+                <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-500">{status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden h-px w-10 bg-slate-200 lg:block" />
+        <div className="flex justify-center lg:hidden">
+          <ArrowRight className="h-5 w-5 rotate-90 text-slate-300" />
+        </div>
+
+        <div className="overflow-hidden rounded-xl border border-navy-900/10 bg-white">
+          <div className="border-b border-slate-100 bg-navy-950 px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/70">Proof Snapshot</p>
+              <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] font-semibold text-white">review ready</span>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="mb-4 rounded-lg border border-slate-200 bg-offwhite p-3">
+              <p className="text-sm font-semibold text-navy-950">Route Cleanup recommendation</p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                Clean up the missing signature and confirm disposal details before sharing externally.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {cleanItems.map(([label, status]) => (
+                <div key={label} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-0">
+                  <span className="text-sm text-slate-600">{label}</span>
+                  <span className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
+                    status === "found"
+                      ? "bg-status-complete-bg text-status-complete"
+                      : status === "missing"
+                        ? "bg-status-incomplete-bg text-status-incomplete"
+                        : "bg-status-attention-bg text-status-attention"
+                  }`}>
+                    {status}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-slate-400">Illustrative sample only. No customer logo, endorsement, or certification implied.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
-  const packet = proofPackets[0];
   return (
     <Layout>
-      <section className="container-page pt-16 sm:pt-24 pb-16 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="flex flex-col gap-6 stagger">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-navy-900/5 border border-navy-900/10 px-3 py-1 text-xs font-semibold tracking-wide text-navy-800 uppercase">
-            Field-Proof Records Platform
+      <section className="container-page grid gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center">
+        <div className="stagger flex flex-col gap-6">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-navy-900/10 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide text-navy-800">
+            Field-service proof records
           </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-navy-950">
-            Field proof. <br className="hidden sm:block" /> Clear records.
+          <h1 className="mobile-safe-text max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight text-navy-950 sm:text-5xl lg:text-6xl">
+            Field proof. Clear records.
           </h1>
-          <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed">
-            ClearRun Records turns messy field service records into branded proof packets, missing-record reports,
-            billing-ready exports, and customer-ready proof links.
+          <p className="max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            ClearRun turns messy service records into clean Proof Snapshots, missing-field summaries, and practical cleanup recommendations.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link to="/try-free" data-testid="hero-primary-cta">
-              <Button size="lg" className="w-full sm:w-auto">Start Free Records Trial <ArrowRight className="h-4 w-4" /></Button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to="/proof-snapshot" data-testid="hero-primary-cta">
+              <Button size="lg" className="w-full sm:w-auto">
+                Get Free Proof Snapshot <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
-            <Link to="/proof-mockup" data-testid="hero-secondary-cta">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">Get a Free Proof Packet Mockup</Button>
+            <Link to="/proof/PP-10231" data-testid="hero-secondary-cta">
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto">See Proof Example</Button>
             </Link>
           </div>
-          <p className="text-xs text-slate-400 max-w-md">
-            No credit card required. Built for grease-trap / FOG and liquid-waste service records today — expanding beyond.
+          <p className="max-w-lg text-xs leading-relaxed text-slate-500">
+            No card. No signup. Start with one redacted or sample record before you commit to a cleanup workflow.
           </p>
         </div>
-
-        <div className="relative animate-fade-in-up">
-          <div className="absolute -inset-4 bg-gradient-to-tr from-navy-900/5 to-transparent rounded-3xl -z-10" />
-          <div data-testid="hero-proof-preview" className="rounded-2xl border border-slate-200 bg-white shadow-premium p-6 sm:p-8">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-navy-900" />
-                <span className="font-display font-semibold text-sm text-navy-950">Proof Packet {packet.id}</span>
-              </div>
-              <StatusBadge status={packet.status} />
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><p className="text-slate-400 text-xs">Customer</p><p className="font-medium text-navy-900">{packet.customer}</p></div>
-              <div><p className="text-slate-400 text-xs">Service Date</p><p className="font-medium text-navy-900">{packet.serviceDate}</p></div>
-              <div><p className="text-slate-400 text-xs">Service Type</p><p className="font-medium text-navy-900">{packet.serviceType}</p></div>
-              <div><p className="text-slate-400 text-xs">Volume</p><p className="font-medium text-navy-900">{packet.gallons} gal</p></div>
-              <div><p className="text-slate-400 text-xs">Hauler</p><p className="font-medium text-navy-900">{packet.hauler}</p></div>
-              <div><p className="text-slate-400 text-xs">Disposal Site</p><p className="font-medium text-navy-900">{packet.disposalSite}</p></div>
-            </div>
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-              <span>{packet.photos} photos attached</span>
-              <Link to="/proof/PP-10231" className="text-navy-800 font-medium hover:underline" data-testid="hero-view-proof-link">View full proof packet →</Link>
-            </div>
-          </div>
-        </div>
+        <TransformationVisual />
       </section>
 
-      <section className="container-page pb-16">
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-slate-500">
-          <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Grease Trap / FOG</span>
-          <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Liquid Waste</span>
-          <span className="flex items-center gap-2 text-slate-400"><Waves className="h-4 w-4" /> Septic (planned)</span>
-          <span className="flex items-center gap-2 text-slate-400"><Waves className="h-4 w-4" /> Portable Sanitation (planned)</span>
+      <section className="container-page pb-16" id="problem">
+        <div className="mb-8 max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">The problem</span>
+          <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">Service happened. The proof is messy.</h2>
         </div>
-      </section>
-
-      <section className="container-page pb-20">
-        <div className="max-w-2xl mb-10">
-          <span className="text-xs font-semibold uppercase tracking-wide text-status-incomplete">The problem</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Records go missing. Inspections get harder.</h2>
-        </div>
-        <div className="grid sm:grid-cols-3 gap-6">
-          {[
-            { title: "Scattered across tools", desc: "Service history lives in spreadsheets, PDFs, paper tickets, and hauler systems that don't talk to each other." },
-            { title: "No proof when it counts", desc: "When a restaurant or inspector asks for proof of service, someone spends hours digging for it." },
-            { title: "Gaps go unnoticed", desc: "Missing records aren't caught until an inspection or billing dispute forces the issue." },
-          ].map((p) => (
-            <div key={p.title} className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-              <h3 className="font-display font-semibold text-navy-950 mb-2">{p.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">{p.desc}</p>
+        <div className="grid gap-5 md:grid-cols-3">
+          {problems.map((item) => (
+            <div key={item.title} className="surface-card p-6">
+              <SearchX className="h-5 w-5 text-navy-800" />
+              <h3 className="mt-4 font-display text-lg font-semibold text-navy-950">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-500">{item.copy}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-white border-y border-slate-200 py-20">
+      <section className="border-y border-slate-200 bg-white py-16" id="how-it-works">
         <div className="container-page">
-          <div className="max-w-2xl mb-12">
+          <div className="mb-10 max-w-2xl">
             <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">How it works</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">From field ticket to proof-ready record</h2>
+            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">One record in. One clear next step out.</h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((s, i) => (
-              <div key={s.title} className="relative flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-900 text-white shrink-0">
-                    <s.icon className="h-5 w-5" />
-                  </span>
-                  <span className="font-display text-sm font-semibold text-slate-600">Step {i + 1}</span>
+          <div className="grid gap-6 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <div key={step.title} className="flex gap-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-900 text-white">
+                  <step.icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Step {index + 1}</p>
+                  <h3 className="mt-1 font-display text-lg font-semibold text-navy-950">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-500">{step.copy}</p>
                 </div>
-                <h3 className="font-display font-semibold text-navy-950">{s.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="container-page py-20">
-        <div className="max-w-2xl mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Everything in one place</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Built around proof, not paperwork</h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f) => (
-            <Link
-              key={f.title}
-              to={f.to}
-              data-testid={`home-feature-${f.title.toLowerCase().replace(/\s+/g, "-")}`}
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-card hover:shadow-card-hover hover:border-navy-900/20 transition-all"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy-900/5 text-navy-900 mb-4 group-hover:bg-navy-900 group-hover:text-white transition-colors">
-                <f.icon className="h-5 w-5" />
-              </span>
-              <h3 className="font-display font-semibold text-navy-950 mb-1.5">{f.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-navy-800 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore <ArrowRight className="h-3 w-3" />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-white border-y border-slate-200 py-20">
-        <div className="container-page">
-          <div className="max-w-2xl mb-8">
-            <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Works with what you already use</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">No rip-and-replace required</h2>
-            <p className="text-slate-600 mt-3 leading-relaxed">
-              ClearRun works beside spreadsheets, PDFs, paper tickets, QuickBooks, ServiceCore, PumpDocket, Tank Track, and other
-              existing systems through import/export workflows.
+      <section className="container-page py-16">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">What you get</span>
+            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">A useful review before a paid cleanup.</h2>
+            <p className="mt-4 text-sm leading-relaxed text-slate-500">
+              The public offer is intentionally simple: prove the artifact is useful, then offer Route Cleanup only when the gaps are clear.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {compatibilityList.map((c) => (
-              <span key={c.name} className="rounded-full border border-slate-200 bg-offwhite px-4 py-2 text-sm font-medium text-navy-800">
-                {c.name}
-              </span>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {deliverables.map((item) => (
+              <div key={item.title} className="rounded-xl border border-slate-200 bg-white p-5">
+                <FileCheck2 className="h-5 w-5 text-navy-800" />
+                <h3 className="mt-4 font-display font-semibold text-navy-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">{item.copy}</p>
+              </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-5">
-            These reflect import/export compatibility, not official integration partnerships.
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white py-14" id="trust">
+        <div className="container-page grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-offwhite px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <ShieldCheck className="h-3.5 w-3.5" /> Trust posture
+            </span>
+            <h2 className="mt-4 text-3xl font-bold text-navy-950">Organized proof, without fake guarantees.</h2>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-offwhite p-5">
+            <div className="flex gap-3">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-status-attention" />
+              <p className="text-sm leading-relaxed text-slate-600">
+                ClearRun helps organize service proof and record visibility. It does not certify legal compliance, verify record accuracy, or guarantee inspection, reviewer, customer, city, state, federal, or agency outcomes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-page py-16">
+        <div className="rounded-2xl border border-navy-900/10 bg-navy-950 px-6 py-10 text-center shadow-premium sm:px-10">
+          <h2 className="mx-auto max-w-2xl text-3xl font-bold text-white sm:text-4xl">Send one messy record. See the cleanup path.</h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300">
+            Get a free Proof Snapshot first. If the missing fields matter, ClearRun can recommend the next Route Cleanup step.
           </p>
-          <Link to="/compatibility" data-testid="home-compatibility-link" className="inline-flex items-center gap-1 text-sm font-semibold text-navy-800 mt-4 hover:underline">
-            See full compatibility details <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          <div className="mt-7">
+            <Link to="/proof-snapshot" data-testid="home-final-cta">
+              <Button size="lg" className="bg-white text-navy-950 hover:bg-slate-100">
+                Get Free Proof Snapshot <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
-
-      <section className="container-page py-20">
-        <div className="max-w-2xl mb-8">
-          <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Where ClearRun is headed</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Beyond grease traps and FOG</h2>
-        </div>
-        <RoadmapCard
-          icon={LineChart}
-          title="Infrastructure Intelligence"
-          description="ClearRun is building toward septic, portable sanitation, disposal confirmations, review-ready exports, municipal visibility (CityView), and infrastructure-wide record intelligence (ProofGraph)."
-          bullets={["Septic & liquid waste expansion", "CityView municipal visibility", "ProofGraph record relationships", "Infrastructure-wide intelligence"]}
-        />
-      </section>
-
-      <CTASection />
     </Layout>
   );
 }
