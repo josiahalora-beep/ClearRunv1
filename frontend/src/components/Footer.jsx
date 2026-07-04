@@ -43,7 +43,7 @@ export function Footer() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {columns.map((col) => (
               <div key={col.title} className="flex flex-col gap-2.5">
-                <p className="text-xs font-semibold uppercase text-slate-500">{col.title}</p>
+                <p className="text-xs font-semibold uppercase text-slate-300">{col.title}</p>
                 {col.links.map((link) => (
                   <Link
                     key={link.to}
@@ -59,10 +59,10 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-white/10 pt-5">
-          <p className="max-w-3xl text-xs leading-relaxed text-slate-500">
+          <p className="max-w-3xl text-xs leading-relaxed text-slate-300">
             ClearRun helps organize service proof and record visibility. It does not certify legal compliance or guarantee inspection outcomes.
           </p>
-          <p className="mt-3 text-xs text-slate-600">
+          <p className="mt-3 text-xs text-slate-300">
             &copy; {new Date().getFullYear()} ClearRun Records. All rights reserved.
           </p>
         </div>
