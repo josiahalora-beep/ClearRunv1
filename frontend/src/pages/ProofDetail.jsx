@@ -129,7 +129,7 @@ export default function ProofDetail() {
             {packet.photos > 0 ? (
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
                 {Array.from({ length: packet.photos }).map((_, i) => (
-                  <div key={i} data-testid={`proof-photo-thumb-${i}`} className="aspect-square rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300">
+                  <div key={i} data-testid={`proof-photo-thumb-${i}`} className="aspect-square rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-slate-500">
                     <Camera className="h-5 w-5" />
                   </div>
                 ))}
@@ -139,7 +139,7 @@ export default function ProofDetail() {
             )}
           </div>
 
-          <div className="px-7 py-5 border-t border-slate-100 bg-slate-50/60">
+          <div className="px-7 py-5 border-t border-slate-100 bg-slate-100/60">
             <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">Record History</p>
             <div className="flex flex-col gap-1.5">
               {relatedAudit.length > 0 ? relatedAudit.map((a) => (
