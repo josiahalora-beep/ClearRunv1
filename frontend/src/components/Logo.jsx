@@ -13,7 +13,7 @@ export function Logo({ className, dark = false }) {
         <span className={cn("font-display font-bold text-[17px] tracking-tight", dark ? "text-white" : "text-navy-950")}>
           ClearRun
         </span>
-        <span className={cn("font-display font-medium text-[10px] tracking-[0.18em] uppercase", dark ? "text-slate-300" : "text-slate-500")}>
+        <span className={cn("font-display font-medium text-[10px] tracking-[0.18em] uppercase", dark ? "text-slate-300" : "text-slate-600")}>
           Records
         </span>
       </span>

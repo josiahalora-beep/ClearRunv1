@@ -31,7 +31,7 @@ api_router = APIRouter(prefix="/api")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-VALID_LEAD_TYPES = {"trial", "mockup", "contact", "partner", "pilot", "checklist"}
+VALID_LEAD_TYPES = {"trial", "mockup", "proof_snapshot", "contact", "partner", "pilot", "checklist"}
 VALID_LEAD_STATUSES = {"New", "Reviewed", "Followed Up", "Trial Started", "Not Fit", "Closed"}
 
 ADMIN_ACCESS_ENABLED = os.environ.get("ADMIN_ACCESS_ENABLED", "false").lower() == "true"

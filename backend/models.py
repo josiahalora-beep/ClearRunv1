@@ -34,7 +34,7 @@ class BaseDocument(BaseModel):
 
 
 class LeadSubmission(BaseDocument):
-    lead_type: str  # "trial" | "mockup" | "contact" | "partner" | "pilot" | "checklist"
+    lead_type: str  # "trial" | "mockup" | "proof_snapshot" | "contact" | "partner" | "pilot" | "checklist"
     name: str
     business_name: Optional[str] = None
     email: EmailStr
@@ -45,6 +45,12 @@ class LeadSubmission(BaseDocument):
     active_customer_accounts: Optional[str] = None
     partner_type: Optional[str] = None
     service_area: Optional[str] = None
+    sample_file_name: Optional[str] = None
+    sample_file_type: Optional[str] = None
+    file_received: Optional[bool] = False
+    snapshot_status: Optional[str] = "Requested"
+    consent_status: Optional[str] = None
+    deletion_requested: Optional[bool] = False
     notes: Optional[str] = None
     message: Optional[str] = None  # legacy field name, kept only to read pre-existing documents
     source_page: Optional[str] = None
@@ -64,6 +70,12 @@ class LeadSubmissionCreate(BaseModel):
     active_customer_accounts: Optional[str] = None
     partner_type: Optional[str] = None
     service_area: Optional[str] = None
+    sample_file_name: Optional[str] = None
+    sample_file_type: Optional[str] = None
+    file_received: Optional[bool] = False
+    snapshot_status: Optional[str] = "Requested"
+    consent_status: Optional[str] = None
+    deletion_requested: Optional[bool] = False
     notes: Optional[str] = None
     source_page: Optional[str] = None
     hp_website: Optional[str] = None  # honeypot: must stay empty; a filled value flags a bot

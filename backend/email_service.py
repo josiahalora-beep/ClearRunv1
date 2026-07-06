@@ -1,6 +1,6 @@
 """
 Email notifications for ClearRun Records lead-capture forms (Try Free, Proof Packet
-Mockup, Pilot, Partner). Uses Resend. Designed to fail safely: if email is disabled,
+Mockup, Proof Snapshot, Pilot, Partner). Uses Resend. Designed to fail safely: if email is disabled,
 unconfigured, or the send itself errors, lead submission must never be affected -
 callers should treat this module as fire-and-forget (invoked via FastAPI BackgroundTasks).
 """
@@ -28,16 +28,18 @@ if RESEND_API_KEY:
 LEAD_TYPE_LABELS = {
     "trial": "Free Records Trial",
     "mockup": "Free Proof Packet Mockup",
+    "proof_snapshot": "Free Proof Snapshot",
     "pilot": "Pilot Program",
     "partner": "Partner Inquiry",
 }
 
 # Lead types that should trigger lead + internal notification emails.
-EMAIL_TRIGGERING_LEAD_TYPES = {"trial", "mockup", "pilot", "partner"}
+EMAIL_TRIGGERING_LEAD_TYPES = {"trial", "mockup", "proof_snapshot", "pilot", "partner"}
 
 SOURCE_FORM_BY_LEAD_TYPE = {
     "trial": "/try-free",
     "mockup": "/proof-mockup",
+    "proof_snapshot": "/proof-snapshot",
     "pilot": "/pilot",
     "partner": "/partners",
 }
@@ -49,6 +51,7 @@ FIELD_RELEVANCE = {
     "trial": {"phone", "service_type", "current_workflow", "number_of_trucks", "active_customer_accounts", "notes"},
     "pilot": {"phone", "service_type", "current_workflow", "number_of_trucks", "active_customer_accounts", "notes"},
     "mockup": {"service_type", "current_workflow", "notes"},
+    "proof_snapshot": {"phone", "service_type", "sample_file_name", "sample_file_type", "file_received", "snapshot_status", "consent_status", "deletion_requested", "notes"},
     "partner": {"partner_type", "service_area", "notes"},
 }
 
@@ -64,6 +67,8 @@ def _field_display(lead, field_name: str) -> str:
     if field_name not in FIELD_RELEVANCE.get(lead.lead_type, set()):
         return "Not applicable"
     value = getattr(lead, field_name, None)
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
     return value if value else "Not provided"
 
 
@@ -78,11 +83,11 @@ def _confirmation_html(lead) -> str:
       <p>ClearRun Records helps turn service records, manifests, photos, signatures, and disposal receipts
       into clean proof packets, missing-record reports, billing-ready exports, and customer-ready proof links.</p>
       <p><strong>Next step:</strong><br/>
-      We'll review your submission and follow up with the next step for your free records trial or proof packet mockup.</p>
+      We'll review your submission and follow up with the right next step.</p>
       <p>If you uploaded or referenced a sample record, we'll use it only to prepare your ClearRun proof example.</p>
       <p style="font-size:12px;color:#64748B;">ClearRun helps organize service proof and record visibility.
       It does not certify legal compliance or guarantee inspection outcomes.</p>
-      <p>— ClearRun Records<br/><em>Field proof. Clear records.</em></p>
+      <p>- ClearRun Records<br/><em>Field proof. Clear records.</em></p>
     </div>
     """.strip()
 
@@ -100,6 +105,12 @@ def _internal_notification_html(lead, is_duplicate: bool, source_form: str) -> s
         ("Active customer accounts", _field_display(lead, "active_customer_accounts")),
         ("Partner type", _field_display(lead, "partner_type")),
         ("Service area", _field_display(lead, "service_area")),
+        ("Sample file name", _field_display(lead, "sample_file_name")),
+        ("Sample file type", _field_display(lead, "sample_file_type")),
+        ("File selected/received flag", _field_display(lead, "file_received")),
+        ("Snapshot status", _field_display(lead, "snapshot_status")),
+        ("Consent status", _field_display(lead, "consent_status")),
+        ("Deletion requested", _field_display(lead, "deletion_requested")),
         ("Notes", lead.notes or "Not provided"),
         ("Created", lead.created_at.isoformat() if lead.created_at else "Unknown"),
         ("Submission status", "Duplicate (within 24h window)" if is_duplicate else "New"),
@@ -130,8 +141,8 @@ def _send_sync(to_email: str, subject: str, html: str):
 async def send_lead_emails(lead, is_duplicate: bool) -> None:
     """
     Send a confirmation email to the lead and an internal notification email to
-    CLEAR_RUN_OWNER_EMAIL. Only runs for the 4 form types that should trigger email
-    (trial/mockup/pilot/partner), skips duplicate submissions, and never raises -
+    CLEAR_RUN_OWNER_EMAIL. Only runs for the form types that should trigger email
+    (trial/mockup/proof_snapshot/pilot/partner), skips duplicate submissions, and never raises -
     all failures are caught and logged (without secrets) so the caller (a
     BackgroundTask fired after the HTTP response) can't affect lead submission.
     """
@@ -171,7 +182,7 @@ async def send_lead_emails(lead, is_duplicate: bool) -> None:
         await asyncio.to_thread(
             _send_sync,
             CLEAR_RUN_OWNER_EMAIL,
-            f"New ClearRun Records lead: {label} — {business}",
+            f"New ClearRun Records lead: {label} - {business}",
             _internal_notification_html(lead, is_duplicate, source_form),
         )
     except Exception:

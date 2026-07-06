@@ -14,7 +14,7 @@ import { SERVICE_TYPE_OPTIONS, CURRENT_WORKFLOW_OPTIONS, LEAD_STATUS_OPTIONS } f
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const LEAD_TYPE_LABELS = { trial: "Try Free", mockup: "Proof Mockup", pilot: "Pilot", partner: "Partner" };
+const LEAD_TYPE_LABELS = { trial: "Try Free", mockup: "Proof Mockup", proof_snapshot: "Proof Snapshot", pilot: "Pilot", partner: "Partner" };
 
 function toCsvValue(v) {
   if (v === null || v === undefined) return "";
@@ -164,13 +164,16 @@ export default function AdminLeads() {
   const handleExportCsv = () => {
     const headers = [
       "Lead Type", "Business/Organization", "Contact Name", "Email", "Phone", "Service Type",
-      "Current Workflow", "Trucks", "Active Accounts", "Partner Type", "Service Area", "Notes",
+      "Current Workflow", "Trucks", "Active Accounts", "Partner Type", "Service Area",
+      "Sample File", "File Selected", "Snapshot Status", "Consent Status", "Deletion Requested", "Notes",
       "Status", "Source Page", "Created At",
     ];
     const rows = filtered.map((l) => [
       LEAD_TYPE_LABELS[l.lead_type] || l.lead_type, l.business_name, l.name, l.email, l.phone,
       l.service_type, l.current_workflow, l.number_of_trucks, l.active_customer_accounts,
-      l.partner_type, l.service_area, l.notes, l.status, l.source_page, l.created_at,
+      l.partner_type, l.service_area, l.sample_file_name, l.file_received ? "Yes" : "No",
+      l.snapshot_status, l.consent_status, l.deletion_requested ? "Yes" : "No",
+      l.notes, l.status, l.source_page, l.created_at,
     ]);
     const csv = [headers, ...rows].map((row) => row.map(toCsvValue).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -197,7 +200,7 @@ export default function AdminLeads() {
         <PageHeader
           eyebrow="Admin"
           title="Lead Inbox"
-          description="Every Try Free, Proof Mockup, Pilot, and Partner submission in one place."
+          description="Every Try Free, Proof Mockup, Proof Snapshot, Pilot, and Partner submission in one place."
           actions={
             <Button variant="secondary" size="sm" data-testid="admin-export-csv-btn" onClick={handleExportCsv} disabled={filtered.length === 0}>
               <Download className="h-3.5 w-3.5" /> Export CSV
@@ -240,7 +243,7 @@ export default function AdminLeads() {
           ) : (
             <div className="table-shell">
               <div className="table-scroll">
-                <table data-testid="admin-leads-table" className="w-full min-w-[1040px] text-sm">
+                <table data-testid="admin-leads-table" className="w-full min-w-[1360px] text-sm">
                   <thead>
                     <tr className="text-left text-xs text-slate-400 border-b border-slate-100 whitespace-nowrap">
                       <th className="px-4 py-3 font-medium">Type</th>
@@ -249,6 +252,9 @@ export default function AdminLeads() {
                       <th className="px-4 py-3 font-medium">Email</th>
                       <th className="px-4 py-3 font-medium">Phone</th>
                       <th className="px-4 py-3 font-medium">Service Type</th>
+                      <th className="px-4 py-3 font-medium">Snapshot</th>
+                      <th className="px-4 py-3 font-medium">File</th>
+                      <th className="px-4 py-3 font-medium">Consent</th>
                       <th className="px-4 py-3 font-medium">Workflow</th>
                       <th className="px-4 py-3 font-medium">Trucks</th>
                       <th className="px-4 py-3 font-medium">Accounts</th>
@@ -267,6 +273,9 @@ export default function AdminLeads() {
                         <td className="px-4 py-3 text-slate-600">{l.email}</td>
                         <td className="px-4 py-3 text-slate-500">{l.phone || "-"}</td>
                         <td className="px-4 py-3 text-slate-500">{l.service_type || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.snapshot_status || "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.sample_file_name ? `${l.sample_file_name} (${l.file_received ? "selected" : "not selected"})` : "-"}</td>
+                        <td className="px-4 py-3 text-slate-500">{l.consent_status || "-"}</td>
                         <td className="px-4 py-3 text-slate-500">{l.current_workflow || "-"}</td>
                         <td className="px-4 py-3 text-slate-500">{l.number_of_trucks || "-"}</td>
                         <td className="px-4 py-3 text-slate-500">{l.active_customer_accounts || "-"}</td>

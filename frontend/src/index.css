@@ -41,7 +41,7 @@
     @apply rounded-xl border border-slate-200/80 bg-white shadow-premium;
   }
   .muted-copy {
-    @apply text-sm leading-relaxed text-slate-500;
+    @apply text-sm leading-relaxed text-slate-600;
   }
   .mobile-safe-text {
     overflow-wrap: anywhere;
@@ -61,6 +61,50 @@
   .stagger > *:nth-child(4) { animation-delay: 0.20s; }
   .stagger > *:nth-child(5) { animation-delay: 0.26s; }
   .stagger > *:nth-child(6) { animation-delay: 0.32s; }
+
+  .text-status-attention {
+    color: #7A4F00;
+  }
+
+  .text-status-complete {
+    color: #2F684B;
+  }
+
+  .text-status-review {
+    color: #2F5E91;
+  }
+
+  .text-status-incomplete {
+    color: #98342E;
+  }
+
+  .bg-navy-950 .text-slate-400,
+  .bg-navy-950 .text-slate-500 {
+    color: #CBD5E1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .table-scroll > table,
+  .table-scroll .table-basic {
+    min-width: 0 !important;
+    table-layout: fixed;
+  }
+
+  .table-scroll th,
+  .table-scroll td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .overflow-x-auto > ol {
+    min-width: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
 }
 
 ::selection {

@@ -88,6 +88,27 @@ class TestLeads:
         assert resp.status_code == 201
         assert resp.json()["lead_type"] == "mockup"
 
+    def test_create_lead_proof_snapshot_saves_snapshot_fields(self, api_client):
+        payload = self._payload("proof_snapshot", uuid.uuid4().hex[:8])
+        payload.update({
+            "sample_file_name": "sample-ticket.pdf",
+            "sample_file_type": "application/pdf",
+            "file_received": True,
+            "snapshot_status": "Requested",
+            "consent_status": "Review consent granted",
+            "deletion_requested": False,
+        })
+        resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)
+        assert resp.status_code == 201
+        data = resp.json()
+        assert data["lead_type"] == "proof_snapshot"
+        assert data["sample_file_name"] == "sample-ticket.pdf"
+        assert data["sample_file_type"] == "application/pdf"
+        assert data["file_received"] is True
+        assert data["snapshot_status"] == "Requested"
+        assert data["consent_status"] == "Review consent granted"
+        assert data["deletion_requested"] is False
+
     def test_create_lead_pilot(self, api_client):
         payload = self._payload("pilot", uuid.uuid4().hex[:8])
         resp = api_client.post(f"{BASE_URL}/api/leads", json=payload)

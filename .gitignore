@@ -23,3 +23,8 @@ frontend/.env
 !.env.example
 !backend/.env.example
 !frontend/.env.example
+
+# Generated frontend review artifacts.
+frontend/test-results/
+frontend/playwright-report/
+frontend/.lighthouseci/
