@@ -36,7 +36,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-[1.2fr_2fr]">
           <div className="flex max-w-sm flex-col gap-4">
             <Logo dark />
-            <p className="text-sm leading-relaxed text-slate-400">
+            <p className="text-sm leading-relaxed text-slate-300">
               Field proof. Clear records. ClearRun organizes messy service records into proof packets and missing-field summaries.
             </p>
           </div>
@@ -49,7 +49,7 @@ export function Footer() {
                     key={link.to}
                     to={link.to}
                     data-testid={`footer-link-${link.to.replace("/", "")}`}
-                    className="text-sm text-slate-400 transition-colors hover:text-white"
+                    className="text-sm text-slate-300 transition-colors hover:text-white"
                   >
                     {link.label}
                   </Link>
@@ -63,7 +63,7 @@ export function Footer() {
             ClearRun helps organize service proof and record visibility. It does not certify legal compliance or guarantee inspection outcomes.
           </p>
           <p className="mt-3 text-xs text-slate-300">
-            &copy; {new Date().getFullYear()} ClearRun Records. All rights reserved.
+            Copyright {new Date().getFullYear()} ClearRun Records. All rights reserved.
           </p>
         </div>
       </div>
