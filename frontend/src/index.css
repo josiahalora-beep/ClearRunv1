@@ -84,6 +84,29 @@
   }
 }
 
+@media (max-width: 1023px) {
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .table-scroll > table,
+  .table-scroll .table-basic {
+    min-width: 0 !important;
+    table-layout: fixed;
+  }
+
+  .table-scroll th,
+  .table-scroll td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .overflow-x-auto > ol {
+    min-width: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
 ::selection {
   background: #1A2438;
   color: #fff;
