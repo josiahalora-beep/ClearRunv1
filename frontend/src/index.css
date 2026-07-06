@@ -77,6 +77,11 @@
   .text-status-incomplete {
     color: #98342E;
   }
+
+  .bg-navy-950 .text-slate-400,
+  .bg-navy-950 .text-slate-500 {
+    color: #CBD5E1;
+  }
 }
 
 ::selection {
