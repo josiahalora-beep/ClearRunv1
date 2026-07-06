@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { to: "/#how-it-works", label: "How it works" },
+  { to: "/proof", label: "Proof Packets" },
   { to: "/proof/PP-10231", label: "Proof Example" },
   { to: "/pricing", label: "Pricing" },
   { to: "/trust", label: "FAQ/Trust" },
