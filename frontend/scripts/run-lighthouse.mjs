@@ -12,7 +12,7 @@ const routes = [
   { name: "proof-snapshot", path: "/proof-snapshot" },
   { name: "dashboard", path: "/dashboard" },
   { name: "proof-list", path: "/proof" },
-  { name: "proof-detail", path: "/proof/PP-10231" },
+  { name: "proof-detail", path: "/proof/PP-10234" },
 ];
 
 const baseURL = (process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
