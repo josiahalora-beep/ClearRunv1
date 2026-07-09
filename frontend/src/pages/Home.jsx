@@ -13,24 +13,46 @@ const proofPoints = [
   "Exact follow-up for dispatch or billing to send",
 ];
 
+const handoffRows = [
+  ["Pump-out ticket", "Backup gap list"],
+  ["Signed service slip", "Billing-ready signal"],
+  ["Stop photo / site photo", "Missing-photo flag"],
+  ["Gallons / volume note", "Volume mismatch note"],
+  ["Disposal ticket", "Disposal-match warning"],
+  ["Customer proof request", "Ready-to-send backup packet view"],
+];
+
+const workflowSteps = [
+  ["Route completed", "Driver finishes the stop and the ticket, photo, gallons, and disposal backup start moving back to dispatch."],
+  ["Backup reviewed", "ClearRun checks whether the route packet has the signed ticket, photo, gallons, and matching disposal ticket."],
+  ["Follow-up sent", "Dispatch or billing gets one clean request instead of chasing missing pieces across calls and texts."],
+  ["Billing supported", "The team knows whether the ticket can support the invoice or customer backup request."],
+];
+
+const ticketProblems = [
+  ["Driver says it was done", "but the signed ticket or stop photo is not attached."],
+  ["Disposal slip exists", "but it does not clearly match the ticket, gallons, or service date."],
+  ["Customer asks for proof", "and billing has to rebuild the route packet after the fact."],
+];
+
 const programs = [
   {
     number: "01",
-    title: "Free Route Ticket Review",
+    title: "Review one ticket",
     body: "Send one messy pump-out ticket and see the backup gaps ClearRun catches before billing or a customer request.",
     glow: "bg-sageglass-300",
     to: "/closeout-check",
   },
   {
     number: "02",
-    title: "Proof Packet Demo",
-    body: "See ready, needs-review, and missing-backup route packet examples.",
+    title: "See proof packets",
+    body: "Open ready, needs-review, and missing-backup packet examples in the dashboard.",
     glow: "bg-grape-300",
     to: "/proof",
   },
   {
     number: "03",
-    title: "Route Packet Cleanup",
+    title: "Clean a batch",
     body: "If the first ticket exposes real pain, organize a batch of weak tickets next.",
     glow: "bg-skyglass-300",
     to: "/pricing",
@@ -91,6 +113,26 @@ function ProgramCard({ item }) {
   );
 }
 
+function HandoffRow({ input, output }) {
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-white/10 py-3 last:border-b-0">
+      <p className="text-sm font-semibold text-white">{input}</p>
+      <span className="rounded-full border border-white/10 bg-white/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/70">to</span>
+      <p className="text-sm font-semibold text-sageglass-300">{output}</p>
+    </div>
+  );
+}
+
+function WorkflowStep({ index, title, copy }) {
+  return (
+    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-card">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-sm font-semibold text-white">{index}</span>
+      <h3 className="mt-5 font-display text-xl font-semibold text-navy-950">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-slate-600">{copy}</p>
+    </div>
+  );
+}
+
 function DeliverableRow({ title, copy }) {
   return (
     <div className="flex items-start gap-3 border-b border-slate-200 py-4 last:border-b-0">
@@ -147,10 +189,70 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="container-editorial pb-12 pt-4">
+        <div className="grid gap-4 rounded-premium bg-ink p-5 text-white shadow-editorial lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1fr)] lg:p-8">
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/8 p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Fits beside your current tools</p>
+            <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
+              The layer between route completion and billing backup.
+            </h2>
+            <p className="mt-5 text-sm leading-6 text-white/65">
+              Keep your dispatch, routing, invoicing, and accounting system. ClearRun focuses on the paper trail those tools still depend on: tickets, photos, gallons, signatures, and disposal backup.
+            </p>
+          </div>
+          <div className="rounded-[1.75rem] border border-white/10 bg-black/30 p-5">
+            <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+              <span>You send</span>
+              <span />
+              <span>ClearRun returns</span>
+            </div>
+            {handoffRows.map(([input, output]) => <HandoffRow key={input} input={input} output={output} />)}
+          </div>
+        </div>
+      </section>
+
+      <section className="container-editorial section-y">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="premium-kicker">The real workflow</p>
+          <h2 className="premium-section-title mt-4">Show the handoff, not another generic feature list</h2>
+          <p className="premium-section-copy">
+            The buyer should see exactly where ClearRun sits: after the route, before billing, and before the customer asks for backup.
+          </p>
+        </div>
+        <div className="mt-10 grid gap-3 md:grid-cols-4">
+          {workflowSteps.map(([title, copy], index) => <WorkflowStep key={title} index={index + 1} title={title} copy={copy} />)}
+        </div>
+      </section>
+
+      <section className="container-editorial pb-12">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)]">
+          <div className="premium-card-dark">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Common route packet problems</p>
+            <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white">
+              The painful stuff already hiding in their day.
+            </h2>
+            <p className="mt-5 text-sm leading-6 text-white/65">
+              The page should not educate them on a new problem. It should describe the paperwork pain they already recognize.
+            </p>
+          </div>
+          <div className="grid gap-3">
+            {ticketProblems.map(([title, copy]) => (
+              <div key={title} className="premium-card flex items-start gap-4">
+                <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-status-attention-bg text-xs font-bold text-status-attention">!</span>
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-navy-950">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{copy}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="container-editorial pb-8 pt-4 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="premium-kicker">What the free review proves</p>
-          <h2 className="premium-section-title mt-4">A sample ticket should feel like a real route packet review</h2>
+          <p className="premium-kicker">Start small, prove value</p>
+          <h2 className="premium-section-title mt-4">One sample ticket should show the paid workflow in miniature</h2>
         </div>
         <div className="mt-10 grid gap-3 md:grid-cols-3">
           {programs.map((item) => <ProgramCard key={item.title} item={item} />)}
