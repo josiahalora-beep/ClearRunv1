@@ -8,40 +8,40 @@ import { CTASection } from "@/components/shared/CTASection";
 const HeroProofPreview = lazy(() => import("@/components/home/HeroProofPreview"));
 
 const proofPoints = [
-  "Proof gaps found and labeled",
-  "Why the record should not be closed yet",
-  "Exact next message for the office to send",
+  "Ticket backup gaps found and labeled",
+  "Why the route packet is not billing-ready yet",
+  "Exact follow-up for dispatch or billing to send",
 ];
 
 const programs = [
   {
     number: "01",
-    title: "Free Closeout Diagnostic",
-    body: "Send one messy record and see the kind of gaps ClearRun catches before closeout.",
+    title: "Free Route Ticket Review",
+    body: "Send one messy pump-out ticket and see the backup gaps ClearRun catches before billing or a customer request.",
     glow: "bg-sageglass-300",
     to: "/closeout-check",
   },
   {
     number: "02",
-    title: "Proof Dashboard Preview",
-    body: "Open the dashboard view for ready, review, and missing-proof examples.",
+    title: "Proof Packet Demo",
+    body: "See ready, needs-review, and missing-backup route packet examples.",
     glow: "bg-grape-300",
     to: "/proof",
   },
   {
     number: "03",
-    title: "Batch Closeout Rescue",
-    body: "If the first check exposes real pain, organize a group of weak records next.",
+    title: "Route Packet Cleanup",
+    body: "If the first ticket exposes real pain, organize a batch of weak tickets next.",
     glow: "bg-skyglass-300",
     to: "/pricing",
   },
 ];
 
 const deliverables = [
-  ["Gap list", "What is missing, weak, or already present."],
-  ["Closeout decision", "Whether the record is ready, needs review, or should be held."],
-  ["Office action", "The next message or task your team can use immediately."],
-  ["Invoice support view", "Whether the record is strong enough to support a billing or customer question."],
+  ["Backup gap list", "What is missing, weak, or already attached to the route packet."],
+  ["Billing-ready signal", "Whether the ticket is ready, needs review, or should be held."],
+  ["Dispatch follow-up", "The next message or task dispatch, billing, or the route manager can use."],
+  ["Customer backup view", "Whether the ticket can support an invoice question or customer proof request."],
 ];
 
 function HeroPreviewFallback() {
@@ -110,22 +110,22 @@ export default function Home() {
     <Layout>
       <section className="container-editorial section-y grid items-center gap-12 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.04fr)]">
         <div className="stagger">
-          <span className="premium-pill">Free closeout diagnostic</span>
+          <span className="premium-pill">Free route ticket review</span>
           <h1 className="mobile-safe-text mt-7 max-w-3xl font-display text-5xl font-bold leading-[0.92] text-ink sm:text-6xl lg:text-7xl">
-            One messy record.
-            <span className="block text-slate-400">A full proof diagnosis.</span>
+            One messy ticket.
+            <span className="block text-slate-400">A full backup review.</span>
           </h1>
           <p className="mt-6 max-w-md text-sm leading-6 text-slate-600 sm:text-base">
-            The free check should prove the value fast: ClearRun shows what is missing, why it matters, and what your office should do before closing the record.
+            ClearRun checks the pump-out ticket, signed service slip, photos, gallons, and disposal backup so your billing desk knows what is missing before the invoice or customer proof request comes back.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/closeout-check" data-testid="hero-primary-cta">
               <Button size="lg" className="w-full bg-black text-white hover:bg-navy-900 sm:w-auto">
-                Get My Free Diagnosis <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                Review My Route Ticket <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </Link>
             <Link to="/proof" data-testid="hero-secondary-cta">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Dashboard</Button>
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Proof Packets</Button>
             </Link>
           </div>
           <div className="mt-14 max-w-xl divide-y divide-slate-200">
@@ -149,8 +149,8 @@ export default function Home() {
 
       <section className="container-editorial pb-8 pt-4 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="premium-kicker">What the free check proves</p>
-          <h2 className="premium-section-title mt-4">A sample record should feel like a real diagnosis</h2>
+          <p className="premium-kicker">What the free review proves</p>
+          <h2 className="premium-section-title mt-4">A sample ticket should feel like a real route packet review</h2>
         </div>
         <div className="mt-10 grid gap-3 md:grid-cols-3">
           {programs.map((item) => <ProgramCard key={item.title} item={item} />)}
@@ -160,12 +160,12 @@ export default function Home() {
       <section className="container-editorial section-y">
         <div className="grid gap-8 rounded-premium border border-slate-200 bg-white p-5 shadow-editorial md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:p-8 lg:p-10">
           <div className="rounded-[1.75rem] bg-ink p-6 text-white md:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Diagnostic output</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Route packet output</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
-              Not just a yes/no check.
+              Not just a clean or dirty ticket.
             </h2>
             <p className="mt-5 text-sm leading-6 text-white/65">
-              One record is enough to show whether ClearRun can find gaps your office would otherwise chase later.
+              One ticket is enough to show whether ClearRun can find backup gaps your dispatch or billing team would otherwise chase later.
             </p>
           </div>
           <div className="px-1 md:px-2">
@@ -177,9 +177,9 @@ export default function Home() {
       <section className="container-editorial pb-20">
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            ["Disproportionate value", "The first record should expose the full workflow: gaps, risk, action, and proof readiness."],
-            ["No sales pressure", "The diagnostic should make the next step obvious without a pitch."],
-            ["No approval claims", "ClearRun organizes office review, not legal certification or inspection approval."],
+            ["Disproportionate value", "The first ticket should expose the full workflow: missing backup, billing risk, dispatch follow-up, and proof readiness."],
+            ["No sales pressure", "The route ticket review should make the next step obvious without a pitch."],
+            ["No approval claims", "ClearRun organizes service records and backup review, not legal certification or inspection approval."],
           ].map(([title, copy]) => (
             <div key={title} className="premium-card">
               <FileCheck2 className="h-7 w-7 text-navy-800" aria-hidden="true" />
