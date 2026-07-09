@@ -9,6 +9,7 @@ import Comparison from "@/pages/Comparison";
 import Dashboard from "@/pages/Dashboard";
 import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
+import MissingProofIntakeForm from "@/pages/MissingProofIntakeForm";
 import Recovery from "@/pages/Recovery";
 import Import from "@/pages/Import";
 import Export from "@/pages/Export";
@@ -74,6 +75,7 @@ function App() {
         <Route path="/proofgraph" element={<ProofGraph />} />
         <Route path="/intelligence" element={<Intelligence />} />
         <Route path="/admin/leads" element={<AdminLeads />} />
+        <Route path="/closeout-check" element={<MissingProofIntakeForm />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
