@@ -62,6 +62,14 @@
   .stagger > *:nth-child(5) { animation-delay: 0.26s; }
   .stagger > *:nth-child(6) { animation-delay: 0.32s; }
 
+  .text-slate-400 {
+    color: #64748B;
+  }
+
+  .text-slate-500 {
+    color: #475569;
+  }
+
   .text-status-attention {
     color: #7A4F00;
   }
