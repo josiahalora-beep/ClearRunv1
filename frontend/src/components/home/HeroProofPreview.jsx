@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileWarning, MessageSquareText } from "lucide-react";
 
-const closeoutRows = [
-  ["Service date", "Found", "complete"],
-  ["Customer/site", "Found", "complete"],
+const findings = [
   ["Service photo", "Missing", "incomplete"],
   ["Signature", "Missing", "incomplete"],
   ["Disposal backup", "Weak match", "attention"],
@@ -12,57 +10,94 @@ const closeoutRows = [
 ];
 
 const toneClass = {
-  complete: "bg-status-complete-bg text-status-complete border-status-complete/30",
   incomplete: "bg-status-incomplete-bg text-status-incomplete border-status-incomplete/30",
   attention: "bg-status-attention-bg text-status-attention border-status-attention/30",
+  complete: "bg-status-complete-bg text-status-complete border-status-complete/30",
 };
 
 export default function HeroProofPreview() {
   return (
     <div className="relative animate-fade-in-up">
-      <div className="absolute -inset-4 bg-gradient-to-tr from-navy-900/5 to-transparent rounded-3xl -z-10" />
-      <div data-testid="hero-proof-preview" className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-premium">
-        <div className="border-b border-slate-100 bg-navy-950 px-6 py-5 text-white sm:px-8">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-white" aria-hidden="true" />
-              <span className="font-display font-semibold text-sm text-white">Can This Record Be Closed?</span>
-            </div>
-            <span className="rounded-full border border-status-incomplete/30 bg-status-incomplete-bg px-2.5 py-1 text-xs font-semibold text-status-incomplete">
-              Missing Proof
-            </span>
-          </div>
-        </div>
+      <div className="premium-gradient-orb bg-grape-300 -right-6 top-10 h-40 w-40 opacity-40" />
+      <div className="premium-gradient-orb bg-skyglass-300 -left-6 bottom-4 h-44 w-44 opacity-40" />
 
-        <div className="p-6 sm:p-8">
-          <div className="rounded-xl border border-status-incomplete/20 bg-status-incomplete-bg p-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-status-incomplete" aria-hidden="true" />
-              <div>
-                <p className="font-display text-lg font-semibold text-navy-950">Do not close yet</p>
-                <p className="mt-1 text-sm leading-6 text-navy-900">
-                  Request missing photo/signature and confirm disposal match before closing this route record.
-                </p>
+      <div data-testid="hero-proof-preview" className="relative overflow-hidden rounded-premium border border-slate-200 bg-white shadow-editorial">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1fr)]">
+          <div className="bg-ink p-6 text-white sm:p-7">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Free check output</p>
+              <span className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/80">
+                1 record
+              </span>
+            </div>
+
+            <h3 className="mt-8 font-display text-4xl font-bold leading-[0.95] text-white">
+              4 proof gaps found before closeout.
+            </h3>
+            <p className="mt-4 text-sm leading-6 text-white/62">
+              The free check is a diagnostic: what is missing, why it matters, and what the office should do next.
+            </p>
+
+            <div className="mt-8 grid grid-cols-3 gap-2">
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
+                <p className="text-[10px] font-semibold uppercase text-white/45">Missing</p>
+                <p className="mt-1 font-display text-3xl font-semibold text-white">2</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
+                <p className="text-[10px] font-semibold uppercase text-white/45">Weak</p>
+                <p className="mt-1 font-display text-3xl font-semibold text-white">2</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
+                <p className="text-[10px] font-semibold uppercase text-white/45">Action</p>
+                <p className="mt-1 font-display text-3xl font-semibold text-white">1</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-5 grid gap-2">
-            {closeoutRows.map(([label, status, tone]) => (
-              <div key={label} className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2.5">
-                <span className="text-sm font-medium text-navy-950">{label}</span>
-                <span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${toneClass[tone]}`}>
-                  {status}
-                </span>
+          <div className="p-5 sm:p-6">
+            <div className="rounded-2xl border border-slate-200 bg-offwhite p-4">
+              <div className="flex items-start gap-3">
+                <FileWarning className="mt-0.5 h-5 w-5 shrink-0 text-status-incomplete" aria-hidden="true" />
+                <div>
+                  <p className="font-display text-lg font-semibold text-navy-950">Hold before closing</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    Request photo/signature and confirm disposal match before this record is used for invoice backup.
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-600">
-            <span>Free sample check</span>
-            <Link to="/closeout-check" className="font-semibold text-navy-800 hover:underline" data-testid="hero-view-proof-link">
-              Get the closeout check →
-            </Link>
+            <div className="mt-4 grid gap-2">
+              {findings.map(([label, status, tone]) => (
+                <div key={label} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                  <span className="text-sm font-semibold text-navy-950">{label}</span>
+                  <span className={`rounded-full border px-2 py-1 text-[11px] font-semibold ${toneClass[tone]}`}>
+                    {status}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="flex items-start gap-3">
+                <MessageSquareText className="mt-0.5 h-5 w-5 shrink-0 text-navy-800" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Office-ready next message</p>
+                  <p className="mt-1 text-sm font-semibold leading-6 text-navy-950">
+                    “Can you send the service photo, signed ticket, and disposal backup for this stop?”
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-600">
+              <span className="inline-flex items-center gap-1 font-semibold text-status-complete">
+                <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> Diagnostic preview
+              </span>
+              <Link to="/closeout-check" className="inline-flex items-center gap-1 font-semibold text-navy-800 hover:underline" data-testid="hero-view-proof-link">
+                Get this check <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
