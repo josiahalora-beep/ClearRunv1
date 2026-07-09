@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawn, execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -28,50 +29,79 @@ function wait(ms) {
 /**
  * Find a usable Chrome/Chromium binary.
  * Priority:
- *   1. LIGHTHOUSE_CHROME_PATH env var (set by CI when system Chrome is installed)
- *   2. Playwright's own chromium download (works in any env where Playwright ran)
- *   3. Common Linux system paths
+ *   1. LIGHTHOUSE_CHROME_PATH env var (explicit override)
+ *   2. Playwright's own Chromium download location (detected via playwright-core)
+ *   3. Common system binary names resolved via `which`
  */
 function findChrome() {
-  // 1. Explicit override
+  // 1. Explicit env-var override
   if (process.env.LIGHTHOUSE_CHROME_PATH) {
+    console.log(`Chrome: using LIGHTHOUSE_CHROME_PATH=${process.env.LIGHTHOUSE_CHROME_PATH}`);
     return process.env.LIGHTHOUSE_CHROME_PATH;
   }
 
-  // 2. Playwright's chromium — installed by `npx playwright install chromium`
-  //    The path is exposed via playwright's own API.
+  // 2. Ask playwright-core where it put Chromium
   try {
-    const { execSync } = await import("node:child_process");
+    const playwrightCorePath = path.join(root, "node_modules", "playwright-core");
+    const { chromium } = await import(path.join(playwrightCorePath, "index.js"));
+    const execPath = chromium.executablePath();
+    if (execPath) {
+      console.log(`Chrome: using Playwright chromium at ${execPath}`);
+      return execPath;
+    }
   } catch {
-    // handled below
-  }
-  try {
-    // Works in Playwright >= 1.18
-    const { chromium } = await import("@playwright/test");
-    const channel = chromium.executablePath();
-    if (channel) return channel;
-  } catch {
-    // Not available in this context — fall through
+    // playwright-core not importable this way — try node require
   }
 
-  // 3. Try common system paths
-  const candidates = [
-    "/usr/bin/google-chrome-stable",
-    "/usr/bin/google-chrome",
-    "/usr/bin/chromium-browser",
-    "/usr/bin/chromium",
-    "/snap/bin/chromium",
+  // 3. Try playwright-core's browsers registry (works across versions)
+  try {
+    const registryPath = path.join(root, "node_modules", "playwright-core", "lib", "server", "registry", "index.js");
+    // Fallback: inspect known Playwright cache paths on Linux
+    const home = process.env.HOME || "/root";
+    const playwrightCacheDirs = [
+      path.join(home, ".cache", "ms-playwright"),
+      "/root/.cache/ms-playwright",
+      "/home/runner/.cache/ms-playwright",
+    ];
+    for (const cacheDir of playwrightCacheDirs) {
+      try {
+        const entries = await fs.readdir(cacheDir);
+        const chromiumEntry = entries.find((e) => e.startsWith("chromium-"));
+        if (chromiumEntry) {
+          const chromeBin = path.join(cacheDir, chromiumEntry, "chrome-linux", "chrome");
+          await fs.access(chromeBin);
+          console.log(`Chrome: found Playwright chromium at ${chromeBin}`);
+          return chromeBin;
+        }
+      } catch {
+        // not found here, continue
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 4. Try system binaries
+  const systemBinaries = [
+    "google-chrome-stable",
+    "google-chrome",
+    "chromium-browser",
+    "chromium",
   ];
-  for (const c of candidates) {
+  for (const bin of systemBinaries) {
     try {
-      fs.access(c); // sync-ish; we check via try/catch
-      return c;
+      const result = execFileSync("which", [bin], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+      if (result) {
+        console.log(`Chrome: found system binary at ${result}`);
+        return result;
+      }
     } catch {
-      // keep trying
+      // not found, continue
     }
   }
 
-  return null; // will let Lighthouse try its own bundled finder
+  console.warn("Chrome: no binary found — Lighthouse will attempt its own discovery");
+  return null;
 }
 
 function run(command, args, options = {}) {
@@ -108,17 +138,13 @@ async function waitForServer() {
 await fs.mkdir(resultsDir, { recursive: true });
 await fs.mkdir(tmpDir, { recursive: true });
 
-// Resolve Chrome path before starting the server
-const chromePath = findChrome();
+const chromePath = await findChrome();
 const chromeFlags = [
   "--headless=new",
   "--no-sandbox",
   "--disable-dev-shm-usage",
   "--disable-gpu",
 ];
-if (chromePath) {
-  console.log(`Using Chrome at: ${chromePath}`);
-}
 
 const server = spawn(process.execPath, [path.join(root, "scripts", "serve-build.mjs")], {
   cwd: root,
