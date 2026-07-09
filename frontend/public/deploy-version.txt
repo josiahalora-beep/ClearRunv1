@@ -1,0 +1,11 @@
+ClearRun production deploy marker
+
+Purpose: trigger a fresh Vercel production deployment after PR06 merge.
+PR06 merge commit: bb007d69fec6dc22f4eacd486416b66781ed6761
+Triggered: 2026-07-09T20:45:00Z
+Expected live surfaces:
+- /proof
+- /proof/PP-10231
+- /proof/PP-10232
+- /proof/PP-10234
+- /closeout-check
