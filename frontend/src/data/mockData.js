@@ -186,3 +186,107 @@ export const compatibilityList = [
   { name: "Tank Track", type: "Liquid-waste operations", note: "Import disposal and route backup where available" },
   { name: "PDF / paper tickets", type: "Manual records", note: "Organize scanned or photographed record sets" },
 ];
+
+export const objections = [
+  {
+    q: "We already track this in spreadsheets — why change?",
+    a: "ClearRun does not replace your spreadsheet. It organizes what is already scattered across spreadsheets, PDFs, and paper tickets into one review-friendly record set so nothing falls through the cracks when a customer or reviewer asks for backup.",
+  },
+  {
+    q: "Will this force us to change haulers or software?",
+    a: "No. ClearRun is designed to work beside your existing tools through import and export, not replace them.",
+  },
+  {
+    q: "Does ClearRun guarantee outcomes?",
+    a: "No platform can guarantee outcomes. ClearRun helps organize service proof and record visibility for office review. It does not certify legal compliance.",
+  },
+  {
+    q: "Is our data secure?",
+    a: "Records are stored with access controls and are only shared through links you generate. We do not claim any third-party security certification we have not independently obtained.",
+  },
+  {
+    q: "What if a service record is missing?",
+    a: "ClearRun flags missing records and creates a clear follow-up item the office can send to the hauler or field tech to close the gap.",
+  },
+  {
+    q: "Is this only for grease traps?",
+    a: "Grease-trap / FOG and liquid-waste records are where ClearRun starts. The same proof-packet, missing-record, and export workflows are built to extend into septic, portable sanitation, and other regulated field-service records over time.",
+  },
+];
+
+export const pricingTiers = [
+  {
+    name: "Starter",
+    price: "$149",
+    period: "/mo",
+    description: "For a single hauler or route getting records organized.",
+    features: ["Up to 50 proof packets/mo", "Branded proof links", "CSV import/export", "Email support"],
+    cta: "Start Free Records Trial",
+    highlighted: false,
+  },
+  {
+    name: "Growth",
+    price: "$349",
+    period: "/mo",
+    description: "For multi-location haulers and regional operators.",
+    features: ["Up to 300 proof packets/mo", "Missing-record queue", "Disposal backup tracking", "Priority support", "Audit log access"],
+    cta: "Start Free Records Trial",
+    highlighted: true,
+  },
+  {
+    name: "Fleet",
+    price: "Custom",
+    period: "",
+    description: "For haulers and regional operators at scale.",
+    features: ["Unlimited proof packets", "Reviewer-friendly export tools", "Dedicated onboarding", "Custom reporting", "Volume pricing"],
+    cta: "Get a Free Proof Packet Mockup",
+    highlighted: false,
+  },
+];
+
+export const checklistItems = [
+  { item: "Service date documented for every location", risk: "high" },
+  { item: "Photo evidence attached to each service ticket", risk: "high" },
+  { item: "Disposal backup linked where available", risk: "high" },
+  { item: "Gallons/volume recorded per service", risk: "medium" },
+  { item: "Branded, shareable proof packet for each customer", risk: "medium" },
+  { item: "Missing-record alerts before a records request", risk: "high" },
+  { item: "Exportable billing-ready records for accounting", risk: "medium" },
+  { item: "Central log of who touched each record and when", risk: "low" },
+];
+
+export const comparisonRows = [
+  { capability: "Central proof packet per service", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Missing-record detection", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Branded customer-ready proof link", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Billing-ready export", spreadsheets: "partial", paper: false, clearrun: true },
+  { capability: "Works with your existing tools", spreadsheets: true, paper: true, clearrun: true },
+  { capability: "Audit trail of record changes", spreadsheets: false, paper: false, clearrun: true },
+];
+
+export const importSources = ["CSV", "Excel spreadsheet", "PDF service tickets", "Scanned paper tickets", "ServiceCore export", "PumpDocket export", "Tank Track export"];
+
+export const exportFormats = ["Billing-ready CSV (QuickBooks-compatible)", "Branded PDF proof packet", "Bulk ZIP of proof packets", "County/municipal summary export"];
+
+export const cityExportRecords = [
+  { id: "CE-01", business: "Macon Route A — Ready", lastPumpOut: "2026-01-28", status: "complete" },
+  { id: "CE-02", business: "Warner Robins Route B — Needs Review", lastPumpOut: "2026-01-27", status: "review" },
+  { id: "CE-03", business: "Perry Route C — Missing Proof", lastPumpOut: "2026-01-22", status: "incomplete" },
+  { id: "CE-04", business: "Highway 96 Wings", lastPumpOut: "2026-01-22", status: "incomplete" },
+  { id: "CE-05", business: "Central Georgia BBQ", lastPumpOut: "2026-01-20", status: "complete" },
+];
+
+export const partners = [
+  { type: "Hauling Companies", desc: "Give your customers branded proof packets automatically after every service." },
+  { type: "Pumping & Septic Providers", desc: "Extend record-keeping beyond FOG into septic and liquid waste services." },
+  { type: "Accountants & Billing Partners", desc: "Receive billing-ready exports mapped to your accounting workflow." },
+  { type: "Referral Partners", desc: "Refer regulated service businesses and share in program benefits." },
+];
+
+export const resources = [
+  { title: "The Missing-Record Problem in FOG Operations", type: "Guide", readTime: "6 min read" },
+  { title: "What Reviewers Commonly Ask For", type: "Guide", readTime: "5 min read" },
+  { title: "Grease Trap Service Checklist (Printable)", type: "Checklist", readTime: "2 min read" },
+  { title: "Spreadsheets vs. Proof Packets", type: "Comparison", readTime: "4 min read" },
+  { title: "Preparing for a Records Request", type: "Guide", readTime: "7 min read" },
+];
