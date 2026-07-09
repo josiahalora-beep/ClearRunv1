@@ -8,39 +8,40 @@ import { CTASection } from "@/components/shared/CTASection";
 const HeroProofPreview = lazy(() => import("@/components/home/HeroProofPreview"));
 
 const proofPoints = [
-  "Find missing proof before closeout",
-  "Separate ready, review, and missing records",
-  "Give the office one next action",
+  "Proof gaps found and labeled",
+  "Why the record should not be closed yet",
+  "Exact next message for the office to send",
 ];
 
 const programs = [
   {
     number: "01",
-    title: "Route Closeout Check",
-    body: "A free first look at one messy record before the office closes it.",
+    title: "Free Closeout Diagnostic",
+    body: "Send one messy record and see the kind of gaps ClearRun catches before closeout.",
     glow: "bg-sageglass-300",
     to: "/closeout-check",
   },
   {
     number: "02",
-    title: "Proof Packet Demo",
-    body: "Preview the three outcomes ClearRun organizes: ready, review, missing.",
+    title: "Proof Dashboard Preview",
+    body: "Open the dashboard view for ready, review, and missing-proof examples.",
     glow: "bg-grape-300",
     to: "/proof",
   },
   {
     number: "03",
-    title: "Record Closeout Rescue",
-    body: "Turn a batch of weak records into a cleaner office action queue.",
+    title: "Batch Closeout Rescue",
+    body: "If the first check exposes real pain, organize a group of weak records next.",
     glow: "bg-skyglass-300",
     to: "/pricing",
   },
 ];
 
-const outcomes = [
-  ["Ready", "Close the record and share backup if requested."],
-  ["Review", "Confirm weak backup before the office signs off."],
-  ["Missing", "Chase the photo, signature, volume, or disposal backup."],
+const deliverables = [
+  ["Gap list", "What is missing, weak, or already present."],
+  ["Closeout decision", "Whether the record is ready, needs review, or should be held."],
+  ["Office action", "The next message or task your team can use immediately."],
+  ["Invoice support view", "Whether the record is strong enough to support a billing or customer question."],
 ];
 
 function HeroPreviewFallback() {
@@ -90,7 +91,7 @@ function ProgramCard({ item }) {
   );
 }
 
-function OutcomeRow({ title, copy }) {
+function DeliverableRow({ title, copy }) {
   return (
     <div className="flex items-start gap-3 border-b border-slate-200 py-4 last:border-b-0">
       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-grape-500 text-white">
@@ -107,27 +108,27 @@ function OutcomeRow({ title, copy }) {
 export default function Home() {
   return (
     <Layout>
-      <section className="container-editorial section-y grid items-center gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1fr)]">
+      <section className="container-editorial section-y grid items-center gap-12 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.04fr)]">
         <div className="stagger">
-          <span className="premium-pill">Free Route Closeout Check</span>
+          <span className="premium-pill">Free closeout diagnostic</span>
           <h1 className="mobile-safe-text mt-7 max-w-3xl font-display text-5xl font-bold leading-[0.92] text-ink sm:text-6xl lg:text-7xl">
-            Better proof.
-            <span className="block text-slate-400">Cleaner closeout.</span>
+            One messy record.
+            <span className="block text-slate-400">A full proof diagnosis.</span>
           </h1>
           <p className="mt-6 max-w-md text-sm leading-6 text-slate-600 sm:text-base">
-            ClearRun helps FOG and liquid-waste offices see whether a route record is ready, weak, or missing proof before it gets closed.
+            The free check should prove the value fast: ClearRun shows what is missing, why it matters, and what your office should do before closing the record.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/closeout-check" data-testid="hero-primary-cta">
               <Button size="lg" className="w-full bg-black text-white hover:bg-navy-900 sm:w-auto">
-                Start Free Check <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                Get My Free Diagnosis <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </Link>
             <Link to="/proof" data-testid="hero-secondary-cta">
               <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Dashboard</Button>
             </Link>
           </div>
-          <div className="mt-16 max-w-xl divide-y divide-slate-200">
+          <div className="mt-14 max-w-xl divide-y divide-slate-200">
             {proofPoints.map((point) => (
               <div key={point} className="flex items-center gap-3 py-3 text-sm font-medium text-navy-900">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-grape-500 text-white">
@@ -148,30 +149,27 @@ export default function Home() {
 
       <section className="container-editorial pb-8 pt-4 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="premium-kicker">Programs</p>
-          <h2 className="premium-section-title mt-4">Designed around record closeout priorities</h2>
+          <p className="premium-kicker">What the free check proves</p>
+          <h2 className="premium-section-title mt-4">A sample record should feel like a real diagnosis</h2>
         </div>
         <div className="mt-10 grid gap-3 md:grid-cols-3">
           {programs.map((item) => <ProgramCard key={item.title} item={item} />)}
         </div>
-        <p className="premium-section-copy">
-          Choose the path that matches the office problem: one free record check, a product demo, or a batch closeout rescue.
-        </p>
       </section>
 
       <section className="container-editorial section-y">
         <div className="grid gap-8 rounded-premium border border-slate-200 bg-white p-5 shadow-editorial md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:p-8 lg:p-10">
           <div className="rounded-[1.75rem] bg-ink p-6 text-white md:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Closeout logic</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Diagnostic output</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
-              One record. Three possible outcomes.
+              Not just a yes/no check.
             </h2>
             <p className="mt-5 text-sm leading-6 text-white/65">
-              ClearRun should feel like the office can understand the next action in seconds, not read through another long report.
+              One record is enough to show whether ClearRun can find gaps your office would otherwise chase later.
             </p>
           </div>
           <div className="px-1 md:px-2">
-            {outcomes.map(([title, copy]) => <OutcomeRow key={title} title={title} copy={copy} />)}
+            {deliverables.map(([title, copy]) => <DeliverableRow key={title} title={title} copy={copy} />)}
           </div>
         </div>
       </section>
@@ -179,9 +177,9 @@ export default function Home() {
       <section className="container-editorial pb-20">
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            ["No card", "Start with one redacted or sample record."],
-            ["No sales call", "The first check should explain the value itself."],
-            ["No approval claims", "ClearRun organizes office review, not legal certification."],
+            ["Disproportionate value", "The first record should expose the full workflow: gaps, risk, action, and proof readiness."],
+            ["No sales pressure", "The diagnostic should make the next step obvious without a pitch."],
+            ["No approval claims", "ClearRun organizes office review, not legal certification or inspection approval."],
           ].map(([title, copy]) => (
             <div key={title} className="premium-card">
               <FileCheck2 className="h-7 w-7 text-navy-800" aria-hidden="true" />
