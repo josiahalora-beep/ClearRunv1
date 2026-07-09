@@ -29,6 +29,12 @@ const workflowSteps = [
   ["Billing supported", "The team knows whether the ticket can support the invoice or customer backup request."],
 ];
 
+const mustHaveTriggers = [
+  ["Before the invoice goes out", "Catch missing signatures, photos, gallons, and disposal backup before billing has to defend the ticket."],
+  ["Before the customer asks", "Know whether the packet can answer a proof request without rebuilding the record under pressure."],
+  ["Before driver memory fades", "Send one clear follow-up while the stop, route, and disposal run are still fresh."],
+];
+
 const ticketProblems = [
   ["Driver says it was done", "but the signed ticket or stop photo is not attached."],
   ["Disposal slip exists", "but it does not clearly match the ticket, gallons, or service date."],
@@ -133,6 +139,15 @@ function WorkflowStep({ index, title, copy }) {
   );
 }
 
+function TriggerCard({ title, copy }) {
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-white/10 p-5">
+      <p className="font-display text-2xl font-semibold leading-tight text-white">{title}</p>
+      <p className="mt-3 text-sm leading-6 text-white/68">{copy}</p>
+    </div>
+  );
+}
+
 function DeliverableRow({ title, copy }) {
   return (
     <div className="flex items-start gap-3 border-b border-slate-200 py-4 last:border-b-0">
@@ -191,7 +206,7 @@ export default function Home() {
 
       <section className="container-editorial pb-12 pt-4">
         <div className="grid gap-4 rounded-premium bg-ink p-5 text-white shadow-editorial lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1fr)] lg:p-8">
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/8 p-6">
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Fits beside your current tools</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
               The layer between route completion and billing backup.
@@ -201,7 +216,7 @@ export default function Home() {
             </p>
           </div>
           <div className="rounded-[1.75rem] border border-white/10 bg-black/30 p-5">
-            <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+            <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/60">
               <span>You send</span>
               <span />
               <span>ClearRun returns</span>
@@ -214,9 +229,9 @@ export default function Home() {
       <section className="container-editorial section-y">
         <div className="mx-auto max-w-3xl text-center">
           <p className="premium-kicker">The real workflow</p>
-          <h2 className="premium-section-title mt-4">Show the handoff, not another generic feature list</h2>
+          <h2 className="premium-section-title mt-4">After the route. Before billing. Before the customer asks.</h2>
           <p className="premium-section-copy">
-            The buyer should see exactly where ClearRun sits: after the route, before billing, and before the customer asks for backup.
+            ClearRun sits where operators already lose time: the handoff from completed service work to usable billing and customer backup.
           </p>
         </div>
         <div className="mt-10 grid gap-3 md:grid-cols-4">
@@ -225,14 +240,33 @@ export default function Home() {
       </section>
 
       <section className="container-editorial pb-12">
+        <div className="rounded-premium bg-ink p-5 shadow-editorial lg:p-8">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1fr)] lg:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Why operators keep it</p>
+              <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
+                It protects the moment when paperwork becomes money.
+              </h2>
+              <p className="mt-5 text-sm leading-6 text-white/65">
+                The must-have angle is not another dashboard. It is fewer billing holds, fewer customer proof chases, and fewer late driver follow-ups.
+              </p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-1">
+              {mustHaveTriggers.map(([title, copy]) => <TriggerCard key={title} title={title} copy={copy} />)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-editorial pb-12">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)]">
           <div className="premium-card-dark">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Common route packet problems</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white">
-              The painful stuff already hiding in their day.
+              The problems operators already recognize.
             </h2>
             <p className="mt-5 text-sm leading-6 text-white/65">
-              The page should not educate them on a new problem. It should describe the paperwork pain they already recognize.
+              Missing backup usually shows up late: when billing needs support, when a customer questions the invoice, or when dispatch has to chase the route after the truck has moved on.
             </p>
           </div>
           <div className="grid gap-3">
