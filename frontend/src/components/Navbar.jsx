@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
+  { to: "/closeout-check", label: "Closeout Check" },
   { to: "/#how-it-works", label: "How it works" },
   { to: "/proof", label: "Proof Packets" },
   { to: "/proof/PP-10231", label: "Proof Example" },
@@ -42,8 +43,8 @@ export function Navbar() {
           })}
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
-          <Link to="/proof-snapshot" data-testid="nav-primary-cta">
-            <Button size="sm">Get Free Proof Snapshot</Button>
+          <Link to="/closeout-check" data-testid="nav-primary-cta">
+            <Button size="sm">Get Free Closeout Check</Button>
           </Link>
         </div>
         <button
@@ -70,8 +71,8 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link to="/proof-snapshot" data-testid="mobile-nav-primary-cta" className="pt-2">
-              <Button className="w-full">Get Free Proof Snapshot</Button>
+            <Link to="/closeout-check" data-testid="mobile-nav-primary-cta" className="pt-2">
+              <Button className="w-full">Get Free Closeout Check</Button>
             </Link>
           </div>
         </div>
