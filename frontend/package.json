@@ -3,23 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^1.7.7",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.446.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
-    "tailwind-merge": "^2.5.2"
+    "axios": "^1.7.7",
+    "lucide-react": "^0.446.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.2",
+    "class-variance-authority": "^0.7.0"
   },
   "scripts": {
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "serve:build": "node scripts/serve-build.mjs",
     "serve:review": "node scripts/serve-build.mjs",
+    "visual:screenshots": "playwright test --config=playwright.config.js tests/visual-review.spec.js",
     "review:visual": "playwright test --config=playwright.config.js",
+    "lighthouse:review": "node scripts/run-lighthouse.mjs",
     "review:lighthouse": "node scripts/run-lighthouse.mjs",
+    "visual:summary": "node scripts/summarize-visual-review.mjs",
+    "review:frontend": "npm run build && npm run visual:screenshots && npm run lighthouse:review && npm run visual:summary",
     "review": "npm run build && npm run review:visual && npm run review:lighthouse"
   },
   "eslintConfig": {
