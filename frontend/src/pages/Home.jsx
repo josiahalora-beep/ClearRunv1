@@ -9,6 +9,10 @@ import {
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 
+// V30 copy — updated 2026-07 per V30 copy alignment PR
+// Primary CTA: "Get a Free Route Closeout Check"
+// Offer: Route Closeout Check (free) → Proof Snapshot (output) → Record Closeout Rescue (paid)
+// Pain: missing/weak/scattered proof that prevents closing a route record
 const trustItems = [
   "No card",
   "No signup",
@@ -18,31 +22,31 @@ const trustItems = [
 
 const problems = [
   {
-    title: "Records scatter fast",
-    copy: "A route sheet, photo, receipt, and spreadsheet row can all describe the same job.",
+    title: "Proof gets scattered",
+    copy: "A route sheet, photo, receipt, and spreadsheet row can all describe the same job — in different places.",
   },
   {
-    title: "Proof is slow to assemble",
-    copy: "When a customer asks, the answer often lives across messages, folders, and paper.",
+    title: "Gaps are hard to spot",
+    copy: "Missing signatures, unclear volume, or loose disposal detail are easy to overlook until someone asks.",
   },
   {
-    title: "Gaps delay cleanup",
-    copy: "Missing signatures, volume notes, or disposal detail can stall the next step.",
+    title: "Records stall before closeout",
+    copy: "When proof is missing or weak, the office can't confidently close the route record.",
   },
 ];
 
 const steps = [
   {
     title: "Send one redacted record",
-    copy: "Start with a ticket photo, route row, receipt, CSV, or sample record.",
+    copy: "Start with a ticket photo, route row, receipt, CSV, or any sample record.",
   },
   {
-    title: "Receive a Proof Snapshot",
-    copy: "ClearRun organizes what is present and flags what needs review.",
+    title: "Get a free Route Closeout Check",
+    copy: "ClearRun reviews what proof is present, flags what is missing or weak, and returns a Proof Snapshot.",
   },
   {
-    title: "Decide on Route Cleanup",
-    copy: "If the gaps matter, the snapshot makes the paid cleanup path obvious.",
+    title: "Decide on Record Closeout Rescue",
+    copy: "If the gaps matter, the snapshot makes the paid cleanup path clear.",
   },
 ];
 
@@ -108,7 +112,7 @@ function ProofTransformationPreview() {
     <div className="relative overflow-hidden rounded-lg border border-navy-900/10 bg-white shadow-premium">
       <div className="border-b border-slate-200 bg-navy-950 px-5 py-4 text-white sm:px-6">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-semibold uppercase text-white/60">Messy record to proof-ready snapshot</p>
+          <p className="text-xs font-semibold uppercase text-white/60">Scattered record to closeout-ready snapshot</p>
           <p className="text-xs text-white/50">Illustrative sample interface</p>
         </div>
       </div>
@@ -153,7 +157,7 @@ function ProofTransformationPreview() {
               <p className="text-xs font-semibold uppercase text-slate-500">Clean output</p>
               <h3 className="mt-1 font-display text-xl font-semibold text-navy-950">Proof Snapshot</h3>
             </div>
-            <StatusPill tone="complete">review-ready</StatusPill>
+            <StatusPill tone="complete">proof organized</StatusPill>
           </div>
 
           <div className="rounded-lg border border-slate-200 bg-white">
@@ -174,20 +178,20 @@ function ProofTransformationPreview() {
           </div>
 
           <div className="mt-4 rounded-lg border border-status-attention/25 bg-status-attention-bg p-4">
-            <p className="text-sm font-semibold text-navy-950">Route Cleanup recommended</p>
+            <p className="text-sm font-semibold text-navy-950">Record Closeout Rescue recommended</p>
             <p className="mt-1 text-xs leading-relaxed text-slate-600">
-              Confirm disposal detail and capture the missing signature before sharing the record externally.
+              Confirm disposal detail and capture the missing signature before the route record can be closed.
             </p>
           </div>
 
           <div className="mt-4 hidden grid-cols-2 gap-2 sm:grid">
             <div className="rounded-md border border-slate-200 bg-offwhite p-3">
-              <p className="text-[11px] font-semibold uppercase text-slate-500">Proof packet</p>
-              <p className="mt-1 text-sm font-semibold text-navy-950">Clean summary</p>
+              <p className="text-[11px] font-semibold uppercase text-slate-500">Proof Snapshot</p>
+              <p className="mt-1 text-sm font-semibold text-navy-950">Proof organized</p>
             </div>
             <div className="rounded-md border border-slate-200 bg-offwhite p-3">
               <p className="text-[11px] font-semibold uppercase text-slate-500">Next step</p>
-              <p className="mt-1 text-sm font-semibold text-navy-950">Cleanup offer</p>
+              <p className="mt-1 text-sm font-semibold text-navy-950">Closeout Rescue offer</p>
             </div>
           </div>
 
@@ -214,7 +218,7 @@ function ReportPreview() {
         <div className="border-b border-slate-100 p-5 md:border-b-0 md:border-r">
           <p className="text-sm font-semibold text-navy-950">Snapshot contents</p>
           <div className="mt-4 space-y-3">
-            {["Proof packet preview", "Missing fields list", "Route Cleanup recommendation"].map((item) => (
+            {["Proof items organized", "Missing and weak fields flagged", "Record Closeout Rescue path (if gaps matter)"].map((item) => (
               <div key={item} className="flex items-center gap-2 text-sm text-slate-600">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-status-complete" />
                 <span>{item}</span>
@@ -225,12 +229,9 @@ function ReportPreview() {
         <div className="p-5">
           <p className="text-sm font-semibold text-navy-950">Operator decision</p>
           <p className="mt-2 text-sm leading-relaxed text-slate-500">
-            See whether the record is clean enough to answer a customer, or whether the missing fields justify a paid cleanup workflow.
+            See whether the record is clean enough to close internally, or whether the missing fields justify
+            a paid Record Closeout Rescue.
           </p>
-          <div className="mt-4 rounded-md border border-slate-200 bg-offwhite p-4">
-            <p className="text-xs font-semibold uppercase text-slate-500">First-dollar path</p>
-            <p className="mt-1 text-sm font-semibold text-navy-950">Free snapshot first. Route Cleanup only when the value is visible.</p>
-          </div>
         </div>
       </div>
     </div>
@@ -240,30 +241,21 @@ function ReportPreview() {
 export default function Home() {
   return (
     <Layout>
-      <section className="container-page py-10 sm:py-14 lg:py-20">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center">
-          <div className="flex flex-col gap-6">
-            <span className="inline-flex w-fit items-center rounded-md border border-navy-900/10 bg-white px-3 py-1 text-xs font-semibold uppercase text-navy-800">
-              Free Proof Snapshot
-            </span>
-            <div className="space-y-5">
-              <h1 className="mobile-safe-text max-w-3xl text-4xl font-bold leading-[1.03] text-navy-950 sm:text-5xl lg:text-6xl">
-                Field proof. Clear records.
-              </h1>
-              <p className="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                ClearRun turns one messy service record into a clean Proof Snapshot, missing-field summary, and practical cleanup recommendation.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link to="/proof-snapshot" data-testid="hero-primary-cta">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Get Free Proof Snapshot <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/proof/PP-10231" data-testid="hero-secondary-cta">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto">See Proof Example</Button>
-              </Link>
-            </div>
+      <section className="container-page pb-12 pt-10 sm:pb-14 sm:pt-12" id="hero">
+        <div className="mb-8 max-w-2xl">
+          <h1 className="text-4xl font-bold leading-tight text-navy-950 sm:text-5xl">
+            Find the missing proof before the route record becomes a problem.
+          </h1>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-500">
+            ClearRun is the missing-proof closeout layer for FOG and liquid-waste operators.
+            Send one record. Get a free Route Closeout Check. See exactly what proof is missing, weak, or scattered.
+          </p>
+          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Link to="/proof-snapshot" data-testid="home-hero-cta">
+              <Button size="lg">
+                Get a Free Route Closeout Check <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
             <div className="grid max-w-xl grid-cols-2 gap-2 text-xs text-slate-500 sm:flex sm:flex-wrap">
               {trustItems.map((item) => (
                 <span key={item} className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-2">
@@ -281,8 +273,8 @@ export default function Home() {
       <section className="container-page pb-14 sm:pb-16" id="problem">
         <div className="grid gap-8 border-y border-slate-200 py-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
           <div>
-            <span className="text-xs font-semibold uppercase text-navy-700">Why records leak value</span>
-            <h2 className="mt-3 max-w-md text-3xl font-bold text-navy-950 sm:text-4xl">Service happened. The proof is still scattered.</h2>
+            <span className="text-xs font-semibold uppercase text-navy-700">Why route records stall</span>
+            <h2 className="mt-3 max-w-md text-3xl font-bold text-navy-950 sm:text-4xl">Service happened. The proof is still missing.</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {problems.map((item) => (
@@ -298,8 +290,8 @@ export default function Home() {
       <section className="bg-white py-14 sm:py-16" id="how-it-works">
         <div className="container-page">
           <div className="mb-10 max-w-2xl">
-            <span className="text-xs font-semibold uppercase text-navy-700">How the Proof Snapshot works</span>
-            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">One record in. One clear cleanup path out.</h2>
+            <span className="text-xs font-semibold uppercase text-navy-700">How the Route Closeout Check works</span>
+            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">One record in. One clear closeout path out.</h2>
           </div>
           <div className="grid gap-0 overflow-hidden rounded-lg border border-slate-200 md:grid-cols-3">
             {steps.map((step, index) => (
@@ -317,9 +309,10 @@ export default function Home() {
         <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
           <div>
             <span className="text-xs font-semibold uppercase text-navy-700">What you get back</span>
-            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">A report-style artifact before a paid cleanup.</h2>
+            <h2 className="mt-3 text-3xl font-bold text-navy-950 sm:text-4xl">A Proof Snapshot before a paid closeout rescue.</h2>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-500">
-              The homepage sells the artifact, not a future platform. The free snapshot proves whether Route Cleanup is worth the next step.
+              The Route Closeout Check is free. The Proof Snapshot shows what proof is present, missing, or weak.
+              If the gaps matter, the snapshot makes the paid Record Closeout Rescue obvious.
             </p>
           </div>
           <ReportPreview />
@@ -347,14 +340,15 @@ export default function Home() {
 
       <section className="container-page py-14 sm:py-16">
         <div className="rounded-lg border border-navy-900/10 bg-navy-950 px-6 py-10 text-center shadow-premium sm:px-10">
-          <h2 className="mx-auto max-w-2xl text-3xl font-bold text-white sm:text-4xl">Send one messy record. See the cleanup path.</h2>
+          <h2 className="mx-auto max-w-2xl text-3xl font-bold text-white sm:text-4xl">Send one messy record. See the closeout path.</h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300">
-            Get a free Proof Snapshot first. If the missing fields matter, ClearRun can recommend the next Route Cleanup step.
+            Get a free Route Closeout Check first. The Proof Snapshot shows exactly what is missing or weak.
+            If the gaps matter, ClearRun can walk through the Record Closeout Rescue path.
           </p>
           <div className="mt-7">
             <Link to="/proof-snapshot" data-testid="home-final-cta">
               <Button size="lg" className="bg-white text-navy-950 hover:bg-slate-100">
-                Get Free Proof Snapshot <ArrowRight className="h-4 w-4" />
+                Get a Free Route Closeout Check <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
