@@ -17,6 +17,21 @@ module.exports = {
         },
         offwhite: "#F7F6F2",
         cream: "#FAF9F6",
+        ink: "#070707",
+        mist: "#ECEAE4",
+        glass: "rgba(255,255,255,0.72)",
+        grape: {
+          500: "#9B5D7D",
+          300: "#D8A8C2",
+        },
+        skyglass: {
+          500: "#6F8EC8",
+          300: "#B7C9EE",
+        },
+        sageglass: {
+          500: "#8AAE9A",
+          300: "#C7DCCF",
+        },
         border: {
           DEFAULT: "#E4E1D9",
         },
@@ -31,10 +46,21 @@ module.exports = {
           "review-bg": "#EAF1F8",
         },
       },
+      borderRadius: {
+        premium: "2rem",
+        "premium-lg": "2.75rem",
+      },
       boxShadow: {
         card: "0 1px 2px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.08)",
         "card-hover": "0 4px 12px rgba(15,23,42,0.10), 0 2px 4px rgba(15,23,42,0.06)",
         premium: "0 8px 30px rgba(10,15,28,0.12)",
+        editorial: "0 22px 80px rgba(10,15,28,0.10)",
+        glow: "0 18px 70px rgba(111,142,200,0.22)",
+        "glow-grape": "0 18px 70px rgba(155,93,125,0.24)",
+      },
+      backgroundImage: {
+        "premium-radial": "radial-gradient(circle at 50% 35%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.18) 44%, rgba(255,255,255,0) 70%)",
+        "soft-grid": "radial-gradient(circle at 1px 1px, rgba(15,23,42,0.08) 1px, transparent 0)",
       },
       keyframes: {
         "fade-in-up": {
