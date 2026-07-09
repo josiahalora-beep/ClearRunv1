@@ -1,36 +1,34 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  ClipboardCheck,
-  FileCheck2,
-  ShieldCheck,
-} from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, ClipboardCheck, FileCheck2, ShieldCheck } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { proofPackets } from "@/data/mockData";
 
-const DEMO_EXPLAINERS = {
+const STATUS_CONFIG = {
   ready: {
     eyebrow: "Clean record",
-    headline: "Everything needed is organized.",
+    title: "Ready to Close",
+    line: "Everything needed is organized.",
+    badge: "border-status-complete/30 bg-status-complete-bg text-status-complete",
     panel: "border-status-complete/20 bg-status-complete-bg",
     icon: CheckCircle2,
     iconClass: "text-status-complete",
   },
   review: {
     eyebrow: "Weak backup",
-    headline: "Most proof exists, but one match needs office review.",
+    title: "Needs Review",
+    line: "Most proof exists, but one match needs office review.",
+    badge: "border-status-review/30 bg-status-review-bg text-status-review",
     panel: "border-status-review/20 bg-status-review-bg",
     icon: ShieldCheck,
     iconClass: "text-status-review",
   },
   missing: {
     eyebrow: "Missing proof",
-    headline: "This should not be closed until the gaps are chased.",
+    title: "Missing Proof",
+    line: "This should not be closed until the gaps are chased.",
+    badge: "border-status-incomplete/30 bg-status-incomplete-bg text-status-incomplete",
     panel: "border-status-incomplete/20 bg-status-incomplete-bg",
     icon: AlertTriangle,
     iconClass: "text-status-incomplete",
@@ -43,7 +41,7 @@ const summaryStats = [
   { label: "Need office attention", value: "2", note: "review or missing proof" },
 ];
 
-function ProofMetric({ label, value, note }) {
+function MetricCard({ label, value, note }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">{label}</p>
@@ -53,11 +51,11 @@ function ProofMetric({ label, value, note }) {
   );
 }
 
-function ProofList({ title, items, empty }) {
+function ProofChips({ title, items, emptyText }) {
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{title}</p>
-      {items?.length ? (
+      {items.length > 0 ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {items.map((item) => (
             <span key={item} className="rounded-full border border-slate-200 bg-offwhite px-2.5 py-1 text-xs font-semibold text-navy-800">
@@ -66,35 +64,35 @@ function ProofList({ title, items, empty }) {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm font-medium text-slate-600">{empty}</p>
+        <p className="mt-3 text-sm font-medium text-slate-600">{emptyText}</p>
       )}
     </div>
   );
 }
 
-function DemoCard({ packet, featured = false }) {
-  const cfg = DEMO_EXPLAINERS[packet.demoType] || DEMO_EXPLAINERS.review;
-  const Icon = cfg.icon;
+function DemoPacketCard({ packet }) {
+  const config = STATUS_CONFIG[packet.demoType] || STATUS_CONFIG.review;
+  const Icon = config.icon;
 
   return (
     <Link
       to={`/proof/${packet.id}`}
       data-testid={`proof-card-${packet.id}`}
-      className={`group surface-card surface-card-hover flex min-w-0 flex-col overflow-hidden ${featured ? "lg:col-span-3" : ""}`}
-      aria-label={`Open ${packet.closeoutStatus} demo proof packet`}
+      aria-label={`Open ${packet.closeoutStatus} proof packet example`}
+      className="group surface-card surface-card-hover flex min-w-0 flex-col overflow-hidden"
     >
-      <div className={`border-b px-5 py-5 ${cfg.panel}`}>
+      <div className={`border-b px-5 py-5 ${config.panel}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">{cfg.eyebrow}</p>
-            <h2 className="mobile-safe-text mt-2 font-display text-2xl font-semibold text-navy-950">
-              {packet.closeoutStatus}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-navy-900">{cfg.headline}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">{config.eyebrow}</p>
+            <h2 className="mobile-safe-text mt-2 font-display text-2xl font-semibold text-navy-950">{config.title}</h2>
+            <p className="mt-2 text-sm leading-6 text-navy-900">{config.line}</p>
           </div>
           <div className="flex items-center gap-2 sm:flex-col sm:items-end">
-            <Icon className={`h-7 w-7 ${cfg.iconClass}`} aria-hidden="true" />
-            <StatusBadge status={packet.status} label={packet.closeoutStatus} />
+            <Icon className={`h-7 w-7 ${config.iconClass}`} aria-hidden="true" />
+            <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${config.badge}`}>
+              {packet.closeoutStatus}
+            </span>
           </div>
         </div>
       </div>
@@ -121,10 +119,10 @@ function DemoCard({ packet, featured = false }) {
           </div>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-3">
-          <ProofList title="Present proof" items={packet.presentProof} empty="None listed" />
-          <ProofList title="Missing proof" items={packet.missingProof} empty="No missing proof" />
-          <ProofList title="Weak backup" items={packet.weakBackup} empty="No weak backup flagged" />
+        <div className="grid gap-3">
+          <ProofChips title="Present proof" items={packet.presentProof} emptyText="None listed" />
+          <ProofChips title="Missing proof" items={packet.missingProof} emptyText="No missing proof" />
+          <ProofChips title="Weak backup" items={packet.weakBackup} emptyText="No weak backup flagged" />
         </div>
 
         <div className="mt-auto rounded-xl border border-navy-900/10 bg-navy-950 p-4 text-white">
@@ -140,7 +138,6 @@ function DemoCard({ packet, featured = false }) {
 }
 
 export default function Proof() {
-  const readyPacket = proofPackets.find((packet) => packet.demoType === "ready") || proofPackets[0];
   const missingPacket = proofPackets.find((packet) => packet.demoType === "missing") || proofPackets[proofPackets.length - 1];
 
   return (
@@ -173,13 +170,13 @@ export default function Proof() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              {summaryStats.map((stat) => <ProofMetric key={stat.label} {...stat} />)}
+              {summaryStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
             </div>
           </div>
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {proofPackets.map((packet) => <DemoCard key={packet.id} packet={packet} featured={packet.id === readyPacket.id} />)}
+          {proofPackets.map((packet) => <DemoPacketCard key={packet.id} packet={packet} />)}
         </div>
 
         <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:items-center">
