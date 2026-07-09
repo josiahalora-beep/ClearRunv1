@@ -1,76 +1,70 @@
 import React, { Suspense, lazy, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight, FileCheck2, SearchX, FolderInput, FolderOutput, Stamp, History,
-  Users, Camera, LineChart, Waves,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, FileCheck2 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { CTASection } from "@/components/shared/CTASection";
-import { RoadmapCard } from "@/components/shared/RoadmapCard";
-import { compatibilityList } from "@/data/mockData";
 
 const HeroProofPreview = lazy(() => import("@/components/home/HeroProofPreview"));
 
-const features = [
-  { icon: FileCheck2, title: "Route Closeout Check", desc: "Shows whether one messy record is ready to close, missing proof, weak, or needs office review.", to: "/closeout-check" },
-  { icon: SearchX, title: "Proof Packet Demo Dashboard", desc: "Shows the 3 customer-facing outcomes: Ready to Close, Needs Review, and Missing Proof.", to: "/proof" },
-  { icon: FolderInput, title: "Import", desc: "Bring in spreadsheets, PDFs, photos, screenshots, and paper-ticket details you already have.", to: "/import" },
-  { icon: FolderOutput, title: "Invoice Backup Support", desc: "Organize record support before invoices, customer questions, or reviewer requests create more work.", to: "/export" },
-  { icon: Stamp, title: "Disposal Backup Review", desc: "Classify whether disposal backup appears present, weak, missing, or needs office review.", to: "/disposal" },
-  { icon: History, title: "Record Timeline", desc: "Keep the office trail visible without pretending ClearRun is a legal verifier or city approval system.", to: "/audit" },
+const proofPoints = [
+  "Find missing proof before closeout",
+  "Separate ready, review, and missing records",
+  "Give the office one next action",
 ];
 
-const steps = [
-  { icon: Camera, title: "Send one messy record", desc: "Use a redacted or sample ticket, photo set, receipt, invoice backup, or customer proof request." },
-  { icon: FileCheck2, title: "ClearRun reviews closeout readiness", desc: "The check separates complete proof, missing proof, weak backup, and items needing office review." },
-  { icon: Users, title: "Get one office action", desc: "Know exactly what to chase next before the record gets closed or shared." },
-  { icon: FolderOutput, title: "Decide if a batch rescue is worth it", desc: "If the sample shows real pain, move to Record Closeout Rescue for multiple records." },
+const programs = [
+  {
+    number: "01",
+    title: "Route Closeout Check",
+    body: "A free first look at one messy record before the office closes it.",
+    glow: "bg-sageglass-300",
+    to: "/closeout-check",
+  },
+  {
+    number: "02",
+    title: "Proof Packet Demo",
+    body: "Preview the three outcomes ClearRun organizes: ready, review, missing.",
+    glow: "bg-grape-300",
+    to: "/proof",
+  },
+  {
+    number: "03",
+    title: "Record Closeout Rescue",
+    body: "Turn a batch of weak records into a cleaner office action queue.",
+    glow: "bg-skyglass-300",
+    to: "/pricing",
+  },
+];
+
+const outcomes = [
+  ["Ready", "Close the record and share backup if requested."],
+  ["Review", "Confirm weak backup before the office signs off."],
+  ["Missing", "Chase the photo, signature, volume, or disposal backup."],
 ];
 
 function HeroPreviewFallback() {
   return (
-    <div className="relative" aria-hidden="true">
-      <div className="absolute -inset-4 bg-gradient-to-tr from-navy-900/5 to-transparent rounded-3xl -z-10" />
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-premium p-6 sm:p-8 min-h-[420px]">
-        <div className="h-5 w-48 rounded bg-slate-100 mb-6" />
-        <div className="h-24 rounded-xl bg-slate-100 mb-6" />
-        <div className="grid gap-3">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="flex items-center justify-between rounded-lg border border-slate-100 p-3">
-              <div className="h-4 w-28 rounded bg-slate-100" />
-              <div className="h-5 w-20 rounded-full bg-slate-100" />
-            </div>
-          ))}
-        </div>
+    <div className="premium-shell p-5" aria-hidden="true">
+      <div className="h-72 rounded-[1.5rem] bg-slate-100" />
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="h-24 rounded-2xl bg-slate-100" />
+        <div className="h-24 rounded-2xl bg-slate-100" />
       </div>
     </div>
   );
 }
 
 function DeferredHeroProofPreview() {
-  const [shouldRenderPreview, setShouldRenderPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
-
-    const renderPreview = () => setShouldRenderPreview(true);
-    const idleId = window.requestIdleCallback
-      ? window.requestIdleCallback(renderPreview, { timeout: 900 })
-      : window.setTimeout(renderPreview, 250);
-
-    return () => {
-      if (window.cancelIdleCallback && typeof idleId === "number") {
-        window.cancelIdleCallback(idleId);
-      } else {
-        window.clearTimeout(idleId);
-      }
-    };
+    const id = window.setTimeout(() => setShowPreview(true), 180);
+    return () => window.clearTimeout(id);
   }, []);
 
-  if (!shouldRenderPreview) {
-    return <HeroPreviewFallback />;
-  }
+  if (!showPreview) return <HeroPreviewFallback />;
 
   return (
     <Suspense fallback={<HeroPreviewFallback />}>
@@ -79,150 +73,123 @@ function DeferredHeroProofPreview() {
   );
 }
 
+function ProgramCard({ item }) {
+  return (
+    <Link to={item.to} className="group premium-card-dark relative min-h-[22rem] overflow-hidden p-6 transition-transform hover:-translate-y-1">
+      <span className="relative z-10 text-sm font-semibold text-white/70">{item.number}</span>
+      <div className={`premium-gradient-orb ${item.glow} left-1/2 top-20 h-32 w-32 -translate-x-1/2 opacity-80`} />
+      <div className="premium-gradient-orb bg-white/20 left-1/2 top-24 h-20 w-20 -translate-x-1/2" />
+      <div className="relative z-10 mt-40">
+        <h3 className="font-display text-2xl font-semibold text-white">{item.title}</h3>
+        <p className="mt-3 max-w-xs text-sm leading-6 text-white/68">{item.body}</p>
+        <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold text-white/80 group-hover:text-white">
+          Open <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function OutcomeRow({ title, copy }) {
+  return (
+    <div className="flex items-start gap-3 border-b border-slate-200 py-4 last:border-b-0">
+      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-grape-500 text-white">
+        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+      </span>
+      <div>
+        <p className="text-sm font-semibold text-navy-950">{title}</p>
+        <p className="mt-1 text-sm leading-6 text-slate-600">{copy}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <Layout>
-      <section className="container-page pt-16 sm:pt-24 pb-16 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="flex flex-col gap-6 stagger">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-navy-900/5 border border-navy-900/10 px-3 py-1 text-xs font-semibold tracking-wide text-navy-800 uppercase">
-            Free Route Closeout Check
-          </span>
-          <h1 className="mobile-safe-text text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-navy-950">
-            Find missing proof before your office closes the record.
+      <section className="container-editorial section-y grid items-center gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1fr)]">
+        <div className="stagger">
+          <span className="premium-pill">Free Route Closeout Check</span>
+          <h1 className="mobile-safe-text mt-7 max-w-3xl font-display text-5xl font-bold leading-[0.92] text-ink sm:text-6xl lg:text-7xl">
+            Better proof.
+            <span className="block text-slate-400">Cleaner closeout.</span>
           </h1>
-          <p className="text-base md:text-lg text-slate-600 max-w-xl leading-relaxed">
-            ClearRun helps FOG and liquid-waste offices answer the practical question: can this route record be closed, or is proof missing, weak, scattered, or unclear?
+          <p className="mt-6 max-w-md text-sm leading-6 text-slate-600 sm:text-base">
+            ClearRun helps FOG and liquid-waste offices see whether a route record is ready, weak, or missing proof before it gets closed.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/closeout-check" data-testid="hero-primary-cta">
-              <Button size="lg" className="w-full sm:w-auto">Get Free Route Closeout Check <ArrowRight className="h-4 w-4" /></Button>
+              <Button size="lg" className="w-full bg-black text-white hover:bg-navy-900 sm:w-auto">
+                Start Free Check <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Button>
             </Link>
             <Link to="/proof" data-testid="hero-secondary-cta">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Proof Demo Dashboard</Button>
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Dashboard</Button>
             </Link>
           </div>
-          <p className="text-xs text-slate-600 max-w-md">
-            No card. No signup. No sales call required. Redacted or sample records welcome. Not legal certification or inspection approval.
-          </p>
-        </div>
-
-        <DeferredHeroProofPreview />
-      </section>
-
-      <section className="container-page pb-16">
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-slate-600 shadow-card">
-          <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Grease Trap / FOG</span>
-          <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Liquid Waste</span>
-          <span className="flex items-center gap-2 text-slate-600"><Waves className="h-4 w-4" /> Septic (planned)</span>
-          <span className="flex items-center gap-2 text-slate-600"><Waves className="h-4 w-4" /> Portable Sanitation (planned)</span>
-        </div>
-      </section>
-
-      <section className="container-page pb-20">
-        <div className="max-w-2xl mb-10">
-          <span className="text-xs font-semibold uppercase tracking-wide text-status-incomplete">The office problem</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Messy records are easy to close too early.</h2>
-        </div>
-        <div className="grid sm:grid-cols-3 gap-6">
-          {[
-            { title: "Proof is scattered", desc: "Photos, receipts, notes, route sheets, and customer requests live in different places." },
-            { title: "Billing support gets weak", desc: "The office may not know what is missing until a customer asks or an invoice needs backup." },
-            { title: "The next action is unclear", desc: "Staff wastes time deciding whether to chase a driver, match a disposal receipt, or hold the record." },
-          ].map((p) => (
-            <div key={p.title} className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-              <h3 className="font-display font-semibold text-navy-950 mb-2">{p.title}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{p.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="how-it-works" className="bg-white border-y border-slate-200 py-20">
-        <div className="container-page">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">How it works</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">From messy record to one clean office decision.</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((s, i) => (
-              <div key={s.title} className="relative flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-card">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-900 text-white shrink-0">
-                    <s.icon className="h-5 w-5" />
-                  </span>
-                  <span className="font-display text-sm font-semibold text-slate-600">Step {i + 1}</span>
-                </div>
-                <h3 className="font-display font-semibold text-navy-950">{s.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{s.desc}</p>
+          <div className="mt-16 max-w-xl divide-y divide-slate-200">
+            {proofPoints.map((point) => (
+              <div key={point} className="flex items-center gap-3 py-3 text-sm font-medium text-navy-900">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-grape-500 text-white">
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                </span>
+                {point}
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      <section className="container-page py-20">
-        <div className="max-w-2xl mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Built around closeout readiness</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Simple on the surface. Useful under the hood.</h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f) => (
-            <Link
-              key={f.title}
-              to={f.to}
-              data-testid={`home-feature-${f.title.toLowerCase().replace(/\s+/g, "-")}`}
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-card hover:shadow-card-hover hover:border-navy-900/20 transition-all"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-navy-900/5 text-navy-900 mb-4 group-hover:bg-navy-900 group-hover:text-white transition-colors">
-                <f.icon className="h-5 w-5" />
-              </span>
-              <h3 className="font-display font-semibold text-navy-950 mb-1.5">{f.title}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{f.desc}</p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-navy-800 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore <ArrowRight className="h-3 w-3" />
-              </span>
-            </Link>
-          ))}
+        <div className="relative">
+          <div className="premium-gradient-orb bg-grape-300 right-6 top-0 h-52 w-52 opacity-40" />
+          <div className="premium-gradient-orb bg-skyglass-300 bottom-8 left-8 h-56 w-56 opacity-45" />
+          <DeferredHeroProofPreview />
         </div>
       </section>
 
-      <section className="bg-white border-y border-slate-200 py-20">
-        <div className="container-page">
-          <div className="max-w-2xl mb-8">
-            <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Works with what you already use</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">No rip-and-replace required</h2>
-            <p className="text-slate-600 mt-3 leading-relaxed">
-              ClearRun works beside spreadsheets, PDFs, paper tickets, QuickBooks, ServiceCore, PumpDocket, Tank Track, and other
-              existing systems through import/export workflows.
+      <section className="container-editorial pb-8 pt-4 sm:pb-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="premium-kicker">Programs</p>
+          <h2 className="premium-section-title mt-4">Designed around record closeout priorities</h2>
+        </div>
+        <div className="mt-10 grid gap-3 md:grid-cols-3">
+          {programs.map((item) => <ProgramCard key={item.title} item={item} />)}
+        </div>
+        <p className="premium-section-copy">
+          Choose the path that matches the office problem: one free record check, a product demo, or a batch closeout rescue.
+        </p>
+      </section>
+
+      <section className="container-editorial section-y">
+        <div className="grid gap-8 rounded-premium border border-slate-200 bg-white p-5 shadow-editorial md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:p-8 lg:p-10">
+          <div className="rounded-[1.75rem] bg-ink p-6 text-white md:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Closeout logic</p>
+            <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
+              One record. Three possible outcomes.
+            </h2>
+            <p className="mt-5 text-sm leading-6 text-white/65">
+              ClearRun should feel like the office can understand the next action in seconds, not read through another long report.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {compatibilityList.map((c) => (
-              <span key={c.name} className="rounded-full border border-slate-200 bg-offwhite px-4 py-2 text-sm font-medium text-navy-800">
-                {c.name}
-              </span>
-            ))}
+          <div className="px-1 md:px-2">
+            {outcomes.map(([title, copy]) => <OutcomeRow key={title} title={title} copy={copy} />)}
           </div>
-          <p className="text-xs text-slate-600 mt-5">
-            These reflect import/export compatibility, not official integration partnerships.
-          </p>
-          <Link to="/compatibility" data-testid="home-compatibility-link" className="inline-flex items-center gap-1 text-sm font-semibold text-navy-800 mt-4 hover:underline">
-            See full compatibility details <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
         </div>
       </section>
 
-      <section className="container-page py-20">
-        <div className="max-w-2xl mb-8">
-          <span className="text-xs font-semibold uppercase tracking-wide text-navy-700">Where ClearRun is headed</span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-navy-950 mt-3">Beyond grease traps and FOG</h2>
+      <section className="container-editorial pb-20">
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            ["No card", "Start with one redacted or sample record."],
+            ["No sales call", "The first check should explain the value itself."],
+            ["No approval claims", "ClearRun organizes office review, not legal certification."],
+          ].map(([title, copy]) => (
+            <div key={title} className="premium-card">
+              <FileCheck2 className="h-7 w-7 text-navy-800" aria-hidden="true" />
+              <h3 className="mt-5 font-display text-xl font-semibold text-navy-950">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p>
+            </div>
+          ))}
         </div>
-        <RoadmapCard
-          icon={LineChart}
-          title="Infrastructure Intelligence"
-          description="ClearRun is building toward septic, portable sanitation, disposal confirmations, review-ready exports, municipal visibility (CityView), and infrastructure-wide record intelligence (ProofGraph)."
-          bullets={["Septic & liquid waste expansion", "CityView municipal visibility", "ProofGraph record relationships", "Infrastructure-wide intelligence"]}
-        />
       </section>
 
       <CTASection />
