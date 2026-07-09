@@ -31,17 +31,27 @@ export default function Proof() {
 
         <div className="surface-card mt-8 mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full min-w-0 sm:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input data-testid="proof-search-input" placeholder="Search customer or ID" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
+            <label htmlFor="proof-search" className="sr-only">Search proof packets by customer or ID</label>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" aria-hidden="true" />
+            <Input
+              id="proof-search"
+              data-testid="proof-search-input"
+              placeholder="Search customer or ID"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" aria-label="Proof packet status filters">
             {FILTERS.map((f) => (
               <button
                 key={f}
+                type="button"
                 data-testid={`proof-filter-${f}`}
+                aria-pressed={filter === f}
                 onClick={() => setFilter(f)}
                 className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition-colors ${
-                  filter === f ? "bg-navy-900 text-white border-navy-900" : "bg-white text-slate-600 border-slate-200 hover:border-navy-900/30"
+                  filter === f ? "bg-navy-900 text-white border-navy-900" : "bg-white text-slate-700 border-slate-300 hover:border-navy-900/30"
                 }`}
               >
                 {f}
@@ -59,17 +69,18 @@ export default function Proof() {
                 key={p.id}
                 to={`/proof/${p.id}`}
                 data-testid={`proof-card-${p.id}`}
+                aria-label={`Open proof packet ${p.id} for ${p.customer}`}
                 className="surface-card surface-card-hover flex min-w-0 flex-col gap-3 p-5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-slate-400">{p.id}</span>
+                  <span className="text-xs font-semibold text-slate-600">{p.id}</span>
                   <StatusBadge status={p.status} />
                 </div>
                 <div>
                   <h3 className="mobile-safe-text font-display font-semibold text-navy-950">{p.customer}</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">{p.address}</p>
+                  <p className="text-xs text-slate-600 mt-0.5">{p.address}</p>
                 </div>
-                <div className="flex flex-col gap-1 border-t border-slate-100 pt-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-1 border-t border-slate-100 pt-3 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
                   <span>{p.serviceType}</span>
                   <span>{p.serviceDate}</span>
                 </div>
