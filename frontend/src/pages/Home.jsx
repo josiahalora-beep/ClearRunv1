@@ -1,15 +1,16 @@
-import React from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, FileCheck2, SearchX, FolderInput, FolderOutput, Stamp, History,
-  Users, Camera, ShieldCheck, LineChart, Waves,
+  Users, Camera, LineChart, Waves,
 } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { CTASection } from "@/components/shared/CTASection";
 import { RoadmapCard } from "@/components/shared/RoadmapCard";
-import { proofPackets, compatibilityList } from "@/data/mockData";
+import { compatibilityList } from "@/data/mockData";
+
+const HeroProofPreview = lazy(() => import("@/components/home/HeroProofPreview"));
 
 const features = [
   { icon: FileCheck2, title: "Proof Packets", desc: "Branded, report-grade proof of every service — ready to share.", to: "/proof" },
@@ -27,8 +28,62 @@ const steps = [
   { icon: FolderOutput, title: "Billing-ready export", desc: "Export for accounting, haulers, or a municipal records request." },
 ];
 
+function HeroPreviewFallback() {
+  return (
+    <div className="relative" aria-hidden="true">
+      <div className="absolute -inset-4 bg-gradient-to-tr from-navy-900/5 to-transparent rounded-3xl -z-10" />
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-premium p-6 sm:p-8 min-h-[316px]">
+        <div className="h-5 w-40 rounded bg-slate-100 mb-6" />
+        <div className="grid grid-cols-2 gap-4">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="space-y-2">
+              <div className="h-3 w-20 rounded bg-slate-100" />
+              <div className="h-4 w-28 rounded bg-slate-200" />
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 h-px bg-slate-100" />
+        <div className="mt-5 flex items-center justify-between">
+          <div className="h-3 w-24 rounded bg-slate-100" />
+          <div className="h-3 w-28 rounded bg-slate-100" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeferredHeroProofPreview() {
+  const [shouldRenderPreview, setShouldRenderPreview] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const renderPreview = () => setShouldRenderPreview(true);
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(renderPreview, { timeout: 900 })
+      : window.setTimeout(renderPreview, 250);
+
+    return () => {
+      if (window.cancelIdleCallback && typeof idleId === "number") {
+        window.cancelIdleCallback(idleId);
+      } else {
+        window.clearTimeout(idleId);
+      }
+    };
+  }, []);
+
+  if (!shouldRenderPreview) {
+    return <HeroPreviewFallback />;
+  }
+
+  return (
+    <Suspense fallback={<HeroPreviewFallback />}>
+      <HeroProofPreview />
+    </Suspense>
+  );
+}
+
 export default function Home() {
-  const packet = proofPackets[0];
   return (
     <Layout>
       <section className="container-page pt-16 sm:pt-24 pb-16 grid lg:grid-cols-2 gap-12 items-center">
@@ -51,43 +106,20 @@ export default function Home() {
               <Button size="lg" variant="secondary" className="w-full sm:w-auto">Get a Free Proof Packet Mockup</Button>
             </Link>
           </div>
-          <p className="text-xs text-slate-400 max-w-md">
+          <p className="text-xs text-slate-500 max-w-md">
             No credit card required. Built for grease-trap / FOG and liquid-waste service records today — expanding beyond.
           </p>
         </div>
 
-        <div className="relative animate-fade-in-up">
-          <div className="absolute -inset-4 bg-gradient-to-tr from-navy-900/5 to-transparent rounded-3xl -z-10" />
-          <div data-testid="hero-proof-preview" className="rounded-2xl border border-slate-200 bg-white shadow-premium p-6 sm:p-8">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-navy-900" />
-                <span className="font-display font-semibold text-sm text-navy-950">Proof Packet {packet.id}</span>
-              </div>
-              <StatusBadge status={packet.status} />
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><p className="text-slate-400 text-xs">Customer</p><p className="font-medium text-navy-900">{packet.customer}</p></div>
-              <div><p className="text-slate-400 text-xs">Service Date</p><p className="font-medium text-navy-900">{packet.serviceDate}</p></div>
-              <div><p className="text-slate-400 text-xs">Service Type</p><p className="font-medium text-navy-900">{packet.serviceType}</p></div>
-              <div><p className="text-slate-400 text-xs">Volume</p><p className="font-medium text-navy-900">{packet.gallons} gal</p></div>
-              <div><p className="text-slate-400 text-xs">Hauler</p><p className="font-medium text-navy-900">{packet.hauler}</p></div>
-              <div><p className="text-slate-400 text-xs">Disposal Site</p><p className="font-medium text-navy-900">{packet.disposalSite}</p></div>
-            </div>
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-              <span>{packet.photos} photos attached</span>
-              <Link to="/proof/PP-10231" className="text-navy-800 font-medium hover:underline" data-testid="hero-view-proof-link">View full proof packet →</Link>
-            </div>
-          </div>
-        </div>
+        <DeferredHeroProofPreview />
       </section>
 
       <section className="container-page pb-16">
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-slate-500">
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-slate-600">
           <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Grease Trap / FOG</span>
           <span className="flex items-center gap-2"><Waves className="h-4 w-4 text-navy-800" /> Liquid Waste</span>
-          <span className="flex items-center gap-2 text-slate-400"><Waves className="h-4 w-4" /> Septic (planned)</span>
-          <span className="flex items-center gap-2 text-slate-400"><Waves className="h-4 w-4" /> Portable Sanitation (planned)</span>
+          <span className="flex items-center gap-2 text-slate-600"><Waves className="h-4 w-4" /> Septic (planned)</span>
+          <span className="flex items-center gap-2 text-slate-600"><Waves className="h-4 w-4" /> Portable Sanitation (planned)</span>
         </div>
       </section>
 
@@ -104,7 +136,7 @@ export default function Home() {
           ].map((p) => (
             <div key={p.title} className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
               <h3 className="font-display font-semibold text-navy-950 mb-2">{p.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">{p.desc}</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{p.desc}</p>
             </div>
           ))}
         </div>
@@ -123,10 +155,10 @@ export default function Home() {
                   <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-900 text-white shrink-0">
                     <s.icon className="h-5 w-5" />
                   </span>
-                  <span className="font-display text-sm font-semibold text-slate-300">Step {i + 1}</span>
+                  <span className="font-display text-sm font-semibold text-slate-600">Step {i + 1}</span>
                 </div>
                 <h3 className="font-display font-semibold text-navy-950">{s.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
+                <p className="text-sm text-slate-600 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -150,7 +182,7 @@ export default function Home() {
                 <f.icon className="h-5 w-5" />
               </span>
               <h3 className="font-display font-semibold text-navy-950 mb-1.5">{f.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{f.desc}</p>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-navy-800 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 Explore <ArrowRight className="h-3 w-3" />
               </span>
@@ -176,7 +208,7 @@ export default function Home() {
               </span>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-5">
+          <p className="text-xs text-slate-600 mt-5">
             These reflect import/export compatibility, not official integration partnerships.
           </p>
           <Link to="/compatibility" data-testid="home-compatibility-link" className="inline-flex items-center gap-1 text-sm font-semibold text-navy-800 mt-4 hover:underline">
