@@ -30,7 +30,7 @@ function wait(ms) {
  * Find a usable Chrome/Chromium binary (fully synchronous).
  * Priority:
  *   1. LIGHTHOUSE_CHROME_PATH env var (explicit CI override)
- *   2. Playwright chromium cache (~/.cache/ms-playwright/chromium-*/chrome-linux/chrome)
+ *   2. Playwright chromium cache (ms-playwright/chromium-<rev>/chrome-linux/chrome)
  *   3. System binaries via `which`
  */
 function findChrome() {
