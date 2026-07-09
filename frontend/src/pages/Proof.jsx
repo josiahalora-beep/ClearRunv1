@@ -1,206 +1,302 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ArrowRight, CheckCircle2, ClipboardCheck, FileCheck2, ShieldCheck } from "lucide-react";
-import { Layout } from "@/components/Layout";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Bell,
+  CheckCircle2,
+  ClipboardCheck,
+  FileCheck2,
+  Filter,
+  LayoutDashboard,
+  ListChecks,
+  Map,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { proofPackets } from "@/data/mockData";
 
 const STATUS_CONFIG = {
   ready: {
-    eyebrow: "Clean record",
-    title: "Ready to Close",
-    line: "Everything needed is organized.",
-    badge: "border-status-complete/30 bg-status-complete-bg text-status-complete",
-    panel: "border-status-complete/20 bg-status-complete-bg",
+    label: "Ready",
+    full: "Ready to Close",
+    tone: "border-status-complete/25 bg-status-complete-bg text-status-complete",
+    dot: "bg-status-complete",
+    ring: "ring-status-complete/20",
     icon: CheckCircle2,
-    iconClass: "text-status-complete",
   },
   review: {
-    eyebrow: "Weak backup",
-    title: "Needs Review",
-    line: "Most proof exists, but one match needs office review.",
-    badge: "border-status-review/30 bg-status-review-bg text-status-review",
-    panel: "border-status-review/20 bg-status-review-bg",
+    label: "Review",
+    full: "Needs Review",
+    tone: "border-status-review/25 bg-status-review-bg text-status-review",
+    dot: "bg-status-review",
+    ring: "ring-status-review/20",
     icon: ShieldCheck,
-    iconClass: "text-status-review",
   },
   missing: {
-    eyebrow: "Missing proof",
-    title: "Missing Proof",
-    line: "This should not be closed until the gaps are chased.",
-    badge: "border-status-incomplete/30 bg-status-incomplete-bg text-status-incomplete",
-    panel: "border-status-incomplete/20 bg-status-incomplete-bg",
+    label: "Missing",
+    full: "Missing Proof",
+    tone: "border-status-incomplete/25 bg-status-incomplete-bg text-status-incomplete",
+    dot: "bg-status-incomplete",
+    ring: "ring-status-incomplete/20",
     icon: AlertTriangle,
-    iconClass: "text-status-incomplete",
   },
 };
 
-const summaryStats = [
-  { label: "Demo records", value: "3", note: "curated examples" },
-  { label: "Ready to close", value: "1", note: "clean packet" },
-  { label: "Need office attention", value: "2", note: "review or missing proof" },
+const sidebarItems = [
+  { icon: LayoutDashboard, label: "Dashboard", active: true },
+  { icon: ClipboardCheck, label: "Records" },
+  { icon: ListChecks, label: "Queue" },
+  { icon: Map, label: "Routes" },
 ];
 
-function MetricCard({ label, value, note }) {
+const kpis = [
+  { label: "Records", value: "3", note: "demo" },
+  { label: "Ready", value: "1", note: "close" },
+  { label: "Attention", value: "2", note: "review" },
+  { label: "Avg. gaps", value: "1.3", note: "per record" },
+];
+
+function StatusPill({ packet }) {
+  const cfg = STATUS_CONFIG[packet.demoType] || STATUS_CONFIG.review;
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">{label}</p>
-      <p className="mt-2 font-display text-3xl font-bold text-white">{value}</p>
-      <p className="mt-1 text-xs text-slate-300">{note}</p>
-    </div>
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${cfg.tone}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
+      {packet.closeoutStatus}
+    </span>
   );
 }
 
-function ProofChips({ title, items, emptyText }) {
+function Rail() {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{title}</p>
-      {items.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {items.map((item) => (
-            <span key={item} className="rounded-full border border-slate-200 bg-offwhite px-2.5 py-1 text-xs font-semibold text-navy-800">
-              {item}
-            </span>
-          ))}
+    <aside className="hidden w-20 shrink-0 rounded-[1.75rem] bg-navy-950 p-3 text-white shadow-premium lg:flex lg:flex-col lg:items-center">
+      <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-navy-950">
+        <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
+      </div>
+      <div className="mt-8 flex flex-1 flex-col items-center gap-3">
+        {sidebarItems.map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            aria-label={item.label}
+            className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-colors ${
+              item.active ? "bg-white text-navy-950" : "text-slate-300 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            <item.icon className="h-5 w-5" aria-hidden="true" />
+          </button>
+        ))}
+      </div>
+      <div className="mb-1 h-11 w-11 rounded-2xl bg-white/10" aria-hidden="true" />
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="flex flex-col gap-4 border-b border-slate-200 bg-white px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex items-center justify-between gap-4">
+        <Logo />
+        <span className="rounded-full border border-slate-200 bg-offwhite px-3 py-1 text-xs font-semibold text-navy-800 lg:hidden">
+          Proof Dashboard
+        </span>
+      </div>
+      <div className="flex min-w-0 flex-1 items-center gap-3 lg:justify-end">
+        <div className="hidden min-w-0 max-w-md flex-1 items-center gap-2 rounded-full border border-slate-200 bg-offwhite px-3 py-2 text-sm text-slate-600 md:flex">
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="truncate">Search records, routes, missing proof...</span>
         </div>
-      ) : (
-        <p className="mt-3 text-sm font-medium text-slate-600">{emptyText}</p>
-      )}
+        <Link to="/closeout-check" data-testid="proof-dashboard-top-cta">
+          <Button size="sm">Free Check</Button>
+        </Link>
+        <button type="button" aria-label="Notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-navy-900">
+          <Bell className="h-4 w-4" aria-hidden="true" />
+          <span className="absolute -right-0.5 -top-0.5 rounded-full bg-status-incomplete px-1.5 text-[10px] font-bold text-white">2</span>
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function KpiStrip() {
+  return (
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {kpis.map((item) => (
+        <div key={item.label} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-card">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">{item.label}</p>
+          <div className="mt-1 flex items-end justify-between gap-3">
+            <p className="font-display text-2xl font-semibold text-navy-950">{item.value}</p>
+            <span className="rounded-full bg-offwhite px-2 py-1 text-[11px] font-semibold text-slate-600">{item.note}</span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function DemoPacketCard({ packet }) {
-  const config = STATUS_CONFIG[packet.demoType] || STATUS_CONFIG.review;
-  const Icon = config.icon;
-
+function ProofNode({ packet, index }) {
+  const cfg = STATUS_CONFIG[packet.demoType] || STATUS_CONFIG.review;
+  const Icon = cfg.icon;
   return (
     <Link
       to={`/proof/${packet.id}`}
-      data-testid={`proof-card-${packet.id}`}
-      aria-label={`Open ${packet.closeoutStatus} proof packet example`}
-      className="group surface-card surface-card-hover flex min-w-0 flex-col overflow-hidden"
+      data-testid={`proof-node-${packet.id}`}
+      className={`absolute group flex min-w-[10rem] flex-col gap-2 rounded-2xl border bg-white p-3 shadow-card ring-8 transition-transform hover:-translate-y-1 hover:shadow-card-hover ${cfg.ring} ${
+        index === 0 ? "left-[6%] top-[14%]" : index === 1 ? "right-[8%] top-[28%]" : "left-[30%] bottom-[12%]"
+      }`}
     >
-      <div className={`border-b px-5 py-5 ${config.panel}`}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">{config.eyebrow}</p>
-            <h2 className="mobile-safe-text mt-2 font-display text-2xl font-semibold text-navy-950">{config.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-navy-900">{config.line}</p>
-          </div>
-          <div className="flex items-center gap-2 sm:flex-col sm:items-end">
-            <Icon className={`h-7 w-7 ${config.iconClass}`} aria-hidden="true" />
-            <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${config.badge}`}>
-              {packet.closeoutStatus}
-            </span>
-          </div>
-        </div>
+      <div className="flex items-center justify-between gap-2">
+        <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${cfg.tone}`}>
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span className="text-[11px] font-semibold text-slate-600">{packet.id}</span>
       </div>
-
-      <div className="flex flex-1 flex-col gap-5 p-5">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Demo packet</p>
-          <h3 className="mobile-safe-text mt-1 font-display text-xl font-semibold text-navy-950">{packet.customer}</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{packet.summary}</p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border border-slate-200 bg-offwhite p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">Missing proof</p>
-            <p className="mt-1 font-display text-2xl font-semibold text-navy-950">{packet.missingProofCount}</p>
-          </div>
-          <div className="rounded-lg border border-slate-200 bg-offwhite p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">Weak backup</p>
-            <p className="mt-1 font-display text-2xl font-semibold text-navy-950">{packet.weakBackupCount}</p>
-          </div>
-          <div className="rounded-lg border border-slate-200 bg-offwhite p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">Photos</p>
-            <p className="mt-1 font-display text-2xl font-semibold text-navy-950">{packet.photos}</p>
-          </div>
-        </div>
-
-        <div className="grid gap-3">
-          <ProofChips title="Present proof" items={packet.presentProof} emptyText="None listed" />
-          <ProofChips title="Missing proof" items={packet.missingProof} emptyText="No missing proof" />
-          <ProofChips title="Weak backup" items={packet.weakBackup} emptyText="No weak backup flagged" />
-        </div>
-
-        <div className="mt-auto rounded-xl border border-navy-900/10 bg-navy-950 p-4 text-white">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">Next office action</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-white">{packet.nextOfficeAction}</p>
-          <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-slate-200 group-hover:text-white">
-            Open example <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
-        </div>
+      <div>
+        <p className="font-display text-sm font-semibold text-navy-950">{cfg.full}</p>
+        <p className="mt-0.5 text-xs text-slate-600">{packet.missingProofCount} missing · {packet.weakBackupCount} weak</p>
       </div>
     </Link>
   );
 }
 
-export default function Proof() {
-  const missingPacket = proofPackets.find((packet) => packet.demoType === "missing") || proofPackets[proofPackets.length - 1];
-
+function ProofCanvas() {
   return (
-    <Layout>
-      <section className="container-page py-10 sm:py-14">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-navy-950 shadow-premium">
-          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:p-10">
-            <div className="min-w-0 text-white">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-200">
-                <ClipboardCheck className="h-3.5 w-3.5" aria-hidden="true" /> Proof Packet Demo Dashboard
-              </span>
-              <h1 className="mobile-safe-text mt-5 max-w-3xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
-                See what ClearRun gives your office after checking records.
+    <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-premium">
+      <div className="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Live demo workspace</p>
+          <h2 className="font-display text-xl font-semibold text-navy-950">Closeout board</h2>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className="rounded-full border border-slate-200 bg-offwhite px-3 py-1.5 text-xs font-semibold text-navy-800">All 3</button>
+          <button type="button" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">Ready 1</button>
+          <button type="button" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">Attention 2</button>
+        </div>
+      </div>
+
+      <div className="relative min-h-[28rem] bg-[radial-gradient(circle_at_1px_1px,rgba(15,23,42,0.08)_1px,transparent_0)] [background-size:28px_28px]">
+        <div className="absolute inset-6 rounded-[1.5rem] border border-slate-200 bg-gradient-to-br from-offwhite via-white to-slate-100" />
+        <div className="absolute left-8 right-8 top-1/2 h-px bg-slate-300/70" />
+        <div className="absolute bottom-12 left-1/4 top-10 w-px rotate-12 bg-slate-300/70" />
+        <div className="absolute bottom-10 right-1/3 top-16 w-px -rotate-12 bg-slate-300/70" />
+
+        <div className="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-navy-900/10 bg-white shadow-premium">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-950 text-white">
+            <FileCheck2 className="h-7 w-7" aria-hidden="true" />
+          </div>
+        </div>
+
+        {proofPackets.map((packet, index) => <ProofNode key={packet.id} packet={packet} index={index} />)}
+
+        <div className="absolute bottom-5 left-5 right-5 flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-card backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-semibold text-navy-950">One record check becomes a visible closeout decision.</p>
+          <Link to="/closeout-check" className="inline-flex items-center gap-1 text-sm font-semibold text-navy-800 hover:underline">
+            Start free check <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function QueueCard({ packet }) {
+  const cfg = STATUS_CONFIG[packet.demoType] || STATUS_CONFIG.review;
+  const Icon = cfg.icon;
+  return (
+    <Link to={`/proof/${packet.id}`} data-testid={`proof-card-${packet.id}`} className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${cfg.tone}`}>
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div>
+            <p className="font-display text-base font-semibold text-navy-950">{cfg.full}</p>
+            <p className="mt-0.5 text-xs font-medium text-slate-600">{packet.customer}</p>
+          </div>
+        </div>
+        <ArrowRight className="mt-1 h-4 w-4 text-slate-400 group-hover:text-navy-900" aria-hidden="true" />
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className="rounded-xl bg-offwhite p-2">
+          <p className="text-[10px] font-semibold uppercase text-slate-600">Missing</p>
+          <p className="font-display text-xl font-semibold text-navy-950">{packet.missingProofCount}</p>
+        </div>
+        <div className="rounded-xl bg-offwhite p-2">
+          <p className="text-[10px] font-semibold uppercase text-slate-600">Weak</p>
+          <p className="font-display text-xl font-semibold text-navy-950">{packet.weakBackupCount}</p>
+        </div>
+        <div className="rounded-xl bg-offwhite p-2">
+          <p className="text-[10px] font-semibold uppercase text-slate-600">Photos</p>
+          <p className="font-display text-xl font-semibold text-navy-950">{packet.photos}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <StatusPill packet={packet} />
+        <span className="text-xs font-semibold text-navy-800">Open</span>
+      </div>
+    </Link>
+  );
+}
+
+function RightPanel() {
+  return (
+    <aside className="flex flex-col gap-4">
+      <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Closeout queue</p>
+            <h2 className="font-display text-xl font-semibold text-navy-950">3 records</h2>
+          </div>
+          <button type="button" aria-label="Filter records" className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-offwhite text-navy-900">
+            <Filter className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+      {proofPackets.map((packet) => <QueueCard key={packet.id} packet={packet} />)}
+    </aside>
+  );
+}
+
+export default function Proof() {
+  return (
+    <div className="min-h-screen bg-offwhite text-navy-950">
+      <TopBar />
+      <main className="mx-auto flex w-full max-w-[1440px] gap-4 px-3 py-4 sm:px-5 lg:gap-5 lg:px-6">
+        <Rail />
+        <div className="min-w-0 flex-1">
+          <section className="mb-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wide text-navy-700">Proof Packet Demo Dashboard</p>
+              <h1 className="mobile-safe-text mt-2 font-display text-3xl font-bold tracking-tight text-navy-950 sm:text-4xl">
+                Closeout decisions, not packet clutter.
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                Three curated examples show how ClearRun turns messy route records into a closeout decision, proof summary, invoice-support state, and next office action.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/closeout-check" data-testid="proof-primary-cta">
-                  <Button size="lg" className="w-full bg-white text-navy-950 hover:bg-slate-100 sm:w-auto">
-                    Get Free Route Closeout Check <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </Link>
-                <Link to={`/proof/${missingPacket.id}`} data-testid="proof-secondary-cta">
-                  <Button size="lg" variant="outline" className="w-full border-white/25 text-white hover:bg-white/10 hover:text-white sm:w-auto">
-                    View Missing Proof Example
-                  </Button>
-                </Link>
-              </div>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              {summaryStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
+            <div className="flex flex-col gap-2 sm:flex-row lg:justify-end">
+              <Link to="/closeout-check" data-testid="proof-primary-cta">
+                <Button className="w-full sm:w-auto">Get Free Check</Button>
+              </Link>
+              <Link to="/proof/PP-10234" data-testid="proof-secondary-cta">
+                <Button variant="secondary" className="w-full sm:w-auto">Missing Example</Button>
+              </Link>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {proofPackets.map((packet) => <DemoPacketCard key={packet.id} packet={packet} />)}
-        </div>
+          <KpiStrip />
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:items-center">
-          <div className="surface-card p-6 sm:p-7">
-            <FileCheck2 className="h-9 w-9 text-navy-800" aria-hidden="true" />
-            <h2 className="mt-4 font-display text-2xl font-semibold text-navy-950">This is not a random packet list.</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              The demo dashboard shows the three outcomes an office needs to understand before closeout: ready, review, or missing proof. That makes ClearRun easier to buy, easier to explain, and easier to test with one real sample record.
-            </p>
+          <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
+            <ProofCanvas />
+            <RightPanel />
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              ["Closeout status", "Can this record be closed?"],
-              ["Proof gaps", "What is missing or weak?"],
-              ["Office action", "What should staff do next?"],
-            ].map(([title, copy]) => (
-              <div key={title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
-                <p className="font-display text-lg font-semibold text-navy-950">{title}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p>
-              </div>
-            ))}
-          </div>
+
+          <p className="px-1 py-4 text-xs text-slate-600">
+            Demo data only. ClearRun organizes office review and proof readiness; it does not certify legal compliance or guarantee outcomes.
+          </p>
         </div>
-      </section>
-    </Layout>
+      </main>
+    </div>
   );
 }
