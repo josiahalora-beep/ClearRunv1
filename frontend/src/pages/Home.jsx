@@ -14,7 +14,7 @@ const HeroProofPreview = lazy(() => import("@/components/home/HeroProofPreview")
 
 const features = [
   { icon: FileCheck2, title: "Route Closeout Check", desc: "Shows whether one messy record is ready to close, missing proof, weak, or needs office review.", to: "/closeout-check" },
-  { icon: SearchX, title: "Missing-Proof Queue", desc: "Turns proof gaps into a clear office follow-up list instead of scattered screenshots and notes.", to: "/recovery" },
+  { icon: SearchX, title: "Proof Packet Demo Dashboard", desc: "Shows the 3 customer-facing outcomes: Ready to Close, Needs Review, and Missing Proof.", to: "/proof" },
   { icon: FolderInput, title: "Import", desc: "Bring in spreadsheets, PDFs, photos, screenshots, and paper-ticket details you already have.", to: "/import" },
   { icon: FolderOutput, title: "Invoice Backup Support", desc: "Organize record support before invoices, customer questions, or reviewer requests create more work.", to: "/export" },
   { icon: Stamp, title: "Disposal Backup Review", desc: "Classify whether disposal backup appears present, weak, missing, or needs office review.", to: "/disposal" },
@@ -97,8 +97,8 @@ export default function Home() {
             <Link to="/closeout-check" data-testid="hero-primary-cta">
               <Button size="lg" className="w-full sm:w-auto">Get Free Route Closeout Check <ArrowRight className="h-4 w-4" /></Button>
             </Link>
-            <Link to="/closeout-check#example-check" data-testid="hero-secondary-cta">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">See Example Check</Button>
+            <Link to="/proof" data-testid="hero-secondary-cta">
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto">View Proof Demo Dashboard</Button>
             </Link>
           </div>
           <p className="text-xs text-slate-600 max-w-md">

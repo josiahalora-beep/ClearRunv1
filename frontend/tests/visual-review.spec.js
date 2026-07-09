@@ -9,7 +9,7 @@ const routes = [
   { name: "proof-snapshot", path: "/proof-snapshot" },
   { name: "dashboard", path: "/dashboard" },
   { name: "proof-list", path: "/proof" },
-  { name: "proof-detail", path: "/proof/PP-10231" },
+  { name: "proof-detail", path: "/proof/PP-10234" },
 ];
 
 function ensureDir(dir) {
