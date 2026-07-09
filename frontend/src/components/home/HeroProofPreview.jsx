@@ -40,15 +40,15 @@ export default function HeroProofPreview() {
 
             <div className="mt-8 grid grid-cols-3 gap-2">
               <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-                <p className="text-[10px] font-semibold uppercase text-white/45">Missing</p>
+                <p className="text-[10px] font-semibold uppercase text-white/65">Missing</p>
                 <p className="mt-1 font-display text-3xl font-semibold text-white">2</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-                <p className="text-[10px] font-semibold uppercase text-white/45">Weak</p>
+                <p className="text-[10px] font-semibold uppercase text-white/65">Weak</p>
                 <p className="mt-1 font-display text-3xl font-semibold text-white">2</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-                <p className="text-[10px] font-semibold uppercase text-white/45">Follow-up</p>
+                <p className="text-[10px] font-semibold uppercase text-white/65">Follow-up</p>
                 <p className="mt-1 font-display text-3xl font-semibold text-white">1</p>
               </div>
             </div>
