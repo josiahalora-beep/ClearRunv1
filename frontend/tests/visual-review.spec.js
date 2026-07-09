@@ -5,6 +5,7 @@ const AxeBuilder = require("@axe-core/playwright").default;
 
 const routes = [
   { name: "home", path: "/" },
+  { name: "closeout-check", path: "/closeout-check" },
   { name: "proof-snapshot", path: "/proof-snapshot" },
   { name: "dashboard", path: "/dashboard" },
   { name: "proof-list", path: "/proof" },

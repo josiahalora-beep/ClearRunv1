@@ -6,11 +6,11 @@ const columns = [
   {
     title: "Product",
     links: [
+      { to: "/closeout-check", label: "Route Closeout Check" },
       { to: "/dashboard", label: "Dashboard" },
       { to: "/proof", label: "Proof Packets" },
       { to: "/proof-snapshot", label: "Proof Snapshot" },
       { to: "/recovery", label: "Missing-Record Recovery" },
-      { to: "/import", label: "Import" },
       { to: "/export", label: "Export" },
     ],
   },
@@ -57,7 +57,7 @@ export function Footer() {
           <div className="col-span-2 flex flex-col gap-4">
             <Logo dark />
             <p className="text-sm text-slate-300 max-w-xs leading-relaxed">
-              Field proof. Clear records. ClearRun turns messy field service records into branded proof packets and billing-ready exports.
+              Field proof. Clear records. ClearRun helps offices find missing proof before route records are closed.
             </p>
           </div>
           {columns.map((col) => (
