@@ -9,12 +9,6 @@ module.exports = {
         display: ["Manrope", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
-        slate: {
-          200: "#E2E8F0",
-          300: "#CBD5E1",
-          400: "#475569",
-          500: "#475569",
-        },
         navy: {
           950: "#0A0F1C",
           900: "#0F172A",
@@ -27,13 +21,13 @@ module.exports = {
           DEFAULT: "#E4E1D9",
         },
         status: {
-          complete: "#3B7356",
+          complete: "#2F6047",
           "complete-bg": "#EAF3EE",
-          attention: "#B2790A",
+          attention: "#7A4D00",
           "attention-bg": "#FBF3E2",
-          incomplete: "#B3433A",
+          incomplete: "#8F332D",
           "incomplete-bg": "#FBEBEA",
-          review: "#3B6EA5",
+          review: "#28567F",
           "review-bg": "#EAF1F8",
         },
       },
