@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { to: "/#how-it-works", label: "How it works" },
-  { to: "/proof", label: "Proof Packets" },
   { to: "/proof/PP-10231", label: "Proof Example" },
   { to: "/pricing", label: "Pricing" },
   { to: "/trust", label: "FAQ/Trust" },
@@ -43,35 +42,36 @@ export function Navbar() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <Link to="/proof-snapshot" data-testid="nav-primary-cta">
-            <Button size="sm">Get Free Proof Snapshot</Button>
+            <Button size="sm">Get a Free Route Closeout Check</Button>
           </Link>
         </div>
         <button
           data-testid="mobile-menu-toggle"
           aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={mobileOpen}
-          className="rounded-lg p-2 text-navy-900 transition-colors hover:bg-slate-100 lg:hidden"
-          onClick={() => setMobileOpen((open) => !open)}
+          className="flex h-9 w-9 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-white lg:hidden"
+          onClick={() => setMobileOpen((prev) => !prev)}
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div data-testid="mobile-nav-panel" className="border-t border-slate-200 bg-offwhite lg:hidden">
-          <div className="container-page flex flex-col gap-2 py-4">
+        <div className="border-t border-slate-200 bg-offwhite px-4 pb-4 pt-3 lg:hidden">
+          <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 data-testid={`mobile-nav-link-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                className="rounded-md border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-800 hover:bg-slate-50"
+                className="rounded-md px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-white"
               >
                 {item.label}
               </Link>
             ))}
-            <Link to="/proof-snapshot" data-testid="mobile-nav-primary-cta" className="pt-2">
-              <Button className="w-full">Get Free Proof Snapshot</Button>
+          </nav>
+          <div className="mt-3 border-t border-slate-200 pt-3">
+            <Link to="/proof-snapshot" data-testid="mobile-primary-cta">
+              <Button size="sm" className="w-full">Get a Free Route Closeout Check</Button>
             </Link>
           </div>
         </div>

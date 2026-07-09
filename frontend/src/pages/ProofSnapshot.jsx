@@ -261,7 +261,7 @@ function ProofSnapshotForm() {
       </label>
       <Button type="submit" size="lg" data-testid="proof-snapshot-submit-btn" disabled={status === "loading"} className="mt-1 w-full">
         {status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        Get Free Proof Snapshot
+        Get a Free Route Closeout Check
       </Button>
       {status === "error" && (
         <p data-testid="proof-snapshot-error" className="text-sm text-status-incomplete">
@@ -290,7 +290,7 @@ export default function ProofSnapshot() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a href="#proof-snapshot-form-panel">
               <Button size="lg" className="w-full sm:w-auto">
-                Get Free Proof Snapshot <ArrowRight className="h-4 w-4" />
+                Get a Free Route Closeout Check <ArrowRight className="h-4 w-4" />
               </Button>
             </a>
             <Link to="/proof/PP-10231">
