@@ -44,6 +44,17 @@ const deliverables = [
   ["Customer backup view", "Whether the ticket can support an invoice question or customer proof request."],
 ];
 
+const workflowSteps = ["Route scheduled", "Driver pumps", "Ticket comes back", "Backup checked", "Billing supported"];
+
+const exchangeRows = [
+  ["Pump-out ticket", "Missing backup marked"],
+  ["Signed service slip", "Billing-ready signal"],
+  ["Stop photo + gallons", "Route-desk follow-up"],
+  ["Disposal ticket", "Customer proof packet"],
+];
+
+const stackItems = ["Routing", "Dispatch", "Driver ticket", "Billing", "Customer service"];
+
 function HeroPreviewFallback() {
   return (
     <div className="premium-shell p-5" aria-hidden="true">
@@ -105,6 +116,79 @@ function DeliverableRow({ title, copy }) {
   );
 }
 
+function OperatorWorkflowSection() {
+  return (
+    <section className="container-editorial pb-10 pt-2 sm:pb-16">
+      <div className="overflow-hidden rounded-premium border border-slate-200 bg-white shadow-editorial">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <div className="bg-ink p-6 text-white sm:p-8 lg:p-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Fits the real operator workflow</p>
+            <h2 className="mt-5 font-display text-4xl font-bold leading-[0.95] text-white sm:text-5xl">
+              Keep the systems you already use. Add a backup checkpoint where tickets get messy.
+            </h2>
+            <p className="mt-5 max-w-md text-sm leading-6 text-white/70">
+              ClearRun is not trying to replace routing, dispatch, driver apps, billing, or customer service. It sits after the pump-out and before billing or customer proof requests.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              {stackItems.map((item) => (
+                <span key={item} className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/75">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 lg:p-8">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-offwhite p-4 sm:p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Where ClearRun plugs in</p>
+              <div className="mt-5 grid gap-2 sm:grid-cols-5">
+                {workflowSteps.map((step, index) => (
+                  <div key={step} className={`rounded-2xl border p-3 ${index === 3 ? "border-grape-300 bg-white shadow-card" : "border-slate-200 bg-white/70"}`}>
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Step {index + 1}</p>
+                    <p className="mt-2 text-sm font-semibold leading-5 text-navy-950">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">You send</p>
+                <div className="mt-3 space-y-2">
+                  {exchangeRows.map(([send]) => (
+                    <div key={send} className="rounded-xl border border-slate-200 bg-offwhite px-3 py-2 text-sm font-semibold text-navy-950">
+                      {send}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">ClearRun returns</p>
+                <div className="mt-3 space-y-2">
+                  {exchangeRows.map(([, result]) => (
+                    <div key={result} className="rounded-xl border border-slate-200 bg-offwhite px-3 py-2 text-sm font-semibold text-navy-950">
+                      {result}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+              <p className="text-sm font-semibold text-navy-950">The practical result</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Billing sees what backup is missing before the invoice goes out. Dispatch gets the exact driver/vendor follow-up. Customer service has a cleaner packet if a restaurant, property manager, or account asks for proof later.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <Layout>
@@ -147,6 +231,8 @@ export default function Home() {
         </div>
       </section>
 
+      <OperatorWorkflowSection />
+
       <section className="container-editorial pb-8 pt-4 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
           <p className="premium-kicker">What the free review proves</p>
@@ -160,11 +246,11 @@ export default function Home() {
       <section className="container-editorial section-y">
         <div className="grid gap-8 rounded-premium border border-slate-200 bg-white p-5 shadow-editorial md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:p-8 lg:p-10">
           <div className="rounded-[1.75rem] bg-ink p-6 text-white md:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Route packet output</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Route packet output</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
               Not just a clean or dirty ticket.
             </h2>
-            <p className="mt-5 text-sm leading-6 text-white/65">
+            <p className="mt-5 text-sm leading-6 text-white/70">
               One ticket is enough to show whether ClearRun can find backup gaps your dispatch or billing team would otherwise chase later.
             </p>
           </div>
