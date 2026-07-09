@@ -4,6 +4,7 @@ import Home from "@/pages/Home";
 import TryFree from "@/pages/TryFree";
 import ProofMockup from "@/pages/ProofMockup";
 import ProofSnapshot from "@/pages/ProofSnapshot";
+import CloseoutCheck from "@/pages/CloseoutCheck";
 import Checklist from "@/pages/Checklist";
 import Comparison from "@/pages/Comparison";
 import Dashboard from "@/pages/Dashboard";
@@ -43,6 +44,7 @@ function App() {
         <Route path="/try-free" element={<TryFree />} />
         <Route path="/proof-mockup" element={<ProofMockup />} />
         <Route path="/proof-snapshot" element={<ProofSnapshot />} />
+        <Route path="/closeout-check" element={<CloseoutCheck />} />
         <Route path="/checklist" element={<Checklist />} />
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/dashboard" element={<Dashboard />} />
