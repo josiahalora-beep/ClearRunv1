@@ -44,16 +44,16 @@ const deliverables = [
   ["Customer backup view", "Whether the ticket can support an invoice question or customer proof request."],
 ];
 
-const workflowSteps = ["Route scheduled", "Driver pumps", "Ticket comes back", "Backup checked", "Billing supported"];
+const workflowSteps = ["Job done", "Ticket returns", "Exception caught", "Follow-up sent", "Billing supported"];
 
-const exchangeRows = [
-  ["Pump-out ticket", "Missing backup marked"],
-  ["Signed service slip", "Billing-ready signal"],
-  ["Stop photo + gallons", "Route-desk follow-up"],
-  ["Disposal ticket", "Customer proof packet"],
+const exceptionRows = [
+  ["Missing signed ticket", "Driver or route desk follow-up"],
+  ["No stop photo", "Proof request before billing"],
+  ["Gallons do not match disposal ticket", "Hold for review"],
+  ["Customer asks for backup", "Packet already organized"],
 ];
 
-const stackItems = ["Routing", "Dispatch", "Driver ticket", "Billing", "Customer service"];
+const stackItems = ["Routing", "Dispatch", "Driver app", "Billing", "Customer service"];
 
 function HeroPreviewFallback() {
   return (
@@ -120,15 +120,24 @@ function OperatorWorkflowSection() {
   return (
     <section className="container-editorial pb-10 pt-2 sm:pb-16">
       <div className="overflow-hidden rounded-premium border border-slate-200 bg-white shadow-editorial">
-        <div className="grid gap-0 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
           <div className="bg-ink p-6 text-white sm:p-8 lg:p-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Fits the real operator workflow</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Pre-billing exception check</p>
             <h2 className="mt-5 font-display text-4xl font-bold leading-[0.95] text-white sm:text-5xl">
-              Keep the systems you already use. Add a backup checkpoint where tickets get messy.
+              Protect the money after the pump-out is done.
             </h2>
             <p className="mt-5 max-w-md text-sm leading-6 text-white/70">
-              ClearRun is not trying to replace routing, dispatch, driver apps, billing, or customer service. It sits after the pump-out and before billing or customer proof requests.
+              Operators already have routing, dispatch, driver apps, and billing. ClearRun catches the messy ticket backup problems that show up after service but before invoices, account questions, or customer proof requests.
             </p>
+
+            <div className="mt-8 grid gap-3">
+              {["Fewer weak tickets reaching billing", "Less dispatch rework chasing backup", "Cleaner packet when a customer asks for proof"].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-white/82">{item}</span>
+                </div>
+              ))}
+            </div>
 
             <div className="mt-8 flex flex-wrap gap-2">
               {stackItems.map((item) => (
@@ -141,10 +150,10 @@ function OperatorWorkflowSection() {
 
           <div className="p-5 sm:p-6 lg:p-8">
             <div className="rounded-[1.5rem] border border-slate-200 bg-offwhite p-4 sm:p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Where ClearRun plugs in</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Where the buying pain happens</p>
               <div className="mt-5 grid gap-2 sm:grid-cols-5">
                 {workflowSteps.map((step, index) => (
-                  <div key={step} className={`rounded-2xl border p-3 ${index === 3 ? "border-grape-300 bg-white shadow-card" : "border-slate-200 bg-white/70"}`}>
+                  <div key={step} className={`rounded-2xl border p-3 ${index === 2 ? "border-grape-300 bg-white shadow-card" : "border-slate-200 bg-white/70"}`}>
                     <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Step {index + 1}</p>
                     <p className="mt-2 text-sm font-semibold leading-5 text-navy-950">{step}</p>
                   </div>
@@ -152,35 +161,44 @@ function OperatorWorkflowSection() {
               </div>
             </div>
 
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">You send</p>
-                <div className="mt-3 space-y-2">
-                  {exchangeRows.map(([send]) => (
-                    <div key={send} className="rounded-xl border border-slate-200 bg-offwhite px-3 py-2 text-sm font-semibold text-navy-950">
-                      {send}
-                    </div>
-                  ))}
+            <div className="mt-4 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Exception queue</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">What gets caught before billing</h3>
                 </div>
+                <span className="rounded-full border border-status-attention/30 bg-status-attention-bg px-3 py-1 text-xs font-semibold text-status-attention">
+                  Hold for backup
+                </span>
               </div>
 
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">ClearRun returns</p>
-                <div className="mt-3 space-y-2">
-                  {exchangeRows.map(([, result]) => (
-                    <div key={result} className="rounded-xl border border-slate-200 bg-offwhite px-3 py-2 text-sm font-semibold text-navy-950">
-                      {result}
+              <div className="mt-5 grid gap-2">
+                {exceptionRows.map(([problem, action]) => (
+                  <div key={problem} className="grid gap-2 rounded-2xl border border-slate-200 bg-offwhite p-3 sm:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Problem</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-950">{problem}</p>
                     </div>
-                  ))}
-                </div>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">ClearRun output</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-950">{action}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="mt-4 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
-              <p className="text-sm font-semibold text-navy-950">The practical result</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Billing sees what backup is missing before the invoice goes out. Dispatch gets the exact driver/vendor follow-up. Customer service has a cleaner packet if a restaurant, property manager, or account asks for proof later.
-              </p>
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              {[
+                ["Billing", "Knows which tickets should wait before invoicing."],
+                ["Dispatch", "Gets the exact driver/vendor follow-up to chase."],
+                ["Customer service", "Has cleaner backup when an account asks for proof."],
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-[1.25rem] border border-slate-200 bg-white p-4 shadow-card">
+                  <p className="text-sm font-semibold text-navy-950">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
