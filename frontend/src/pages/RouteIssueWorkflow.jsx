@@ -262,7 +262,7 @@ export default function RouteIssueWorkflow({ issue }) {
                 <h3 className="font-display text-lg font-semibold text-navy-950">Add supporting evidence</h3>
                 <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_12rem]">
                   <input value={workflow.newEvidenceLabel} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceLabel: event.target.value }))} data-testid="route-new-evidence-label" placeholder="Example: gate photo, signed ticket, receipt image" className="rounded-xl border border-slate-200 bg-offwhite px-3 py-3 text-sm text-navy-950" />
-                  <select value={workflow.newEvidenceSource} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceSource: event.target.value }))} data-testid="route-new-evidence-source" className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
+                  <select aria-label="Evidence source" value={workflow.newEvidenceSource} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceSource: event.target.value }))} data-testid="route-new-evidence-source" className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
                     {evidenceSourceOptions.map((source) => <option key={source} value={source}>{source}</option>)}
                   </select>
                 </div>
