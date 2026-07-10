@@ -160,24 +160,24 @@ test("exception release remains gated until required proof is confirmed", async 
   await expect(page.getByTestId("exception-activity-timeline")).toContainText("Ticket released");
 });
 
-test("route summary counts reconcile and claim language remains safe", async ({ page }) => {
+test("route review shows reconciling operator-facing counts", async ({ page }) => {
   await page.goto("/route-intelligence/warner-robins-route-b", { waitUntil: "networkidle" });
 
   const header = page.getByTestId("route-intelligence-header");
-  await expect(header).toContainText("Scheduled");
+  await expect(header).toContainText("Scheduled stops");
   await expect(header).toContainText("14");
-  await expect(header).toContainText("Clean stops");
+  await expect(header).toContainText("Completed without issue");
   await expect(header).toContainText("10");
-  await expect(header).toContainText("Active exceptions");
+  await expect(header).toContainText("Needs attention now");
   await expect(header).toContainText("2");
-  await expect(header).toContainText("Closeout exceptions");
+  await expect(header).toContainText("Needs office follow-up");
   await expect(page.getByTestId("route-pattern-panel")).toContainText("3 of 11");
-  await expect(page.getByTestId("route-pattern-panel")).toContainText("not a compliance");
-  await expect(page.getByTestId("route-disposal-matrix")).toContainText("does not verify disposal");
-  await expect(page.getByTestId("route-disposal-matrix")).toContainText("does not expose facility pricing");
+  await expect(page.getByTestId("route-pattern-panel")).toContainText("not an employee score");
+  await expect(page.getByTestId("route-disposal-matrix")).toContainText("Disposal receipt status");
+  await expect(page.getByTestId("route-closeout-summary")).toContainText("What is ready and what still needs work");
 });
 
-test("route selector, lane filters, disposal filter, and detail click-through work", async ({ page }) => {
+test("route selector, work filters, disposal filter, and issue click-through work", async ({ page }) => {
   await page.goto("/route-intelligence/warner-robins-route-b", { waitUntil: "networkidle" });
 
   await page.getByTestId("route-lane-filter-active").click();
@@ -199,7 +199,38 @@ test("route selector, lane filters, disposal filter, and detail click-through wo
   await expect(page.getByTestId("route-exception-detail")).toBeVisible();
 });
 
-test("route intelligence avoids page-level horizontal overflow", async ({ page }) => {
+test("dashboard and route workflow keep internal architecture language out of visible copy", async ({ page }) => {
+  const productRoutes = [
+    "/dashboard",
+    "/route-intelligence/warner-robins-route-b",
+    "/exceptions/EX-2101",
+  ];
+  const bannedVisiblePhrases = [
+    "route exception intelligence",
+    "active route exceptions",
+    "closeout exceptions",
+    "both lanes",
+    "resolution gate",
+    "commercial interpretation",
+    "closeout consequence",
+    "observed demo route data",
+    "primary office action",
+    "exception resolution workspace",
+    "operational labels, not estimated dollars",
+    "claim-safe",
+  ];
+
+  for (const productRoute of productRoutes) {
+    await page.goto(productRoute, { waitUntil: "networkidle" });
+    const visibleCopy = (await page.locator("body").innerText()).toLowerCase();
+
+    for (const phrase of bannedVisiblePhrases) {
+      expect(visibleCopy, `${productRoute} exposes internal phrase: ${phrase}`).not.toContain(phrase);
+    }
+  }
+});
+
+test("route review avoids page-level horizontal overflow", async ({ page }) => {
   await page.goto("/route-intelligence/warner-robins-route-b", { waitUntil: "networkidle" });
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -209,7 +240,7 @@ test("route intelligence avoids page-level horizontal overflow", async ({ page }
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewport + 1);
 });
 
-test("route exception resolution remains gated and records completion", async ({ page }) => {
+test("route issue remains blocked until required work is completed", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/exceptions/EX-2101", { waitUntil: "networkidle" });
 
@@ -225,5 +256,5 @@ test("route exception resolution remains gated and records completion", async ({
 
   await releaseButton.click();
   await expect(releaseButton).toHaveText("Resolved");
-  await expect(page.getByTestId("route-exception-activity")).toContainText("Exception resolved for closeout");
+  await expect(page.getByTestId("route-exception-activity")).toContainText("Issue marked resolved");
 });
