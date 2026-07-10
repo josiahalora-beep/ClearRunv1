@@ -44,6 +44,30 @@ const deliverables = [
   ["Customer backup view", "Whether the ticket can support an invoice question or customer proof request."],
 ];
 
+const workflowSteps = ["Job done", "Ticket returns", "Exception caught", "Follow-up sent", "Billing supported"];
+
+const exceptionRows = [
+  ["Missing signed ticket", "Driver or route desk follow-up", "Dispatch"],
+  ["No stop photo", "Proof request before billing", "Route desk"],
+  ["Gallons do not match disposal ticket", "Hold for review", "Billing"],
+  ["Customer asks for backup", "Packet already organized", "Customer service"],
+];
+
+const mustHaveRows = [
+  ["Standard review rules", "Every route ticket is checked the same way before it reaches billing."],
+  ["Aging exceptions", "Weak tickets do not sit unseen in texts, folders, or someone’s memory."],
+  ["Owner assigned", "Dispatch, billing, or customer service knows who needs to chase the backup."],
+  ["Ready / hold logic", "The team knows what can bill now and what should wait for backup."],
+];
+
+const manualRows = [
+  ["Manual ticket checks", "Depend on whoever remembers to look before the invoice goes out."],
+  ["Spreadsheet notes", "Track the issue, but not the age, owner, packet status, or follow-up."],
+  ["Driver text chains", "Work for one ticket, then break when a batch needs signed slips or disposal backup."],
+];
+
+const stackItems = ["Routing", "Dispatch", "Driver app", "Billing", "Customer service"];
+
 function HeroPreviewFallback() {
   return (
     <div className="premium-shell p-5" aria-hidden="true">
@@ -105,6 +129,145 @@ function DeliverableRow({ title, copy }) {
   );
 }
 
+function OperatorWorkflowSection() {
+  return (
+    <section className="container-editorial pb-10 pt-2 sm:pb-16">
+      <div className="overflow-hidden rounded-premium border border-slate-200 bg-white shadow-editorial">
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
+          <div className="bg-ink p-6 text-white sm:p-8 lg:p-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Pre-billing exception queue</p>
+            <h2 className="mt-5 font-display text-4xl font-bold leading-[0.95] text-white sm:text-5xl">
+              Stop weak route tickets before they slow billing.
+            </h2>
+            <p className="mt-5 max-w-md text-sm leading-6 text-white/70">
+              Operators already have routing, dispatch, driver apps, and billing. ClearRun turns the messy after-route review into a queue: what is blocking the ticket, who needs to chase it, how old it is, and when it is ready to release.
+            </p>
+
+            <div className="mt-8 grid gap-3">
+              {["Fewer weak tickets reaching billing", "Less dispatch rework chasing backup", "Cleaner packet when a customer asks for proof"].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-white/80">{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              {stackItems.map((item) => (
+                <span key={item} className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/75">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 lg:p-8">
+            <div className="rounded-[1.5rem] border border-slate-200 bg-offwhite p-4 sm:p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Where the buying pain happens</p>
+              <div className="mt-5 grid gap-2 sm:grid-cols-5">
+                {workflowSteps.map((step, index) => (
+                  <div key={step} className={`rounded-2xl border p-3 ${index === 2 ? "border-grape-300 bg-white shadow-card" : "border-slate-200 bg-white/70"}`}>
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Step {index + 1}</p>
+                    <p className="mt-2 text-sm font-semibold leading-5 text-navy-950">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-card">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Exception queue</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">What gets caught before billing</h3>
+                </div>
+                <span className="rounded-full border border-status-attention/30 bg-status-attention-bg px-3 py-1 text-xs font-semibold text-status-attention">
+                  Hold for backup
+                </span>
+              </div>
+
+              <div className="mt-5 grid gap-2">
+                {exceptionRows.map(([problem, action, owner]) => (
+                  <div key={problem} className="grid gap-2 rounded-2xl border border-slate-200 bg-offwhite p-3 sm:grid-cols-[minmax(0,0.82fr)_minmax(0,0.92fr)_minmax(0,0.6fr)]">
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Problem</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-950">{problem}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">ClearRun output</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-950">{action}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Owner</p>
+                      <p className="mt-1 text-sm font-semibold text-navy-950">{owner}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              {[
+                ["Billing", "Knows which tickets should wait before invoicing."],
+                ["Dispatch", "Gets the exact driver/vendor follow-up to chase."],
+                ["Customer service", "Has cleaner backup when an account asks for proof."],
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-[1.25rem] border border-slate-200 bg-white p-4 shadow-card">
+                  <p className="text-sm font-semibold text-navy-950">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MustHaveSection() {
+  return (
+    <section className="container-editorial pb-12">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+        <div className="premium-card-dark">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Why this is worth paying for</p>
+          <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
+            Yes, they can check tickets themselves. That is exactly the bottleneck.
+          </h2>
+          <p className="mt-5 text-sm leading-6 text-white/65">
+            A person can open one ticket and look for missing backup. The value is making that review consistent, fast, assigned, aged, and visible across every ticket that is holding up billing or customer proof.
+          </p>
+        </div>
+
+        <div className="grid gap-3">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-card">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">ClearRun turns manual checking into</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {mustHaveRows.map(([title, copy]) => (
+                <div key={title} className="rounded-2xl border border-slate-200 bg-offwhite p-4">
+                  <p className="text-sm font-semibold text-navy-950">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-card">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">What operators are stuck doing now</p>
+            <div className="mt-4 grid gap-2">
+              {manualRows.map(([title, copy]) => (
+                <div key={title} className="grid gap-2 rounded-2xl border border-slate-200 bg-offwhite p-3 sm:grid-cols-[minmax(0,0.55fr)_minmax(0,1fr)]">
+                  <p className="text-sm font-semibold text-navy-950">{title}</p>
+                  <p className="text-sm leading-6 text-slate-600">{copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <Layout>
@@ -147,6 +310,9 @@ export default function Home() {
         </div>
       </section>
 
+      <OperatorWorkflowSection />
+      <MustHaveSection />
+
       <section className="container-editorial pb-8 pt-4 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
           <p className="premium-kicker">What the free review proves</p>
@@ -160,11 +326,11 @@ export default function Home() {
       <section className="container-editorial section-y">
         <div className="grid gap-8 rounded-premium border border-slate-200 bg-white p-5 shadow-editorial md:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] md:p-8 lg:p-10">
           <div className="rounded-[1.75rem] bg-ink p-6 text-white md:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Route packet output</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Route packet output</p>
             <h2 className="mt-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">
               Not just a clean or dirty ticket.
             </h2>
-            <p className="mt-5 text-sm leading-6 text-white/65">
+            <p className="mt-5 text-sm leading-6 text-white/70">
               One ticket is enough to show whether ClearRun can find backup gaps your dispatch or billing team would otherwise chase later.
             </p>
           </div>
