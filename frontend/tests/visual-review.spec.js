@@ -59,7 +59,11 @@ const routes = [
       "route-exception-detail",
       "route-exception-owner",
       "route-exception-context",
+      "route-contact-progress",
+      "route-evidence-work",
       "route-exception-followup",
+      "route-response-work",
+      "route-resolution-panel",
       "route-exception-release-button",
       "route-exception-activity",
     ],
@@ -246,21 +250,36 @@ test("route review avoids page-level horizontal overflow", async ({ page }) => {
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewport + 1);
 });
 
-test("route issue stays blocked until required work is completed", async ({ page }) => {
+test("route issue requires contact, evidence, and final outcome before completion and can be reopened", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/issues/EX-2101", { waitUntil: "networkidle" });
 
-  const closeButton = page.getByTestId("route-exception-release-button");
-  await expect(closeButton).toBeDisabled();
+  const completeButton = page.getByTestId("route-exception-release-button");
+  await expect(completeButton).toBeDisabled();
+
+  await page.getByTestId("route-dispatch-status").selectOption("Attempted");
+  await page.getByTestId("route-customer-status").selectOption("Attempted");
 
   const checks = page.locator('input[type="checkbox"]');
   await expect(checks).toHaveCount(2);
   await checks.nth(0).check();
-  await expect(closeButton).toBeDisabled();
+  await expect(completeButton).toBeDisabled();
   await checks.nth(1).check();
-  await expect(closeButton).toBeEnabled();
+  await expect(completeButton).toBeDisabled();
 
-  await closeButton.click();
-  await expect(closeButton).toHaveText("Complete");
-  await expect(page.getByTestId("route-exception-activity")).toContainText("Issue marked complete");
+  await page.getByTestId("route-resolution-reason").selectOption("Service rescheduled");
+  await page.getByTestId("route-final-status").selectOption("Rescheduled");
+  await expect(completeButton).toBeEnabled();
+
+  await completeButton.click();
+  await expect(page.getByTestId("route-resolution-panel")).toContainText("Rescheduled");
+  await expect(page.getByTestId("route-reopen-button")).toBeDisabled();
+
+  await page.getByTestId("route-reopen-reason").fill("Customer changed the return window.");
+  await expect(page.getByTestId("route-reopen-button")).toBeEnabled();
+  await page.getByTestId("route-reopen-button").click();
+
+  await expect(page.getByTestId("route-exception-release-button")).toBeVisible();
+  await expect(page.getByTestId("route-exception-release-button")).toBeDisabled();
+  await expect(page.getByTestId("route-exception-activity")).toContainText("Issue reopened");
 });
