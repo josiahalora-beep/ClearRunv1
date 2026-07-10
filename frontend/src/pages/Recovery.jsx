@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Clock3, Send, ShieldAlert } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3, FileCheck2, ShieldAlert } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { brand, routeExceptionQueue } from "@/data/mockData";
@@ -30,7 +30,7 @@ function ExceptionCard({ exception }) {
               <Clock3 className="h-3.5 w-3.5" aria-hidden="true" /> {exception.ageLabel}
             </span>
           </div>
-          <Link to={`/proof/${exception.recordId}`} className="mt-4 block font-display text-2xl font-semibold leading-tight text-navy-950 hover:underline">
+          <Link to={`/exceptions/${exception.id}`} className="mt-4 block font-display text-2xl font-semibold leading-tight text-navy-950 hover:underline">
             {exception.ticketId}: {exception.blocker}
           </Link>
           <p className="mt-2 text-sm leading-6 text-slate-500">{exception.customer} · {exception.serviceType} · {exception.serviceDate}</p>
@@ -61,11 +61,11 @@ function ExceptionCard({ exception }) {
           ))}
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Link to="/requests" data-testid={`recovery-request-btn-${exception.id}`}>
-            <Button variant="secondary" size="sm" className="w-full sm:w-auto"><Send className="h-3.5 w-3.5" /> Send Follow-Up</Button>
-          </Link>
           <Link to={`/proof/${exception.recordId}`} data-testid={`recovery-open-record-${exception.id}`}>
-            <Button size="sm" className="w-full sm:w-auto">Open Record <ArrowRight className="h-3.5 w-3.5" /></Button>
+            <Button variant="secondary" size="sm" className="w-full sm:w-auto"><FileCheck2 className="h-3.5 w-3.5" /> View Proof</Button>
+          </Link>
+          <Link to={`/exceptions/${exception.id}`} data-testid={`recovery-resolve-btn-${exception.id}`}>
+            <Button size="sm" className="w-full sm:w-auto">Resolve Exception <ArrowRight className="h-3.5 w-3.5" /></Button>
           </Link>
         </div>
       </div>
