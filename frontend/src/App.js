@@ -12,7 +12,8 @@ import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
 import Recovery from "@/pages/Recovery";
 import ExceptionRouter from "@/pages/ExceptionRouter";
-import RouteReview from "@/pages/RouteReview";
+import RouteReviewLive from "@/pages/RouteReviewLive";
+import ReportRouteIssue from "@/pages/ReportRouteIssue";
 import Import from "@/pages/Import";
 import Export from "@/pages/Export";
 import Pilot from "@/pages/Pilot";
@@ -55,10 +56,12 @@ function App() {
         <Route path="/recovery" element={<Recovery />} />
         <Route path="/exceptions/:id" element={<ExceptionRouter />} />
         <Route path="/issues/:id" element={<ExceptionRouter />} />
-        <Route path="/route-review/:routeId" element={<RouteReview />} />
-        <Route path="/route-review" element={<RouteReview />} />
-        <Route path="/route-intelligence/:routeId" element={<RouteReview />} />
-        <Route path="/route-intelligence" element={<RouteReview />} />
+        <Route path="/report-issue/:routeId" element={<ReportRouteIssue />} />
+        <Route path="/report-issue" element={<ReportRouteIssue />} />
+        <Route path="/route-review/:routeId" element={<RouteReviewLive />} />
+        <Route path="/route-review" element={<RouteReviewLive />} />
+        <Route path="/route-intelligence/:routeId" element={<RouteReviewLive />} />
+        <Route path="/route-intelligence" element={<RouteReviewLive />} />
         <Route path="/import" element={<Import />} />
         <Route path="/export" element={<Export />} />
         <Route path="/pilot" element={<Pilot />} />
