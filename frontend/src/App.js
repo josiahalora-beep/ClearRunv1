@@ -12,7 +12,7 @@ import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
 import Recovery from "@/pages/Recovery";
 import ExceptionRouter from "@/pages/ExceptionRouter";
-import RouteReview from "@/pages/RouteReview";
+import RouteReview from "@/pages/RouteIntelligence";
 import Import from "@/pages/Import";
 import Export from "@/pages/Export";
 import Pilot from "@/pages/Pilot";
