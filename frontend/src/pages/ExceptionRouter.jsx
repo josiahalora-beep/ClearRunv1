@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import ExceptionDetail from "@/pages/ExceptionDetail";
 import TicketIssueDetail from "@/pages/TicketIssueDetail";
 import RouteIssueDetail from "@/pages/RouteIssueDetail";
 import { routeExceptionQueue } from "@/data/mockData";
@@ -15,9 +14,5 @@ export default function ExceptionRouter() {
     return <RouteIssueDetail issue={routeIssue} />;
   }
 
-  if (ticketIssue) {
-    return <TicketIssueDetail issue={ticketIssue} />;
-  }
-
-  return <ExceptionDetail />;
+  return <TicketIssueDetail issue={ticketIssue || routeExceptionQueue[0]} />;
 }
