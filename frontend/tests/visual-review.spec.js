@@ -23,6 +23,10 @@ const routes = [
     requiredTestIds: [
       "exception-detail-workflow",
       "exception-owner-select",
+      "exception-economic-impact",
+      "exception-route-context",
+      "exception-disposal-status",
+      "exception-repeat-signal",
       "exception-followup-panel",
       "exception-release-button",
       "exception-activity-timeline",
@@ -95,6 +99,15 @@ for (const route of routes) {
     ).toEqual([]);
   });
 }
+
+test("exception economic context stays operational and claim-safe", async ({ page }) => {
+  await page.goto("/exceptions/EX-1048", { waitUntil: "networkidle" });
+
+  await expect(page.getByTestId("exception-economic-impact")).toContainText("Operational labels, not estimated dollars");
+  await expect(page.getByTestId("exception-disposal-status")).toContainText("does not verify disposal");
+  await expect(page.getByTestId("exception-disposal-status")).toContainText("does not expose facility pricing");
+  await expect(page.getByTestId("exception-repeat-signal")).toContainText("not a compliance score");
+});
 
 test("exception release remains gated until required proof is confirmed", async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear());
