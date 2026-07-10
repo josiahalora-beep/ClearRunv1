@@ -130,12 +130,8 @@ export function projectRouteIssue(issue, storage = typeof window !== "undefined"
 }
 
 function compareProjectedIssues(a, b) {
-  if (a.queueState !== b.queueState) {
-    if (a.queueState === "reopened") return -1;
-    if (b.queueState === "reopened") return 1;
-    if (a.queueState === "completed") return 1;
-    if (b.queueState === "completed") return -1;
-  }
+  if (a.queueState === "completed" && b.queueState !== "completed") return 1;
+  if (b.queueState === "completed" && a.queueState !== "completed") return -1;
 
   if (a.queueState === "completed" && b.queueState === "completed") {
     const aTime = Date.parse(a.resolvedAt) || 0;
@@ -143,7 +139,15 @@ function compareProjectedIssues(a, b) {
     if (aTime !== bTime) return bTime - aTime;
   }
 
-  return getPriorityRank(a.priority) - getPriorityRank(b.priority) || Number(b.ageHours || 0) - Number(a.ageHours || 0);
+  const priorityDifference = getPriorityRank(a.priority) - getPriorityRank(b.priority);
+  if (priorityDifference !== 0) return priorityDifference;
+
+  if (a.queueState !== b.queueState) {
+    if (a.queueState === "reopened") return -1;
+    if (b.queueState === "reopened") return 1;
+  }
+
+  return Number(b.ageHours || 0) - Number(a.ageHours || 0);
 }
 
 function buildDisposalMatrix(route, completedWithoutException, issues) {
