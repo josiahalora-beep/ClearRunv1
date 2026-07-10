@@ -69,6 +69,97 @@ export const demoFacilities = [
   { name: "Southern Spoon", address: "215 Main St, Warner Robins, GA" },
 ];
 
+export const routeExceptionQueue = [
+  {
+    id: "EX-1048",
+    recordId: "PP-10234",
+    ticketId: "GT-1048",
+    customer: "Perry Route C — Missing Proof",
+    routeName: "Perry Route C",
+    serviceType: "Grease Trap Pump-Out",
+    serviceDate: "2026-01-22",
+    blocker: "Missing signed ticket and stop photo",
+    status: "Hold",
+    severity: "incomplete",
+    owner: "Dispatch",
+    ageLabel: "2d",
+    ageHours: 48,
+    impact: "Hold before invoice support",
+    nextAction: "Ask the driver for the signed service ticket and stop photo for GT-1048.",
+    releaseCondition: "Signed ticket + stop photo attached",
+    billingSupport: "Hold",
+    customerProof: "Not ready",
+    proofNeeded: ["Signed service ticket", "Stop photo"],
+    estimatedMinutesSaved: 10,
+  },
+  {
+    id: "EX-1052",
+    recordId: "PP-10232",
+    ticketId: "GT-1052",
+    customer: "Warner Robins Route B — Needs Review",
+    routeName: "Warner Robins Route B",
+    serviceType: "FOG Interceptor Service",
+    serviceDate: "2026-01-27",
+    blocker: "Disposal ticket does not clearly match gallons",
+    status: "Review",
+    severity: "attention",
+    owner: "Billing",
+    ageLabel: "1d",
+    ageHours: 24,
+    impact: "Needs review before closeout",
+    nextAction: "Compare gallons and disposal ticket date before releasing the record.",
+    releaseCondition: "Disposal backup matched at job or route/load level",
+    billingSupport: "Needs review",
+    customerProof: "Partial",
+    proofNeeded: ["Disposal ticket match", "Gallons note"],
+    estimatedMinutesSaved: 8,
+  },
+  {
+    id: "EX-1061",
+    recordId: "PP-10237",
+    ticketId: "GT-1061",
+    customer: "Macon Route B — Customer Question",
+    routeName: "Macon Route B",
+    serviceType: "Grease Trap Pump-Out",
+    serviceDate: "2026-01-26",
+    blocker: "Customer asked for backup, packet not assembled",
+    status: "Packet",
+    severity: "review",
+    owner: "Customer service",
+    ageLabel: "4h",
+    ageHours: 4,
+    impact: "Customer response waiting on packet",
+    nextAction: "Prepare customer-safe proof view without internal notes.",
+    releaseCondition: "Customer-safe proof packet assembled",
+    billingSupport: "Supported",
+    customerProof: "Prepare packet",
+    proofNeeded: ["Customer-safe summary", "Selected proof items"],
+    estimatedMinutesSaved: 12,
+  },
+  {
+    id: "EX-1067",
+    recordId: "PP-10238",
+    ticketId: "GT-1067",
+    customer: "Macon Route A — Photo Gap",
+    routeName: "Macon Route A",
+    serviceType: "Grease Trap Pump-Out",
+    serviceDate: "2026-01-25",
+    blocker: "Photo evidence missing from route packet",
+    status: "Hold",
+    severity: "incomplete",
+    owner: "Route desk",
+    ageLabel: "18h",
+    ageHours: 18,
+    impact: "Weak support if customer asks for proof",
+    nextAction: "Request the stop photo before the record is closed.",
+    releaseCondition: "Stop photo attached or marked not available",
+    billingSupport: "Hold",
+    customerProof: "Not ready",
+    proofNeeded: ["Stop photo"],
+    estimatedMinutesSaved: 7,
+  },
+];
+
 export const dashboardStats = [
   { label: "Proof Packets This Month", value: "184", delta: "+12% vs last month", status: "complete" },
   { label: "Missing Records Flagged", value: "9", delta: "3 resolved this week", status: "attention" },
@@ -256,37 +347,8 @@ export const checklistItems = [
 ];
 
 export const comparisonRows = [
-  { capability: "Central proof packet per service", spreadsheets: false, paper: false, clearrun: true },
-  { capability: "Missing-record detection", spreadsheets: false, paper: false, clearrun: true },
-  { capability: "Branded customer-ready proof link", spreadsheets: false, paper: false, clearrun: true },
-  { capability: "Billing-ready export", spreadsheets: "partial", paper: false, clearrun: true },
-  { capability: "Works with your existing tools", spreadsheets: true, paper: true, clearrun: true },
-  { capability: "Audit trail of record changes", spreadsheets: false, paper: false, clearrun: true },
-];
-
-export const importSources = ["CSV", "Excel spreadsheet", "PDF service tickets", "Scanned paper tickets", "ServiceCore export", "PumpDocket export", "Tank Track export"];
-
-export const exportFormats = ["Billing-ready CSV (QuickBooks-compatible)", "Branded PDF proof packet", "Bulk ZIP of proof packets", "County/municipal summary export"];
-
-export const cityExportRecords = [
-  { id: "CE-01", business: "Macon Route A — Ready", lastPumpOut: "2026-01-28", status: "complete" },
-  { id: "CE-02", business: "Warner Robins Route B — Needs Review", lastPumpOut: "2026-01-27", status: "review" },
-  { id: "CE-03", business: "Perry Route C — Missing Proof", lastPumpOut: "2026-01-22", status: "incomplete" },
-  { id: "CE-04", business: "Highway 96 Wings", lastPumpOut: "2026-01-22", status: "incomplete" },
-  { id: "CE-05", business: "Central Georgia BBQ", lastPumpOut: "2026-01-20", status: "complete" },
-];
-
-export const partners = [
-  { type: "Hauling Companies", desc: "Give your customers branded proof packets automatically after every service." },
-  { type: "Pumping & Septic Providers", desc: "Extend record-keeping beyond FOG into septic and liquid waste services." },
-  { type: "Accountants & Billing Partners", desc: "Receive billing-ready exports mapped to your accounting workflow." },
-  { type: "Referral Partners", desc: "Refer regulated service businesses and share in program benefits." },
-];
-
-export const resources = [
-  { title: "The Missing-Record Problem in FOG Operations", type: "Guide", readTime: "6 min read" },
-  { title: "What Reviewers Commonly Ask For", type: "Guide", readTime: "5 min read" },
-  { title: "Grease Trap Service Checklist (Printable)", type: "Checklist", readTime: "2 min read" },
-  { title: "Spreadsheets vs. Proof Packets", type: "Comparison", readTime: "4 min read" },
-  { title: "Preparing for a Records Request", type: "Guide", readTime: "7 min read" },
+  { capability: "Central proof packet per service", oldWay: "Scattered PDFs/photos", clearRun: "One organized packet" },
+  { capability: "Disposal backup visibility", oldWay: "Buried receipt folders", clearRun: "Attached where available" },
+  { capability: "Missing record follow-up", oldWay: "Manual calls/texts", clearRun: "Tracked request queue" },
+  { capability: "Review-friendly export", oldWay: "Manual bundle", clearRun: "Structured packet" },
 ];
