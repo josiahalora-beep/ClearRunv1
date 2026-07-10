@@ -22,31 +22,45 @@ const statusClass = {
   Released: "border-status-complete/30 bg-status-complete-bg text-status-complete",
 };
 
+const statusLabel = {
+  Hold: "Not Ready to Close",
+  Review: "Needs Review",
+  Released: "Resolved",
+};
+
+const issueTypeLabel = {
+  Access: "access issue",
+  Service: "service issue",
+  Proof: "missing service proof",
+  Disposal: "disposal receipt issue",
+  Commercial: "customer follow-up",
+};
+
 function StatusPill({ status }) {
   return (
     <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass[status] || statusClass.Review}`}>
-      {status}
+      {statusLabel[status] || status}
     </span>
   );
 }
 
-function loadDemoState(exception) {
-  const initialChecks = Object.fromEntries(exception.proofNeeded.map((item) => [item, false]));
+function loadDemoState(issue) {
+  const initialChecks = Object.fromEntries(issue.proofNeeded.map((item) => [item, false]));
   const fallback = {
-    owner: exception.owner,
+    owner: issue.owner,
     proofChecks: initialChecks,
-    followUpText: exception.nextAction,
+    followUpText: issue.nextAction,
     followUpPrepared: false,
     released: false,
     activity: [
-      { id: "reported", label: "Route exception reported", note: `${exception.reportedTime} · ${exception.blocker}` },
-      { id: "assigned", label: `Assigned to ${exception.owner}`, note: exception.resolutionStatus },
+      { id: "reported", label: "Issue reported", note: `${issue.reportedTime} · ${issue.blocker}` },
+      { id: "assigned", label: `Assigned to ${issue.owner}`, note: issue.resolutionStatus },
     ],
   };
 
   if (typeof window === "undefined") return fallback;
   try {
-    const saved = window.localStorage.getItem(`clearrun-route-exception-${exception.id}`);
+    const saved = window.localStorage.getItem(`clearrun-route-exception-${issue.id}`);
     return saved ? { ...fallback, ...JSON.parse(saved) } : fallback;
   } catch {
     return fallback;
@@ -74,7 +88,7 @@ export default function RouteExceptionDetail({ exception }) {
       ...current,
       owner,
       activity: [
-        { id: `${Date.now()}-owner`, label: `Assigned to ${owner}`, note: "Demo assignment updated in this browser." },
+        { id: `${Date.now()}-owner`, label: `Assigned to ${owner}`, note: "Assignment updated." },
         ...current.activity,
       ],
     }));
@@ -88,8 +102,8 @@ export default function RouteExceptionDetail({ exception }) {
       activity: [
         {
           id: `${Date.now()}-${item}`,
-          label: nextValue ? `${item} confirmed` : `${item} reopened`,
-          note: nextValue ? "Blocking requirement marked complete." : "Blocking requirement needs review again.",
+          label: nextValue ? `${item} confirmed` : `${item} needs attention again`,
+          note: nextValue ? "Required step marked complete." : "Required step reopened for review.",
         },
         ...current.activity,
       ],
@@ -101,7 +115,7 @@ export default function RouteExceptionDetail({ exception }) {
       ...current,
       followUpPrepared: true,
       activity: [
-        { id: `${Date.now()}-followup`, label: "Follow-up prepared", note: current.followUpText },
+        { id: `${Date.now()}-followup`, label: "Next step prepared", note: current.followUpText },
         ...current.activity,
       ],
     }));
@@ -115,8 +129,8 @@ export default function RouteExceptionDetail({ exception }) {
       activity: [
         {
           id: `${Date.now()}-released`,
-          label: "Exception resolved for closeout",
-          note: "All fictional demo release requirements were confirmed.",
+          label: "Issue marked resolved",
+          note: "All required steps were completed in this example.",
         },
         ...current.activity,
       ],
@@ -138,12 +152,12 @@ export default function RouteExceptionDetail({ exception }) {
             <Link to={`/route-intelligence/${exception.routeId}`} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-800 hover:underline">
               <ArrowLeft className="h-4 w-4" aria-hidden="true" /> {exception.routeName}
             </Link>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-navy-800">Route exception resolution</p>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-navy-800">Route Issue</p>
             <h1 className="mobile-safe-text mt-2 max-w-4xl font-display text-4xl font-bold leading-tight text-navy-950 sm:text-5xl">
-              Resolve {exception.ticketId}: {exception.exceptionType.toLowerCase()} exception
+              Work {exception.ticketId}: {issueTypeLabel[exception.exceptionType] || "route issue"}
             </h1>
             <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
-              Review what happened, confirm the evidence and owner, record the next action, and release the exception only when its requirements are satisfied.
+              Review what happened, confirm who owns the next step, complete the required work, and mark the issue resolved when the record is ready.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -165,10 +179,10 @@ export default function RouteExceptionDetail({ exception }) {
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     {[
-                      ["Service outcome", exception.serviceOutcome],
-                      ["Closeout consequence", exception.closeoutConsequence],
-                      ["Recorded delay", `${exception.recordedDelayMinutes} minutes`],
-                      ["Customer notification", exception.customerNotification],
+                      ["Service result", exception.serviceOutcome],
+                      ["Service record status", exception.closeoutConsequence],
+                      ["Delay recorded", `${exception.recordedDelayMinutes} minutes`],
+                      ["Customer contacted", exception.customerNotification],
                     ].map(([label, value]) => (
                       <div key={label} className="rounded-2xl border border-white/10 bg-white/10 p-4">
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-white/50">{label}</p>
@@ -184,7 +198,7 @@ export default function RouteExceptionDetail({ exception }) {
                       <UserRoundCheck className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <label htmlFor="route-exception-owner" className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assigned owner</label>
+                      <label htmlFor="route-exception-owner" className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assigned to</label>
                       <select
                         id="route-exception-owner"
                         value={demoState.owner}
@@ -198,12 +212,12 @@ export default function RouteExceptionDetail({ exception }) {
                   </div>
 
                   <div className="mt-5 rounded-2xl border border-slate-200 bg-offwhite p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Release condition</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Ready-to-close requirement</p>
                     <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">{exception.releaseCondition}</p>
                   </div>
 
                   <div className="mt-5">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Blocking requirements</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">What must be completed</p>
                     <div className="mt-3 grid gap-2">
                       {exception.proofNeeded.map((item) => (
                         <label key={item} className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-card">
@@ -228,8 +242,8 @@ export default function RouteExceptionDetail({ exception }) {
                   <Route className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Route and evidence context</p>
-                  <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Observed facts attached to this exception</h2>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Route details</p>
+                  <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">What the office has on file</h2>
                 </div>
               </div>
               <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -238,8 +252,8 @@ export default function RouteExceptionDetail({ exception }) {
                   ["Truck", exception.truck],
                   ["Technician", exception.technician],
                   ["Reported", exception.reportedTime],
-                  ["Evidence", exception.evidenceSummary],
-                  ["Disposal status", exception.disposalStatus],
+                  ["Proof on file", exception.evidenceSummary],
+                  ["Disposal receipt", exception.disposalStatus],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-2xl border border-slate-200 bg-offwhite p-4">
                     <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
@@ -255,21 +269,21 @@ export default function RouteExceptionDetail({ exception }) {
                   <MessageSquareText className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Next action</p>
-                  <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Prepare the office response</h2>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">What needs to happen next</p>
+                  <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Prepare the office follow-up</h2>
                 </div>
               </div>
               <textarea
                 value={demoState.followUpText}
                 onChange={(event) => setDemoState((current) => ({ ...current, followUpText: event.target.value }))}
                 rows={4}
-                aria-label="Route exception follow-up"
+                aria-label="Route issue follow-up"
                 className="mt-5 w-full rounded-2xl border border-slate-200 bg-offwhite p-4 text-sm leading-6 text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100"
               />
               <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs leading-5 text-slate-500">Demo only. This records a prepared action in browser state and does not send a real message.</p>
+                <p className="text-xs leading-5 text-slate-500">Example action only. No customer or driver message is sent from this preview.</p>
                 <Button type="button" onClick={handlePrepareFollowUp} data-testid="route-exception-followup-button">
-                  {demoState.followUpPrepared ? "Action Prepared" : "Prepare Action"}
+                  {demoState.followUpPrepared ? "Follow-Up Ready" : "Prepare Follow-Up"}
                 </Button>
               </div>
             </section>
@@ -277,22 +291,22 @@ export default function RouteExceptionDetail({ exception }) {
 
           <aside className="space-y-6">
             <section className="premium-card-dark">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Resolution gate</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Ready to finish?</p>
               <h2 className="mt-3 font-display text-3xl font-semibold leading-tight text-white">
-                {demoState.released ? "Exception resolved." : releaseReady ? "Ready to resolve." : "Resolution is blocked."}
+                {demoState.released ? "Issue resolved." : releaseReady ? "Ready to mark resolved." : "More work is needed."}
               </h2>
               <p className="mt-3 text-sm leading-6 text-white/65">
-                Confirm the assigned owner and every blocking requirement before releasing the route exception for closeout.
+                Confirm who owns the issue and complete every required step before marking it resolved.
               </p>
               <div className="mt-6 grid gap-2">
                 <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-sm font-semibold text-white/80">
-                  <CheckCircle2 className={`h-4 w-4 ${demoState.owner ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Owner assigned
+                  <CheckCircle2 className={`h-4 w-4 ${demoState.owner ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Assigned to someone
                 </div>
                 <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-sm font-semibold text-white/80">
-                  <CheckCircle2 className={`h-4 w-4 ${allEvidenceReady ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Requirements confirmed
+                  <CheckCircle2 className={`h-4 w-4 ${allEvidenceReady ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Required work completed
                 </div>
                 <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-sm font-semibold text-white/80">
-                  <CheckCircle2 className={`h-4 w-4 ${demoState.followUpPrepared ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Action prepared when needed
+                  <CheckCircle2 className={`h-4 w-4 ${demoState.followUpPrepared ? "text-white" : "text-white/30"}`} aria-hidden="true" /> Follow-up prepared when needed
                 </div>
               </div>
               <Button
@@ -302,10 +316,10 @@ export default function RouteExceptionDetail({ exception }) {
                 data-testid="route-exception-release-button"
                 className="mt-6 w-full bg-white text-navy-950 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {demoState.released ? "Resolved" : "Resolve for Closeout"}
+                {demoState.released ? "Resolved" : "Mark Issue Resolved"}
               </Button>
               <button type="button" onClick={handleReset} className="mt-3 w-full text-xs font-semibold text-white/55 hover:text-white">
-                Reset browser demo
+                Reset example
               </button>
             </section>
 
@@ -313,9 +327,9 @@ export default function RouteExceptionDetail({ exception }) {
               <div className="flex items-start gap-3">
                 <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-status-attention" aria-hidden="true" />
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Commercial interpretation</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Billing review</p>
                   <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">{exception.billingSupport}</p>
-                  <p className="mt-2 text-xs leading-5 text-slate-500">This is an operational flag, not a final billing or legal determination.</p>
+                  <p className="mt-2 text-xs leading-5 text-slate-500">The office makes the final billing decision.</p>
                 </div>
               </div>
             </section>
@@ -323,7 +337,7 @@ export default function RouteExceptionDetail({ exception }) {
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="route-exception-activity">
               <div className="flex items-center gap-2">
                 <History className="h-4 w-4 text-navy-800" aria-hidden="true" />
-                <h2 className="font-display text-xl font-semibold text-navy-950">Activity history</h2>
+                <h2 className="font-display text-xl font-semibold text-navy-950">Work history</h2>
               </div>
               <div className="mt-5 grid gap-4">
                 {demoState.activity.map((item) => (
@@ -339,7 +353,7 @@ export default function RouteExceptionDetail({ exception }) {
         </div>
 
         <p className="mt-8 max-w-4xl text-xs leading-5 text-slate-500">
-          {brand.disclaimer} This route-exception workspace uses fictional demo data and browser-only state. It does not send messages, store production records, reroute trucks, verify disposal, authorize billing, or make employee-performance judgments.
+          {brand.disclaimer} Example data is shown. Actions in this preview do not contact customers, change billing, or update a live route.
         </p>
       </main>
     </Layout>
