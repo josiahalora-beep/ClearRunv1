@@ -82,7 +82,8 @@ test("reported route issue appears in Route Review and opens for follow-up", asy
   await expect(page).toHaveURL(/issues\/CAP-/);
   await expect(page.getByTestId("route-exception-detail")).toBeVisible();
   await expect(page.locator("h1").first()).toContainText("Cannot access service area");
-  await expect(page.getByTestId("route-exception-context")).toContainText("Sample Restaurant");
+  await expect(page.getByTestId("route-exception-context")).toContainText("Warner Robins Route B");
+  await expect(page.getByTestId("route-exception-context")).toContainText("driver note");
 });
 
 test("a photo can satisfy the first-report evidence requirement without a note", async ({ page }) => {
