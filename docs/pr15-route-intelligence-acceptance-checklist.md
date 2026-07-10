@@ -1,39 +1,52 @@
-# PR15 Route Intelligence Acceptance Checklist
+# PR15 Route Review Acceptance Checklist
 
 ## Product behavior
 
-- [ ] Route selector changes the entire route summary.
-- [ ] Active Route and Closeout lanes remain distinct.
-- [ ] One primary office action is visually dominant.
-- [ ] Every lane row opens the correct exception detail.
-- [ ] Lane filters work.
-- [ ] Disposal matrix filters matching exceptions.
+- [ ] Route selector changes the entire route review.
+- [ ] Needs Dispatch and Needs Office Review remain distinct.
+- [ ] One “What needs attention first” action is visually dominant.
+- [ ] Every route-issue row opens the correct issue detail.
+- [ ] Work filters function correctly.
+- [ ] Disposal receipt status filters matching route issues.
 - [ ] Route closeout counts reconcile to scheduled stops.
-- [ ] Disposal matrix counts reconcile to scheduled stops.
-- [ ] Recorded delay is shown as observed data, not savings.
-- [ ] Potentially unbillable is labeled as an operational review flag.
+- [ ] Disposal receipt counts reconcile to scheduled stops.
+- [ ] Logged delay is shown as observed data, not claimed savings.
+- [ ] Billing review is presented as an office flag, not a final billing decision.
 
-## Recurring patterns
+## Repeat issues
 
-- [ ] Pattern requires at least 3 observations.
-- [ ] Pattern requires at least 20% of the relevant sample.
+- [ ] Repeat issue requires at least 3 observations.
+- [ ] Repeat issue requires at least 20% of the relevant sample.
 - [ ] Numerator and denominator are visible.
 - [ ] Percentage and sample window are visible.
-- [ ] Affected entities and recommended intervention are visible.
-- [ ] Pattern is not presented as a compliance or employee score.
+- [ ] Affected routes, customers, trucks, or drivers are visible where relevant.
+- [ ] Recommended follow-up is visible.
+- [ ] Repeat issue is not presented as a compliance or employee score.
 
-## Resolution workflow
+## Ticket and route-issue workflow
 
-- [ ] Route-exception owner can be changed.
-- [ ] Blocking requirements update release readiness.
-- [ ] Partial requirements do not enable resolution.
-- [ ] All requirements enable resolution.
-- [ ] Resolution records activity history.
-- [ ] Browser-only demo state is disclosed.
+- [ ] Assigned person can be changed.
+- [ ] Required ticket items update ready-to-close status.
+- [ ] Partial completion does not enable closeout.
+- [ ] All required items enable closeout.
+- [ ] Completion records work history.
+- [ ] Browser-only sample state is disclosed.
+
+## Customer-facing language
+
+- [ ] Dashboard uses ticket, route, follow-up, billing, and closeout language.
+- [ ] Route page is labeled Route Review.
+- [ ] Work sections are labeled Needs Dispatch and Needs Office Review.
+- [ ] Detail screens use Ticket Issue or Route Issue.
+- [ ] Disposal section uses Disposal Receipt Status.
+- [ ] Repeat section uses Repeat Issue.
+- [ ] “Ready to close?” replaces internal release-gate wording.
+- [ ] Visible copy does not include banned internal architecture phrases.
+- [ ] `docs/customer-facing-language-contract.md` is satisfied.
 
 ## Visual quality
 
-- [ ] Premium command-center hierarchy.
+- [ ] Premium office-workflow hierarchy.
 - [ ] No vague health score.
 - [ ] No generic empty KPI wall.
 - [ ] Desktop screenshot passes.
@@ -41,12 +54,13 @@
 - [ ] Mobile screenshot passes.
 - [ ] No page-level horizontal overflow.
 - [ ] Serious and critical Axe violations fail the gate.
-- [ ] Route intelligence and route-exception detail run through Lighthouse.
+- [ ] Route Review and Route Issue run through Lighthouse.
 
 ## CI and release
 
 - [ ] Jest aggregation tests pass.
 - [ ] Frontend build passes.
 - [ ] Frontend Visual Review passes.
+- [ ] Internal-language copy scan passes.
 - [ ] Vercel preview passes.
 - [ ] PR remains mergeable on the tested head SHA.
