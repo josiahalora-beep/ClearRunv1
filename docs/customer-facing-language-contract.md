@@ -16,6 +16,11 @@ Use terms such as:
 - Route Issues
 - Ticket Issue
 - Route Issue Follow-Up
+- Queue State
+- Open Issues
+- Completed Issues
+- Completed Outcomes
+- Reopened Work
 - Needs Dispatch
 - Needs Office Review
 - Ready to Close
@@ -48,6 +53,7 @@ Use terms such as:
 - Work History
 - Repeat Issue
 - What Needs Attention First
+- How Completed Issues Ended
 
 ## Internal terms that should not appear in visible product copy
 
@@ -73,6 +79,11 @@ Unless required for a legal, technical, or administrative reason, do not show:
 - Evidence Object
 - Contact-State Mapping
 - Resolution-State Transition
+- Projection Layer
+- Queue Projection
+- Derived Record State
+- Reconciliation Engine
+- Computed Queue Object
 
 ## Translation examples
 
@@ -96,6 +107,11 @@ Unless required for a legal, technical, or administrative reason, do not show:
 | Release condition | Before this can close |
 | Resolution state | Final ticket status |
 | Reopen transition | Reopen issue |
+| Queue projection | Route Review |
+| Computed issue state | Queue state |
+| Resolved records | Completed outcomes |
+| Reopened transition set | Reopened work |
+| Reconciled totals | Route counts |
 
 ## Copy hierarchy
 
@@ -103,14 +119,16 @@ Visible screens should answer, in this order:
 
 1. What is wrong?
 2. Which ticket, stop, route, truck, driver, or customer is affected?
-3. Who is assigned?
-4. How long has it been open?
-5. Who has been contacted?
-6. What ticket backup exists or is missing?
-7. What response was received?
-8. What needs to happen next?
-9. Why was the issue completed?
-10. What is the final ticket status?
+3. Is the issue open, completed, or reopened?
+4. Who is assigned?
+5. How long has it been open?
+6. Who has been contacted?
+7. What ticket backup exists or is missing?
+8. What response was received?
+9. What needs to happen next?
+10. Why was the issue completed?
+11. What is the final ticket status?
+12. Is the ticket actually ready to close?
 
 ## Follow-up workflow language
 
@@ -131,9 +149,71 @@ Use these visible final ticket statuses:
 
 Do not label a prepared follow-up as sent. Do not label selected or described evidence as uploaded unless a real upload exists. Do not label an office status as a final billing decision.
 
+## Queue-state language
+
+Use these visible queue states:
+
+- Open
+- Completed
+- Reopened
+- All
+
+### Open
+
+Open means the issue still requires work. Reopened issues are also unresolved and must be included in open-work totals while retaining a distinct Reopened label.
+
+### Completed
+
+Completed means the issue has a recorded resolution reason, final ticket status, and completion time. It does not automatically mean:
+
+- service was completed;
+- the ticket supports billing;
+- disposal was verified;
+- the invoice was released;
+- the customer was contacted;
+- the ticket is ready to close.
+
+### Reopened
+
+Reopened means the same issue record returned to active work after completion. Do not create or imply a duplicate issue. Preserve the prior work history, evidence, reopen count, and prior outcome in the issue record.
+
+## Issue completion versus ticket readiness
+
+Always distinguish the completion of office work from the readiness of the ticket.
+
+### Final statuses that can count as ready to close
+
+- Ready to Close
+- Closed Without Service
+
+“Closed Without Service” may be administratively closeable while remaining non-billable. Do not present it as billable service.
+
+### Final statuses that remain not ready to close
+
+- Follow-Up Complete
+- Rescheduled
+- Needs Billing Review
+
+A completed issue with one of these statuses must leave the open issue queue but remain in the route’s not-ready closeout total.
+
+## Route-count language
+
+Route counts must reconcile from the same visible issue records.
+
+- Needs Dispatch counts unresolved active-lane issues.
+- Needs Office Review counts unresolved closeout-lane issues.
+- Completed Issues counts issues with recorded completion.
+- Reopened counts unresolved issues that were previously completed.
+- Open Issues includes fresh open issues and reopened issues.
+- Tickets Not Ready uses final ticket status, not issue completion alone.
+- Completed Cleanly excludes stops that have an issue history.
+- A browser-reported issue should replace a clean sample stop when possible rather than silently inflating scheduled stops.
+
+Do not show totals that require the user to infer why the queue and route summary disagree.
+
 ## Market-language guardrails
 
-- Prefer “ticket,” “route,” “stop,” “driver,” “dispatch,” “billing,” “receipt,” “signature,” “photo,” “gallons,” “follow-up,” “response,” “assigned,” and “ready to close.”
+- Prefer “ticket,” “route,” “stop,” “driver,” “dispatch,” “billing,” “receipt,” “signature,” “photo,” “gallons,” “follow-up,” “response,” “assigned,” “open,” “completed,” “reopened,” and “ready to close.”
 - Avoid abstract product-category language on working screens.
 - Do not use vague health scores.
 - Do not describe an employee, driver, or technician with a score.
@@ -141,17 +221,22 @@ Do not label a prepared follow-up as sent. Do not label selected or described ev
 - Do not present a billing-review flag as a final billing decision.
 - Do not present prepared follow-up text as a delivered message.
 - Do not present browser-only evidence records as cloud uploads.
+- Do not treat issue completion as invoice release.
+- Do not remove reopened work from unresolved totals.
 - Use “sample” or “example” when showing fictional or modeled data.
 
 ## Automated enforcement
 
 The Playwright visual-review suite must scan the visible text on the dashboard, route review, route issue, and ticket issue screens and fail when banned internal phrases appear.
 
-Route-issue tests must also verify that visible copy distinguishes:
+Route-issue and route-review tests must also verify that visible behavior distinguishes:
 
 - prepared follow-up from sent communication;
 - ticket backup from disposal verification;
 - completed issue from final billing approval;
-- reopened issue from a new issue record.
+- completed issue from ready-to-close ticket;
+- reopened issue from a new issue record;
+- fresh open work from reopened work;
+- issue totals from route closeout totals.
 
 This contract applies to future PRs unless a later source-of-truth document explicitly replaces it.

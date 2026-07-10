@@ -45,11 +45,13 @@ const routes = [
       "route-intelligence-header",
       "route-consequence-strip",
       "route-primary-action",
+      "route-queue-controls",
       "route-active-lane",
       "route-closeout-lane",
       "route-pattern-panel",
       "route-disposal-matrix",
       "route-closeout-summary",
+      "route-outcome-summary",
     ],
   },
   {
@@ -101,6 +103,7 @@ async function expectBusinessVisualAnchors(page, route) {
 
 for (const route of routes) {
   test(`${route.name} renders, screenshots, passes business anchors, and passes blocking axe checks`, async ({ page }, testInfo) => {
+    await page.addInitScript(() => window.localStorage.clear());
     await page.goto(route.path, { waitUntil: "networkidle" });
     await expect(page.locator("body")).toBeVisible();
     await expect(page.locator("h1").first(), `${route.path} must keep a clear designer-visible H1`).toBeVisible();
@@ -164,34 +167,49 @@ test("ticket stays blocked until required work is completed", async ({ page }) =
   await expect(page.getByTestId("exception-activity-timeline")).toContainText("Ticket marked ready to close");
 });
 
-test("route review shows reconciling operator-facing counts", async ({ page }) => {
+test("route review shows reconciled open, completed, reopened, and closeout counts", async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/route-review/warner-robins-route-b", { waitUntil: "networkidle" });
 
   const header = page.getByTestId("route-intelligence-header");
   await expect(header).toContainText("Scheduled stops");
-  await expect(header).toContainText("14");
+  await expect(page.getByTestId("route-metric-scheduled")).toContainText("14");
   await expect(header).toContainText("Completed cleanly");
-  await expect(header).toContainText("10");
-  await expect(header).toContainText("Needs dispatch");
-  await expect(header).toContainText("2");
-  await expect(header).toContainText("Needs office review");
+  await expect(page.getByTestId("route-metric-clean")).toContainText("10");
+  await expect(page.getByTestId("route-metric-dispatch")).toContainText("2");
+  await expect(page.getByTestId("route-metric-office")).toContainText("2");
+  await expect(page.getByTestId("route-metric-completed")).toContainText("0");
+  await expect(page.getByTestId("route-metric-reopened")).toContainText("0");
+  await expect(page.getByTestId("route-consequence-strip")).toContainText("Open issues");
+  await expect(page.getByTestId("route-consequence-strip")).toContainText("Tickets not ready");
+  await expect(page.getByTestId("route-consequence-strip")).toContainText("4");
   await expect(page.getByTestId("route-pattern-panel")).toContainText("3 of 11");
   await expect(page.getByTestId("route-pattern-panel")).toContainText("not an employee score or compliance grade");
   await expect(page.getByTestId("route-disposal-matrix")).toContainText("Disposal receipt status");
   await expect(page.getByTestId("route-closeout-summary")).toContainText("What is ready and what still needs work");
+  await expect(page.getByTestId("route-outcome-summary")).toContainText("How completed issues ended");
 });
 
-test("route selector, work filters, receipt filter, and issue click-through work", async ({ page }) => {
+test("queue state, work lane, receipt filter, route selector, and issue click-through work", async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/route-review/warner-robins-route-b", { waitUntil: "networkidle" });
 
-  await page.getByTestId("route-lane-filter-active").click();
+  await page.getByLabel("Work lane").selectOption("active");
   await expect(page.getByTestId("route-active-lane")).toBeVisible();
   await expect(page.getByTestId("route-closeout-lane")).toHaveCount(0);
 
-  await page.getByTestId("route-lane-filter-all").click();
+  await page.getByLabel("Work lane").selectOption("all");
   await page.getByRole("button", { name: "Receipt present but unmatched 1" }).click();
   await expect(page.getByTestId("route-exception-EX-2104")).toBeVisible();
   await expect(page.getByTestId("route-exception-EX-2103")).toHaveCount(0);
+
+  await page.getByTestId("route-state-filter-completed").click();
+  await expect(page.getByTestId("route-completed-lane")).toBeVisible();
+  await expect(page.getByTestId("route-completed-lane")).toContainText("No completed issues match");
+
+  await page.getByTestId("route-clear-filters").click();
+  await expect(page.getByTestId("route-active-lane")).toBeVisible();
+  await expect(page.getByTestId("route-closeout-lane")).toBeVisible();
 
   await page.getByTestId("route-selector").selectOption("macon-route-a");
   await expect(page).toHaveURL(/route-review\/macon-route-a/);
@@ -201,6 +219,22 @@ test("route selector, work filters, receipt filter, and issue click-through work
   await page.getByTestId("route-primary-action-link").click();
   await expect(page).toHaveURL(/issues\/EX-2101/);
   await expect(page.getByTestId("route-exception-detail")).toBeVisible();
+});
+
+test("route queue filters use operator-facing owner, contact, backup, and outcome labels", async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto("/route-review/warner-robins-route-b", { waitUntil: "networkidle" });
+
+  await page.getByTestId("route-owner-filter").selectOption("Dispatch");
+  await page.getByTestId("route-contact-filter").selectOption("Needs contact");
+  await page.getByTestId("route-evidence-filter").selectOption("Needed");
+
+  await expect(page.getByTestId("route-exception-EX-2101")).toBeVisible();
+  await expect(page.getByTestId("route-exception-EX-2102")).toHaveCount(0);
+  await expect(page.getByTestId("route-queue-controls")).toContainText("Clear 3 filters");
+
+  await page.getByTestId("route-clear-filters").click();
+  await expect(page.getByTestId("route-exception-EX-2102")).toBeVisible();
 });
 
 test("visible product copy does not expose internal architecture language", async ({ page }) => {
@@ -228,6 +262,8 @@ test("visible product copy does not expose internal architecture language", asyn
     "disposal backup matrix",
     "operational labels, not estimated dollars",
     "claim-safe",
+    "projection layer",
+    "state machine",
   ];
 
   for (const productRoute of productRoutes) {
