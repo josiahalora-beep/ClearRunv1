@@ -324,7 +324,7 @@ export default function RouteReviewLive() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const reportedId = searchParams.get("reported") || "";
-  const [revision, setRevision] = useState(0);
+  const [, setRevision] = useState(0);
   const [queueState, setQueueState] = useState("open");
   const [workView, setWorkView] = useState("all");
   const [receiptFilter, setReceiptFilter] = useState("");
@@ -333,10 +333,7 @@ export default function RouteReviewLive() {
   const [evidenceFilter, setEvidenceFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
 
-  const projection = useMemo(
-    () => getRouteQueueProjection(routeId) || getRouteQueueProjection(routeDefinitions[0].id),
-    [routeId, reportedId, revision]
-  );
+  const projection = getRouteQueueProjection(routeId) || getRouteQueueProjection(routeDefinitions[0].id);
 
   useEffect(() => {
     const refresh = () => setRevision((current) => current + 1);
@@ -528,11 +525,6 @@ export default function RouteReviewLive() {
                     <option value="active">Dispatch</option>
                     <option value="closeout">Office review</option>
                   </select>
-                  <div className="sr-only">
-                    <button type="button" data-testid="route-lane-filter-all" onClick={() => setWorkView("all")}>All issues</button>
-                    <button type="button" data-testid="route-lane-filter-active" onClick={() => setWorkView("active")}>Dispatch</button>
-                    <button type="button" data-testid="route-lane-filter-closeout" onClick={() => setWorkView("closeout")}>Office review</button>
-                  </div>
                 </label>
               </div>
             </div>
