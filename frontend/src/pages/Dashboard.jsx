@@ -20,10 +20,16 @@ const statusClass = {
   Packet: "border-status-complete/30 bg-status-complete-bg text-status-complete",
 };
 
+const statusLabel = {
+  Hold: "Not Ready",
+  Review: "Needs Review",
+  Packet: "Packet Needed",
+};
+
 function StatusPill({ status }) {
   return (
     <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass[status] || statusClass.Review}`}>
-      {status}
+      {statusLabel[status] || status}
     </span>
   );
 }
@@ -56,7 +62,7 @@ function QueueRow({ exception }) {
       </td>
       <td className="px-4 py-4 align-top">
         <p className="text-sm font-semibold text-navy-950">{exception.owner}</p>
-        <p className="mt-1 text-xs text-slate-500">Owner</p>
+        <p className="mt-1 text-xs text-slate-500">Assigned to</p>
       </td>
       <td className="px-4 py-4 align-top">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700">
@@ -77,7 +83,7 @@ function NextActionPanel({ priority }) {
   return (
     <div className="premium-card-dark" data-testid="dashboard-priority-exception">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/52">Priority exception</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/52">First issue to work</p>
         <StatusPill status={priority.status} />
       </div>
       <h2 className="mt-5 font-display text-4xl font-bold leading-none text-white">{priority.ticketId}</h2>
@@ -85,30 +91,30 @@ function NextActionPanel({ priority }) {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-          <p className="text-[10px] font-semibold uppercase text-white/55">Owner</p>
+          <p className="text-[10px] font-semibold uppercase text-white/55">Assigned to</p>
           <p className="mt-1 text-sm font-semibold text-white">{priority.owner}</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-          <p className="text-[10px] font-semibold uppercase text-white/55">Age</p>
+          <p className="text-[10px] font-semibold uppercase text-white/55">Open for</p>
           <p className="mt-1 text-sm font-semibold text-white">{priority.ageLabel}</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-          <p className="text-[10px] font-semibold uppercase text-white/55">Billing</p>
+          <p className="text-[10px] font-semibold uppercase text-white/55">Billing review</p>
           <p className="mt-1 text-sm font-semibold text-white">{priority.billingSupport}</p>
         </div>
       </div>
 
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/10 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-white/55">Next action</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-white/55">What needs to happen next</p>
         <p className="mt-2 text-sm font-semibold leading-6 text-white">{priority.nextAction}</p>
       </div>
 
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         <Link to={`/exceptions/${priority.id}`} data-testid="dashboard-resolve-priority-exception">
-          <Button className="w-full bg-white text-navy-950 hover:bg-slate-100 sm:w-auto">Resolve Exception</Button>
+          <Button className="w-full bg-white text-navy-950 hover:bg-slate-100 sm:w-auto">Open Issue</Button>
         </Link>
         <Link to="/recovery" data-testid="dashboard-open-exception-queue">
-          <Button variant="outline" className="w-full border-white/25 text-white hover:bg-white hover:text-navy-950 sm:w-auto">Work Queue</Button>
+          <Button variant="outline" className="w-full border-white/25 text-white hover:bg-white hover:text-navy-950 sm:w-auto">Open Work List</Button>
         </Link>
       </div>
     </div>
@@ -120,21 +126,21 @@ function ValueMathPanel() {
     <div className="rounded-premium border border-slate-200 bg-white p-5 shadow-editorial" data-testid="dashboard-value-math">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">$150/month add-on math</p>
-          <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">The product has to pay for itself in office time.</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Example office-time estimate</p>
+          <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">See how repeated ticket follow-up can add up.</h2>
         </div>
-        <span className="rounded-full border border-slate-200 bg-offwhite px-3 py-1 text-xs font-semibold text-slate-600">Demo model</span>
+        <span className="rounded-full border border-slate-200 bg-offwhite px-3 py-1 text-xs font-semibold text-slate-600">Example assumptions</span>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-4">
-        <MetricCard label="Modeled exceptions" value={modeledMonthlyExceptions} note="Monthly weak tickets in a small operator example." />
-        <MetricCard label="Minutes saved" value={`${modeledMinutesSaved}m`} note="Per exception if owner, blocker, and follow-up are already clear." />
-        <MetricCard label="Modeled value" value={`$${modeledMonthlyValue}`} note={`At $${adminHourlyCost}/hour admin cost.`} />
-        <MetricCard label="Break-even" value={`${breakEvenExceptions}`} note="Exceptions/month needed to justify $150 at this model." tone="dark" />
+        <MetricCard label="Monthly issues" value={modeledMonthlyExceptions} note="Example number of route tickets needing office follow-up." />
+        <MetricCard label="Time per issue" value={`${modeledMinutesSaved}m`} note="Example time when the owner and next step are already clear." />
+        <MetricCard label="Office-time value" value={`$${modeledMonthlyValue}`} note={`Using an example office cost of $${adminHourlyCost}/hour.`} />
+        <MetricCard label="Break-even volume" value={`${breakEvenExceptions}`} note={`Issues per month needed to cover an example $${targetSubscriptionPrice} monthly price.`} tone="dark" />
       </div>
 
       <p className="mt-4 text-xs leading-5 text-slate-500">
-        This is illustrative math, not a promised customer result. The screen exists to prove why the product must manage repeated exceptions, not just create one proof packet.
+        Example only. Actual time and value should be measured using the operator’s own workload, labor cost, and live pilot results.
       </p>
     </div>
   );
@@ -153,17 +159,17 @@ export default function Dashboard() {
       <section className="container-page py-10 sm:py-14">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-navy-800">Pre-billing exception console</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-navy-800">Office Closeout</p>
             <h1 className="mobile-safe-text mt-2 max-w-3xl font-display text-3xl font-bold leading-tight text-navy-950 sm:text-5xl">
-              Which route tickets are blocking billing?
+              Which route tickets need attention before billing?
             </h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
-              ClearRun turns messy after-route review into a queue: blocker, owner, age, follow-up, release condition, and customer-proof status.
+              See what is missing, who owns the next step, how long it has been open, and what must happen before the record is ready.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link to="/route-intelligence/warner-robins-route-b" data-testid="dashboard-route-intelligence-link" className="shrink-0">
-              <Button>View Route Intelligence</Button>
+              <Button>Review Route Issues</Button>
             </Link>
             <Link to="/proof-snapshot" data-testid="dashboard-request-snapshot-link" className="shrink-0">
               <Button variant="secondary">Review One Route Ticket</Button>
@@ -172,10 +178,10 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetricCard label="Open exceptions" value={openExceptions.length} note="Tickets needing owner or release action." />
-          <MetricCard label="Held from billing" value={heldExceptions.length} note="Records that should wait for backup." />
-          <MetricCard label="Oldest blocker" value={oldestException?.ageLabel || "—"} note={oldestException?.ticketId || "No blocker"} />
-          <MetricCard label="Follow-ups ready" value={followUpsReady.length} note={`${totalEstimatedMinutes} modeled minutes of admin rework in this queue.`} tone="dark" />
+          <MetricCard label="Tickets needing attention" value={openExceptions.length} note="Records that still need an owner, proof, or a closeout decision." />
+          <MetricCard label="Held from billing" value={heldExceptions.length} note="Records that should wait for supporting information." />
+          <MetricCard label="Oldest open issue" value={oldestException?.ageLabel || "—"} note={oldestException?.ticketId || "No open issue"} />
+          <MetricCard label="Next steps ready" value={followUpsReady.length} note={`${totalEstimatedMinutes} example minutes of office follow-up represented in this work list.`} tone="dark" />
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[0.76fr_1.24fr]">
@@ -184,15 +190,15 @@ export default function Dashboard() {
           <div className="console-card" data-testid="dashboard-exception-activity">
             <div className="console-card-header">
               <div>
-                <p className="text-xs font-semibold uppercase text-slate-500">Exception queue</p>
-                <h2 className="mt-1 font-display font-semibold text-navy-950">Tickets that need action before release</h2>
+                <p className="text-xs font-semibold uppercase text-slate-500">Tickets needing attention</p>
+                <h2 className="mt-1 font-display font-semibold text-navy-950">What still needs follow-up before billing</h2>
               </div>
               <div className="flex items-center gap-3">
                 <Link to="/route-intelligence/warner-robins-route-b" className="text-sm font-semibold text-navy-800 hover:underline">
-                  Route view
+                  Review route issues
                 </Link>
                 <Link to="/recovery" data-testid="dashboard-proof-table-link" className="text-sm font-semibold text-navy-800 hover:underline">
-                  Work queue
+                  Open work list
                 </Link>
               </div>
             </div>
@@ -201,11 +207,11 @@ export default function Dashboard() {
                 <thead>
                   <tr className="border-b border-slate-100 text-left text-xs text-slate-400">
                     <th className="px-5 py-3 font-medium">Ticket</th>
-                    <th className="px-4 py-3 font-medium">Blocker</th>
-                    <th className="px-4 py-3 font-medium">Owner</th>
-                    <th className="px-4 py-3 font-medium">Age</th>
+                    <th className="px-4 py-3 font-medium">What is wrong</th>
+                    <th className="px-4 py-3 font-medium">Assigned to</th>
+                    <th className="px-4 py-3 font-medium">Open for</th>
                     <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Release condition</th>
+                    <th className="px-4 py-3 font-medium">Ready-to-close requirement</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -222,9 +228,9 @@ export default function Dashboard() {
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           {[
-            [ShieldCheck, "Standard review rules", "Every weak ticket is reviewed against the same release logic before the office trusts it."],
-            [TimerReset, "Aging exceptions", "The queue exposes what has been stuck for hours or days instead of hiding in texts or memory."],
-            [Send, "Action-ready follow-up", "Each exception has a concrete owner and next message so dispatch, billing, or service can move."],
+            [ShieldCheck, "Same review steps", "Each weak ticket is checked against the same ready-to-close requirements before the office trusts it."],
+            [TimerReset, "Old issues stay visible", "The work list shows what has been open for hours or days instead of leaving it in texts or memory."],
+            [Send, "Clear next steps", "Each issue has an assigned person and a specific follow-up so dispatch, billing, or customer service can move."],
           ].map(([Icon, title, copy]) => (
             <div key={title} className="surface-card p-5">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-navy-900/5 text-navy-900">
@@ -237,9 +243,11 @@ export default function Dashboard() {
         </div>
 
         <p className="mt-6 max-w-4xl text-xs leading-5 text-slate-500">
-          {brand.disclaimer} Dashboard data is illustrative and does not represent real customer records, integrations, storage, payments, or automated document generation.
+          {brand.disclaimer} Example records are shown. Actions in this preview do not contact customers, change billing, or update a live route.
         </p>
       </section>
     </Layout>
   );
 }
+
+export default Dashboard;
