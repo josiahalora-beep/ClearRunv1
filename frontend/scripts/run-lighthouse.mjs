@@ -12,6 +12,7 @@ const routes = [
   { name: "proof-snapshot", path: "/proof-snapshot" },
   { name: "dashboard", path: "/dashboard" },
   { name: "route-review", path: "/route-review/warner-robins-route-b" },
+  { name: "report-route-issue", path: "/report-issue/warner-robins-route-b" },
   { name: "route-issue-detail", path: "/issues/EX-2101" },
   { name: "proof-list", path: "/proof" },
   { name: "proof-detail", path: "/proof/PP-10234" },
