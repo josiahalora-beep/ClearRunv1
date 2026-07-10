@@ -347,8 +347,37 @@ export const checklistItems = [
 ];
 
 export const comparisonRows = [
-  { capability: "Central proof packet per service", oldWay: "Scattered PDFs/photos", clearRun: "One organized packet" },
-  { capability: "Disposal backup visibility", oldWay: "Buried receipt folders", clearRun: "Attached where available" },
-  { capability: "Missing record follow-up", oldWay: "Manual calls/texts", clearRun: "Tracked request queue" },
-  { capability: "Review-friendly export", oldWay: "Manual bundle", clearRun: "Structured packet" },
+  { capability: "Central proof packet per service", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Missing-record detection", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Branded customer-ready proof link", spreadsheets: false, paper: false, clearrun: true },
+  { capability: "Billing-ready export", spreadsheets: "partial", paper: false, clearrun: true },
+  { capability: "Works with your existing tools", spreadsheets: true, paper: true, clearrun: true },
+  { capability: "Audit trail of record changes", spreadsheets: false, paper: false, clearrun: true },
+];
+
+export const importSources = ["CSV", "Excel spreadsheet", "PDF service tickets", "Scanned paper tickets", "ServiceCore export", "PumpDocket export", "Tank Track export"];
+
+export const exportFormats = ["Billing-ready CSV (QuickBooks-compatible)", "Branded PDF proof packet", "Bulk ZIP of proof packets", "County/municipal summary export"];
+
+export const cityExportRecords = [
+  { id: "CE-01", business: "Macon Route A — Ready", lastPumpOut: "2026-01-28", status: "complete" },
+  { id: "CE-02", business: "Warner Robins Route B — Needs Review", lastPumpOut: "2026-01-27", status: "review" },
+  { id: "CE-03", business: "Perry Route C — Missing Proof", lastPumpOut: "2026-01-22", status: "incomplete" },
+  { id: "CE-04", business: "Highway 96 Wings", lastPumpOut: "2026-01-22", status: "incomplete" },
+  { id: "CE-05", business: "Central Georgia BBQ", lastPumpOut: "2026-01-20", status: "complete" },
+];
+
+export const partners = [
+  { type: "Hauling Companies", desc: "Give your customers branded proof packets automatically after every service." },
+  { type: "Pumping & Septic Providers", desc: "Extend record-keeping beyond FOG into septic and liquid waste services." },
+  { type: "Accountants & Billing Partners", desc: "Receive billing-ready exports mapped to your accounting workflow." },
+  { type: "Referral Partners", desc: "Refer regulated service businesses and share in program benefits." },
+];
+
+export const resources = [
+  { title: "The Missing-Record Problem in FOG Operations", type: "Guide", readTime: "6 min read" },
+  { title: "What Reviewers Commonly Ask For", type: "Guide", readTime: "5 min read" },
+  { title: "Grease Trap Service Checklist (Printable)", type: "Checklist", readTime: "2 min read" },
+  { title: "Spreadsheets vs. Proof Packets", type: "Comparison", readTime: "4 min read" },
+  { title: "Preparing for a Records Request", type: "Guide", readTime: "7 min read" },
 ];
