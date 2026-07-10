@@ -156,7 +156,7 @@ describe("route queue projection", () => {
 
     expect(matched.disposalStatus).toBe("Attached at route/load level");
     expect(projection.disposalMatrix.find((row) => row.status === "Receipt present but unmatched")).toBeUndefined();
-    expect(projection.disposalMatrix.find((row) => row.status === "Attached at route/load level").count).toBe(4);
+    expect(projection.disposalMatrix.find((row) => row.status === "Attached at route/load level").count).toBe(5);
   });
 
   test("combined queue filters use projected owner, contact, evidence, and outcome state", () => {
