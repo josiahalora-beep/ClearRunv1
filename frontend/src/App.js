@@ -11,6 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
 import Recovery from "@/pages/Recovery";
+import ExceptionDetail from "@/pages/ExceptionDetail";
 import Import from "@/pages/Import";
 import Export from "@/pages/Export";
 import Pilot from "@/pages/Pilot";
@@ -51,6 +52,7 @@ function App() {
         <Route path="/proof" element={<Proof />} />
         <Route path="/proof/:id" element={<ProofDetail />} />
         <Route path="/recovery" element={<Recovery />} />
+        <Route path="/exceptions/:id" element={<ExceptionDetail />} />
         <Route path="/import" element={<Import />} />
         <Route path="/export" element={<Export />} />
         <Route path="/pilot" element={<Pilot />} />
