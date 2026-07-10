@@ -7,7 +7,7 @@ import ProofSnapshot from "@/pages/ProofSnapshot";
 import CloseoutCheck from "@/pages/CloseoutCheck";
 import Checklist from "@/pages/Checklist";
 import Comparison from "@/pages/Comparison";
-import Dashboard from "@/pages/Dashboard";
+import DashboardOperator from "@/pages/DashboardOperator";
 import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
 import Recovery from "@/pages/Recovery";
@@ -49,7 +49,7 @@ function App() {
         <Route path="/closeout-check" element={<CloseoutCheck />} />
         <Route path="/checklist" element={<Checklist />} />
         <Route path="/comparison" element={<Comparison />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<DashboardOperator />} />
         <Route path="/proof" element={<Proof />} />
         <Route path="/proof/:id" element={<ProofDetail />} />
         <Route path="/recovery" element={<Recovery />} />
