@@ -30,11 +30,12 @@ test("issue-specific follow-up template can be prepared without sending a messag
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/issues/EX-2104", { waitUntil: "networkidle" });
 
+  const followUpText = page.getByLabel("Route issue follow-up");
   await expect(page.getByTestId("route-followup-template")).toHaveValue("receipt-office");
-  await expect(page.getByLabel("Route issue follow-up")).toContainText("route/load receipt");
+  await expect(followUpText).toHaveValue(/route\/load receipt/);
 
   await page.getByTestId("route-followup-template").selectOption("receipt-driver");
-  await expect(page.getByLabel("Route issue follow-up")).toContainText("which disposal receipt supports");
+  await expect(followUpText).toHaveValue(/which disposal receipt supports/);
   await page.getByTestId("route-exception-followup-button").click();
 
   await expect(page.getByTestId("route-exception-followup-button")).toHaveText("Follow-Up Prepared");
