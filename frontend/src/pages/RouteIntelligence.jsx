@@ -33,6 +33,25 @@ const priorityClass = {
   Resolved: "border-status-complete/30 bg-status-complete-bg text-status-complete",
 };
 
+const priorityLabel = {
+  "Resolve Now": "Resolve Now",
+  "Same-Day Follow-Up": "Same-Day Follow-Up",
+  "Closeout Blocked": "Not Ready to Close",
+  "Invoice Support Needed": "Invoice Support Needed",
+  "Customer Response Needed": "Customer Response Needed",
+  "Proof Recovery": "Missing Service Proof",
+  "Internal Review": "Office Review",
+  Resolved: "Resolved",
+};
+
+const issueTypeLabel = {
+  Access: "Access Issue",
+  Service: "Service Issue",
+  Proof: "Service Proof",
+  Disposal: "Disposal Receipt",
+  Commercial: "Customer Follow-Up",
+};
+
 const routeStatusClass = {
   "At Risk": "border-status-incomplete/30 bg-status-incomplete-bg text-status-incomplete",
   "Needs Attention": "border-status-attention/30 bg-status-attention-bg text-status-attention",
@@ -42,7 +61,7 @@ const routeStatusClass = {
 function PriorityPill({ priority }) {
   return (
     <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${priorityClass[priority] || priorityClass["Internal Review"]}`}>
-      {priority}
+      {priorityLabel[priority] || priority}
     </span>
   );
 }
@@ -57,10 +76,10 @@ function RouteHeader({ summary }) {
               {summary.currentRouteStatus}
             </span>
             <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
-              Observed demo route data
+              Example route
             </span>
           </div>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Route exception intelligence</p>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">Route Review</p>
           <h1 className="mobile-safe-text mt-3 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
             {summary.name}
           </h1>
@@ -71,12 +90,12 @@ function RouteHeader({ summary }) {
 
         <div className="grid grid-cols-2 gap-px bg-slate-200 sm:grid-cols-3 lg:grid-cols-2">
           {[
-            ["Scheduled", summary.scheduledStops],
-            ["Clean stops", summary.completedWithoutException],
-            ["Active exceptions", summary.activeExceptions.length],
-            ["Closeout exceptions", summary.closeoutExceptions.length],
-            ["Recorded delay", `${summary.recordedDelayMinutes}m`],
-            ["Not ready", summary.recordsNotReady],
+            ["Scheduled stops", summary.scheduledStops],
+            ["Completed without issue", summary.completedWithoutException],
+            ["Needs attention now", summary.activeExceptions.length],
+            ["Needs office follow-up", summary.closeoutExceptions.length],
+            ["Delay recorded", `${summary.recordedDelayMinutes}m`],
+            ["Not ready to close", summary.recordsNotReady],
           ].map(([label, value]) => (
             <div key={label} className="bg-white p-4 sm:p-5">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
@@ -92,24 +111,24 @@ function RouteHeader({ summary }) {
 function ConsequenceStrip({ summary }) {
   const items = [
     {
-      label: "Truck currently delayed",
+      label: "Truck delayed right now",
       value: summary.activeExceptions.some((item) => item.priority === "Resolve Now") ? "Yes" : "No",
-      note: "Based on current demo exceptions.",
+      note: "Based on the open route issues shown below.",
     },
     {
-      label: "Stops requiring follow-up",
+      label: "Stops needing follow-up",
       value: summary.stopsRequiringFollowUp,
-      note: "Active exceptions awaiting action.",
+      note: "Customer, dispatch, or service action is still needed.",
     },
     {
-      label: "Records blocked from closeout",
+      label: "Records not ready to close",
       value: summary.recordsNotReady,
-      note: "Not in Ready to Close state.",
+      note: "These records still need proof or office review.",
     },
     {
-      label: "Potentially unbillable",
+      label: "Stops needing billing review",
       value: summary.potentiallyUnbillableStops,
-      note: "Operational flag, not a billing judgment.",
+      note: "The office should review these before billing.",
     },
   ];
 
@@ -138,19 +157,19 @@ function PrimaryAction({ exception }) {
           <div className="flex flex-wrap items-center gap-2">
             <PriorityPill priority={exception.priority} />
             <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-white/65">
-              Primary office action
+              What needs to happen next
             </span>
           </div>
           <h2 className="mt-4 font-display text-3xl font-semibold leading-tight text-white">
             {exception.nextAction}
           </h2>
           <p className="mt-3 text-sm leading-6 text-white/65">
-            Highest-priority unresolved exception: {exception.ticketId} · {exception.customer} · {exception.blocker}
+            First issue to work: {exception.ticketId} · {exception.customer} · {exception.blocker}
           </p>
         </div>
         <Link to={`/exceptions/${exception.id}`} className="shrink-0" data-testid="route-primary-action-link">
           <Button className="w-full bg-white text-navy-950 hover:bg-slate-100 lg:w-auto">
-            Work This Exception <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            Open Issue <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </Link>
       </div>
@@ -166,7 +185,7 @@ function ExceptionRow({ exception }) {
           <div className="flex flex-wrap items-center gap-2">
             <PriorityPill priority={exception.priority} />
             <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">
-              {exception.exceptionType}
+              {issueTypeLabel[exception.exceptionType] || exception.exceptionType}
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">
               <Clock3 className="h-3.5 w-3.5" aria-hidden="true" /> {exception.ageLabel}
@@ -182,15 +201,15 @@ function ExceptionRow({ exception }) {
 
         <div className="grid min-w-0 gap-3 sm:grid-cols-3 xl:w-[32rem]">
           <div className="rounded-xl border border-slate-200 bg-offwhite p-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Evidence</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Proof on file</p>
             <p className="mt-1 text-xs font-semibold leading-5 text-navy-950">{exception.evidenceSummary}</p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-offwhite p-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Owner</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Assigned to</p>
             <p className="mt-1 text-xs font-semibold leading-5 text-navy-950">{exception.owner}</p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-offwhite p-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Customer notice</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Customer contacted</p>
             <p className="mt-1 text-xs font-semibold leading-5 text-navy-950">{exception.customerNotification}</p>
           </div>
         </div>
@@ -198,16 +217,16 @@ function ExceptionRow({ exception }) {
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-center">
         <div className="rounded-xl border border-slate-200 bg-white p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Closeout consequence</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Service record status</p>
           <p className="mt-1 text-sm font-semibold text-navy-950">{exception.closeoutConsequence}</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Next action</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Next step</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-navy-950">{exception.nextAction}</p>
         </div>
         <Link to={`/exceptions/${exception.id}`}>
           <Button variant="secondary" size="sm" className="w-full lg:w-auto">
-            Resolve <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            Open Issue <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </Button>
         </Link>
       </div>
@@ -249,9 +268,9 @@ function PatternPanel({ pattern }) {
           <Repeat2 className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Recurring exception pattern</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Repeat issue</p>
           <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">
-            {pattern ? pattern.label : "No recurring pattern meets the threshold"}
+            {pattern ? pattern.label : "No repeat issue found yet"}
           </h2>
         </div>
       </div>
@@ -261,19 +280,19 @@ function PatternPanel({ pattern }) {
           <p className="mt-5 font-display text-4xl font-semibold text-navy-950">
             {pattern.occurrences} of {pattern.denominator}
           </p>
-          <p className="mt-1 text-sm font-semibold text-slate-600">{pattern.percentage}% of the relevant sample · {pattern.sampleWindow}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-600">{pattern.percentage}% of recent records · {pattern.sampleWindow}</p>
           <p className="mt-4 text-sm leading-6 text-slate-600">
-            Affected: {pattern.affectedEntities.join(", ")}.
+            Seen at: {pattern.affectedEntities.join(", ")}.
           </p>
           <div className="mt-4 rounded-2xl border border-slate-200 bg-offwhite p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Recommended office intervention</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Recommended office step</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">{pattern.recommendedIntervention}</p>
           </div>
         </>
       ) : null}
 
       <p className="mt-4 text-xs leading-5 text-slate-500">
-        A recurring signal requires at least 3 observations and at least 20% of the relevant sample. This is not a compliance, employee-performance, or risk score.
+        ClearRun shows a repeat issue after it appears at least 3 times and in at least 20% of the reviewed records. This is not an employee score.
       </p>
     </section>
   );
@@ -287,8 +306,8 @@ function DisposalMatrix({ rows, selectedStatus, onSelect }) {
           <ReceiptText className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Disposal backup matrix</p>
-          <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Documentation status across the route</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Disposal receipt status</p>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">What is attached, missing, or needs review</h2>
         </div>
       </div>
 
@@ -312,7 +331,7 @@ function DisposalMatrix({ rows, selectedStatus, onSelect }) {
         })}
       </div>
       <p className="mt-4 text-xs leading-5 text-slate-500">
-        Selecting a row filters route exceptions with that documentation status. ClearRun does not verify disposal and does not expose facility pricing or margins.
+        Select a receipt status to show the related route issues. ClearRun records whether backup is attached, missing, or needs office review.
       </p>
     </section>
   );
@@ -329,8 +348,8 @@ function CloseoutSummary({ counts }) {
 
   return (
     <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="route-closeout-summary">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Route closeout summary</p>
-      <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">What can and cannot close</h2>
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Route closeout</p>
+      <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">What is ready and what still needs work</h2>
       <div className="mt-5 grid gap-2">
         {Object.entries(counts).map(([state, count]) => {
           const Icon = iconByState[state] || AlertTriangle;
@@ -376,14 +395,14 @@ export default function RouteIntelligence() {
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold text-navy-800 hover:underline">
-              <Route className="h-4 w-4" aria-hidden="true" /> Back to exception console
+              <Route className="h-4 w-4" aria-hidden="true" /> Back to office dashboard
             </Link>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
-              See what is going wrong on a route, what operational consequences are recorded, and which office action should happen first.
+              See which stops need attention, what is holding up closeout, and what the office should work first.
             </p>
           </div>
           <label className="min-w-0 sm:w-72">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Demo route</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Route</span>
             <select
               value={summary.id}
               onChange={handleRouteChange}
@@ -401,13 +420,13 @@ export default function RouteIntelligence() {
 
         <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-card sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-navy-950">
-            <Filter className="h-4 w-4" aria-hidden="true" /> Queue view
+            <Filter className="h-4 w-4" aria-hidden="true" /> Show
           </div>
           <div className="grid grid-cols-3 gap-2">
             {[
-              ["all", "Both lanes"],
-              ["active", "Active route"],
-              ["closeout", "Closeout"],
+              ["all", "All issues"],
+              ["active", "Needs attention now"],
+              ["closeout", "Office follow-up"],
             ].map(([value, label]) => (
               <button
                 key={value}
@@ -424,9 +443,9 @@ export default function RouteIntelligence() {
 
         {disposalFilter ? (
           <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-status-review/20 bg-status-review-bg px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-            <span className="font-semibold text-status-review">Filtering exceptions: {disposalFilter}</span>
+            <span className="font-semibold text-status-review">Showing issues with: {disposalFilter}</span>
             <button type="button" onClick={() => setDisposalFilter("")} className="text-left text-xs font-semibold text-status-review underline sm:text-right">
-              Clear filter
+              Show all
             </button>
           </div>
         ) : null}
@@ -434,22 +453,22 @@ export default function RouteIntelligence() {
         <div className="mt-6 grid gap-6">
           {laneView !== "closeout" ? (
             <LaneSection
-              title="Active Route Exceptions"
-              description="Disruptions that may need immediate dispatch, customer, or service action while the route is operating."
+              title="Needs Attention Now"
+              description="Stops that may need dispatch, customer, or service action while today’s route is still moving."
               icon={MapPinned}
               exceptions={visibleActive}
               testId="route-active-lane"
-              emptyMessage="No active-route exceptions match the selected disposal filter."
+              emptyMessage="No current route issues match the selected receipt status."
             />
           ) : null}
           {laneView !== "active" ? (
             <LaneSection
-              title="Closeout Exceptions"
-              description="Evidence and review problems that prevent service records, invoices, or customer proof from being cleanly closed."
+              title="Needs Office Follow-Up"
+              description="Completed or attempted stops that still need proof, customer follow-up, billing review, or a closeout decision."
               icon={FileWarning}
               exceptions={visibleCloseout}
               testId="route-closeout-lane"
-              emptyMessage="No closeout exceptions match the selected disposal filter."
+              emptyMessage="No office follow-up issues match the selected receipt status."
             />
           ) : null}
         </div>
@@ -460,15 +479,8 @@ export default function RouteIntelligence() {
           <CloseoutSummary counts={summary.closeoutCounts} />
         </div>
 
-        <section className="mt-6 rounded-premium border border-slate-200 bg-white p-5 shadow-card">
-          <h2 className="font-display text-xl font-semibold text-navy-950">What this page does not do</h2>
-          <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-600">
-            ClearRun does not optimize routes, automatically reroute trucks, verify disposal, make final billing judgments, or score technicians. It organizes observed exceptions, evidence, ownership, closeout consequences, and next actions beside the operator’s existing dispatch and routing tools.
-          </p>
-        </section>
-
         <p className="mt-6 max-w-4xl text-xs leading-5 text-slate-500">
-          {brand.disclaimer} All route, delay, stop, customer, truck, technician, and pattern data on this page are fictional demonstration records. “Potentially unbillable” is an operational review flag, not a legal or final billing determination.
+          {brand.disclaimer} Example route data is shown. ClearRun organizes route issues and service records; the operator makes final dispatch, billing, customer, and disposal decisions.
         </p>
       </main>
     </Layout>
