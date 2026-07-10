@@ -11,8 +11,8 @@ const routes = [
   { name: "closeout-check", path: "/closeout-check" },
   { name: "proof-snapshot", path: "/proof-snapshot" },
   { name: "dashboard", path: "/dashboard" },
-  { name: "route-intelligence", path: "/route-intelligence/warner-robins-route-b" },
-  { name: "route-exception-detail", path: "/exceptions/EX-2101" },
+  { name: "route-review", path: "/route-review/warner-robins-route-b" },
+  { name: "route-issue-detail", path: "/issues/EX-2101" },
   { name: "proof-list", path: "/proof" },
   { name: "proof-detail", path: "/proof/PP-10234" },
 ];
