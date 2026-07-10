@@ -15,7 +15,18 @@ const routes = [
   {
     name: "recovery",
     path: "/recovery",
-    requiredTestIds: ["recovery-item-EX-1048", "recovery-request-btn-EX-1048"],
+    requiredTestIds: ["recovery-item-EX-1048", "recovery-resolve-btn-EX-1048"],
+  },
+  {
+    name: "exception-detail",
+    path: "/exceptions/EX-1048",
+    requiredTestIds: [
+      "exception-detail-workflow",
+      "exception-owner-select",
+      "exception-followup-panel",
+      "exception-release-button",
+      "exception-activity-timeline",
+    ],
   },
   { name: "proof-list", path: "/proof" },
   { name: "proof-detail", path: "/proof/PP-10234" },
@@ -84,3 +95,22 @@ for (const route of routes) {
     ).toEqual([]);
   });
 }
+
+test("exception release remains gated until required proof is confirmed", async ({ page }) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto("/exceptions/EX-1048", { waitUntil: "networkidle" });
+
+  const releaseButton = page.getByTestId("exception-release-button");
+  await expect(releaseButton).toBeDisabled();
+
+  const proofChecks = page.locator('input[type="checkbox"]');
+  await expect(proofChecks).toHaveCount(2);
+  await proofChecks.nth(0).check();
+  await expect(releaseButton).toBeDisabled();
+  await proofChecks.nth(1).check();
+
+  await expect(releaseButton).toBeEnabled();
+  await releaseButton.click();
+  await expect(releaseButton).toHaveText("Released");
+  await expect(page.getByTestId("exception-activity-timeline")).toContainText("Ticket released");
+});
