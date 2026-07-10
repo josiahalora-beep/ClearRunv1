@@ -4,13 +4,11 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock3,
-  FilePlus2,
-  FileText,
+  FileCheck2,
   History,
   MessageSquareText,
   PhoneCall,
   RefreshCcw,
-  Route,
   ShieldAlert,
   UserRoundCheck,
 } from "lucide-react";
@@ -48,10 +46,15 @@ const statusClass = {
 };
 
 function StatusPill({ status }) {
+  return <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass[status] || statusClass.Review}`}>{status}</span>;
+}
+
+function DetailCell({ label, value }) {
   return (
-    <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass[status] || statusClass.Review}`}>
-      {status}
-    </span>
+    <div className="rounded-2xl border border-slate-200 bg-offwhite p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">{value || "Not recorded"}</p>
+    </div>
   );
 }
 
@@ -63,15 +66,6 @@ function ReadinessRow({ complete, label, detail }) {
         <p className="text-sm font-semibold text-white/85">{label}</p>
         <p className="mt-1 text-xs leading-5 text-white/50">{detail}</p>
       </div>
-    </div>
-  );
-}
-
-function DetailCell({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-offwhite p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">{value || "Not recorded"}</p>
     </div>
   );
 }
@@ -110,19 +104,8 @@ export default function RouteIssueWorkflow({ issue }) {
     saveIssueWorkflow(issue.id, workflow);
   }, [issue.id, workflow]);
 
-  const updateOwner = (event) => {
-    const owner = event.target.value;
-    setWorkflow((current) => addActivity({ ...current, owner }, {
-      label: `Assigned to ${owner}`,
-      note: "Assignment updated in this browser sample.",
-    }));
-  };
-
-  const updateContact = (field, label, value) => {
-    setWorkflow((current) => addActivity({ ...current, [field]: value }, {
-      label: `${label}: ${value}`,
-      note: value === "Reached" ? "A response note is required before completion." : "Contact progress updated.",
-    }));
+  const addHistory = (changes, label, note) => {
+    setWorkflow((current) => addActivity({ ...current, ...changes }, { label, note }));
   };
 
   const updateRequirementSource = (requirementId, source) => {
@@ -137,14 +120,6 @@ export default function RouteIssueWorkflow({ issue }) {
     setWorkflow((current) => confirmEvidenceRequirement(current, requirement.id, source, !requirement.confirmed));
   };
 
-  const handleAddEvidence = () => {
-    setWorkflow((current) => addEvidenceRecord(current, {
-      label: current.newEvidenceLabel,
-      source: current.newEvidenceSource,
-      note: current.newEvidenceNote,
-    }));
-  };
-
   const changeTemplate = (templateId) => {
     const template = templates.find((item) => item.id === templateId);
     setWorkflow((current) => ({
@@ -155,30 +130,8 @@ export default function RouteIssueWorkflow({ issue }) {
     }));
   };
 
-  const prepareFollowUp = () => {
-    if (!workflow.followUpText.trim()) return;
-    setWorkflow((current) => addActivity({ ...current, followUpPrepared: true }, {
-      label: "Follow-up prepared",
-      note: current.followUpText,
-    }));
-  };
-
-  const handleRecordResponse = () => {
-    setWorkflow((current) => recordResponse(current, current.responseNote));
-  };
-
-  const handleResolve = () => {
-    setWorkflow((current) => resolveWorkflow(current));
-  };
-
-  const handleReopen = () => {
-    setWorkflow((current) => reopenWorkflow(current, current.reopenReason));
-  };
-
-  const handleReset = () => {
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(`clearrun-route-issue-${issue.id}`);
-    }
+  const resetWorkflow = () => {
+    window.localStorage.removeItem(`clearrun-route-issue-${issue.id}`);
     setWorkflow(createInitialWorkflow(issue));
   };
 
@@ -250,9 +203,7 @@ export default function RouteIssueWorkflow({ issue }) {
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="route-contact-progress">
               <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-900/5 text-navy-900">
-                  <PhoneCall className="h-5 w-5" aria-hidden="true" />
-                </span>
+                <PhoneCall className="mt-1 h-5 w-5 shrink-0 text-navy-800" aria-hidden="true" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Contact progress</p>
                   <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Who has been contacted?</h2>
@@ -262,19 +213,19 @@ export default function RouteIssueWorkflow({ issue }) {
               <div className="mt-5 grid gap-4 lg:grid-cols-3">
                 <label>
                   <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assigned to</span>
-                  <select value={workflow.owner} onChange={updateOwner} data-testid="route-exception-owner" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100">
+                  <select value={workflow.owner} onChange={(event) => addHistory({ owner: event.target.value }, `Assigned to ${event.target.value}`, "Assignment updated in this browser sample.")} data-testid="route-exception-owner" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
                     {ownerOptions.map((owner) => <option key={owner} value={owner}>{owner}</option>)}
                   </select>
                 </label>
                 <label>
                   <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dispatch</span>
-                  <select value={workflow.dispatchStatus} onChange={(event) => updateContact("dispatchStatus", "Dispatch contact", event.target.value)} data-testid="route-dispatch-status" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100">
+                  <select value={workflow.dispatchStatus} onChange={(event) => addHistory({ dispatchStatus: event.target.value }, `Dispatch contact: ${event.target.value}`, event.target.value === "Reached" ? "A response note is required before completion." : "Contact progress updated.")} data-testid="route-dispatch-status" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
                     {contactStatusOptions.map((status) => <option key={status} value={status}>{status}</option>)}
                   </select>
                 </label>
                 <label>
                   <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Customer</span>
-                  <select value={workflow.customerStatus} onChange={(event) => updateContact("customerStatus", "Customer contact", event.target.value)} data-testid="route-customer-status" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100">
+                  <select value={workflow.customerStatus} onChange={(event) => addHistory({ customerStatus: event.target.value }, `Customer contact: ${event.target.value}`, event.target.value === "Reached" ? "A response note is required before completion." : "Contact progress updated.")} data-testid="route-customer-status" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
                     {contactStatusOptions.map((status) => <option key={status} value={status}>{status}</option>)}
                   </select>
                 </label>
@@ -283,9 +234,7 @@ export default function RouteIssueWorkflow({ issue }) {
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-editorial" data-testid="route-evidence-work">
               <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-900/5 text-navy-900">
-                  <FileText className="h-5 w-5" aria-hidden="true" />
-                </span>
+                <FileCheck2 className="mt-1 h-5 w-5 shrink-0 text-navy-800" aria-hidden="true" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Ticket backup</p>
                   <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Confirm what supports the closeout</h2>
@@ -310,18 +259,15 @@ export default function RouteIssueWorkflow({ issue }) {
               </div>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="flex items-center gap-2">
-                  <FilePlus2 className="h-4 w-4 text-navy-800" aria-hidden="true" />
-                  <h3 className="font-display text-lg font-semibold text-navy-950">Add supporting evidence</h3>
-                </div>
+                <h3 className="font-display text-lg font-semibold text-navy-950">Add supporting evidence</h3>
                 <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_12rem]">
-                  <input value={workflow.newEvidenceLabel} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceLabel: event.target.value }))} data-testid="route-new-evidence-label" placeholder="Example: gate photo, signed ticket, receipt image" className="rounded-xl border border-slate-200 bg-offwhite px-3 py-3 text-sm text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100" />
+                  <input value={workflow.newEvidenceLabel} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceLabel: event.target.value }))} data-testid="route-new-evidence-label" placeholder="Example: gate photo, signed ticket, receipt image" className="rounded-xl border border-slate-200 bg-offwhite px-3 py-3 text-sm text-navy-950" />
                   <select value={workflow.newEvidenceSource} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceSource: event.target.value }))} data-testid="route-new-evidence-source" className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-navy-950">
                     {evidenceSourceOptions.map((source) => <option key={source} value={source}>{source}</option>)}
                   </select>
                 </div>
-                <textarea value={workflow.newEvidenceNote} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceNote: event.target.value }))} rows={2} placeholder="Optional evidence note" className="mt-3 w-full rounded-xl border border-slate-200 bg-offwhite px-3 py-3 text-sm text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100" />
-                <Button type="button" variant="secondary" onClick={handleAddEvidence} disabled={!workflow.newEvidenceLabel.trim()} data-testid="route-add-evidence" className="mt-3">Add Evidence</Button>
+                <textarea value={workflow.newEvidenceNote} onChange={(event) => setWorkflow((current) => ({ ...current, newEvidenceNote: event.target.value }))} rows={2} placeholder="Optional evidence note" className="mt-3 w-full rounded-xl border border-slate-200 bg-offwhite px-3 py-3 text-sm text-navy-950" />
+                <Button type="button" variant="secondary" onClick={() => setWorkflow((current) => addEvidenceRecord(current, { label: current.newEvidenceLabel, source: current.newEvidenceSource, note: current.newEvidenceNote }))} disabled={!workflow.newEvidenceLabel.trim()} data-testid="route-add-evidence" className="mt-3">Add Evidence</Button>
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -338,9 +284,7 @@ export default function RouteIssueWorkflow({ issue }) {
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-editorial" data-testid="route-exception-followup">
               <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-900/5 text-navy-900">
-                  <MessageSquareText className="h-5 w-5" aria-hidden="true" />
-                </span>
+                <MessageSquareText className="mt-1 h-5 w-5 shrink-0 text-navy-800" aria-hidden="true" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Follow-up</p>
                   <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Prepare the next message or office note</h2>
@@ -352,33 +296,31 @@ export default function RouteIssueWorkflow({ issue }) {
                   {templates.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}
                 </select>
               </label>
-              <textarea value={workflow.followUpText} onChange={(event) => setWorkflow((current) => ({ ...current, followUpText: event.target.value, followUpPrepared: false }))} rows={5} aria-label="Route issue follow-up" className="mt-3 w-full rounded-2xl border border-slate-200 bg-offwhite p-4 text-sm leading-6 text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100" />
+              <textarea value={workflow.followUpText} onChange={(event) => setWorkflow((current) => ({ ...current, followUpText: event.target.value, followUpPrepared: false }))} rows={5} aria-label="Route issue follow-up" className="mt-3 w-full rounded-2xl border border-slate-200 bg-offwhite p-4 text-sm leading-6 text-navy-950" />
               <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs leading-5 text-slate-500">Preparing this text records an office action only. It does not send a real message.</p>
-                <Button type="button" onClick={prepareFollowUp} disabled={!workflow.followUpText.trim()} data-testid="route-exception-followup-button">{workflow.followUpPrepared ? "Follow-Up Prepared" : "Prepare Follow-Up"}</Button>
+                <Button type="button" onClick={() => addHistory({ followUpPrepared: true }, "Follow-up prepared", workflow.followUpText)} disabled={!workflow.followUpText.trim()} data-testid="route-exception-followup-button">{workflow.followUpPrepared ? "Follow-Up Prepared" : "Prepare Follow-Up"}</Button>
               </div>
             </section>
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="route-response-work">
               <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-900/5 text-navy-900"><UserRoundCheck className="h-5 w-5" aria-hidden="true" /></span>
+                <UserRoundCheck className="mt-1 h-5 w-5 shrink-0 text-navy-800" aria-hidden="true" />
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Response</p>
                   <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Record what dispatch or the customer said</h2>
                   <p className="mt-2 text-sm leading-6 text-slate-600">A response note is required when either contact status is Reached.</p>
                 </div>
               </div>
-              <textarea value={workflow.responseNote} onChange={(event) => setWorkflow((current) => ({ ...current, responseNote: event.target.value, responseRecorded: false }))} rows={4} data-testid="route-response-note" placeholder="Record access instructions, reschedule details, receipt clarification, or the customer response." className="mt-5 w-full rounded-2xl border border-slate-200 bg-offwhite p-4 text-sm leading-6 text-navy-950 outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100" />
-              <Button type="button" variant="secondary" onClick={handleRecordResponse} disabled={!workflow.responseNote.trim()} data-testid="route-record-response" className="mt-3">{workflow.responseRecorded ? "Response Recorded" : "Record Response"}</Button>
+              <textarea value={workflow.responseNote} onChange={(event) => setWorkflow((current) => ({ ...current, responseNote: event.target.value, responseRecorded: false }))} rows={4} data-testid="route-response-note" placeholder="Record access instructions, reschedule details, receipt clarification, or the customer response." className="mt-5 w-full rounded-2xl border border-slate-200 bg-offwhite p-4 text-sm leading-6 text-navy-950" />
+              <Button type="button" variant="secondary" onClick={() => setWorkflow((current) => recordResponse(current, current.responseNote))} disabled={!workflow.responseNote.trim()} data-testid="route-record-response" className="mt-3">{workflow.responseRecorded ? "Response Recorded" : "Record Response"}</Button>
             </section>
           </div>
 
           <aside className="space-y-6 xl:sticky xl:top-6 xl:self-start">
             <section className="premium-card-dark" data-testid="route-resolution-panel">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Ready to complete?</p>
-              <h2 className="mt-3 font-display text-3xl font-semibold leading-tight text-white">
-                {workflow.resolved ? workflow.finalStatus : readiness.ready ? "Ready for completion." : "More work is needed."}
-              </h2>
+              <h2 className="mt-3 font-display text-3xl font-semibold leading-tight text-white">{workflow.resolved ? workflow.finalStatus : readiness.ready ? "Ready for completion." : "More work is needed."}</h2>
               <p className="mt-3 text-sm leading-6 text-white/65">The final button stays blocked until contact, evidence, response, and resolution requirements are clear.</p>
 
               <div className="mt-6 grid gap-2">
@@ -405,8 +347,8 @@ export default function RouteIssueWorkflow({ issue }) {
                       {finalStatusOptions.map((status) => <option key={status} value={status}>{status}</option>)}
                     </select>
                   </label>
-                  <textarea value={workflow.resolutionNote} onChange={(event) => setWorkflow((current) => ({ ...current, resolutionNote: event.target.value }))} rows={3} placeholder="Optional completion note" className="w-full rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-sm text-white placeholder:text-white/35 outline-none focus:border-white/40" />
-                  <Button type="button" onClick={handleResolve} disabled={!readiness.ready} data-testid="route-exception-release-button" className="w-full bg-white text-navy-950 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">Complete Issue</Button>
+                  <textarea value={workflow.resolutionNote} onChange={(event) => setWorkflow((current) => ({ ...current, resolutionNote: event.target.value }))} rows={3} placeholder="Optional completion note" className="w-full rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-sm text-white placeholder:text-white/35" />
+                  <Button type="button" onClick={() => setWorkflow((current) => resolveWorkflow(current))} disabled={!readiness.ready} data-testid="route-exception-release-button" className="w-full bg-white text-navy-950 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">Complete Issue</Button>
                 </div>
               ) : (
                 <div className="mt-6 rounded-2xl border border-white/10 bg-white/10 p-4">
@@ -416,11 +358,11 @@ export default function RouteIssueWorkflow({ issue }) {
                     <span className="text-xs font-semibold uppercase tracking-wide text-white/55">Why reopen it?</span>
                     <textarea value={workflow.reopenReason} onChange={(event) => setWorkflow((current) => ({ ...current, reopenReason: event.target.value }))} rows={2} data-testid="route-reopen-reason" className="mt-2 w-full rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-sm text-white placeholder:text-white/35" placeholder="Describe what changed or what is missing." />
                   </label>
-                  <Button type="button" variant="outline" onClick={handleReopen} disabled={!workflow.reopenReason.trim()} data-testid="route-reopen-button" className="mt-3 w-full border-white/25 text-white hover:bg-white hover:text-navy-950"><RefreshCcw className="h-4 w-4" aria-hidden="true" /> Reopen Issue</Button>
+                  <Button type="button" variant="outline" onClick={() => setWorkflow((current) => reopenWorkflow(current, current.reopenReason))} disabled={!workflow.reopenReason.trim()} data-testid="route-reopen-button" className="mt-3 w-full border-white/25 text-white hover:bg-white hover:text-navy-950"><RefreshCcw className="h-4 w-4" aria-hidden="true" /> Reopen Issue</Button>
                 </div>
               )}
 
-              <button type="button" onClick={handleReset} className="mt-4 w-full text-xs font-semibold text-white/55 hover:text-white">Reset browser sample</button>
+              <button type="button" onClick={resetWorkflow} className="mt-4 w-full text-xs font-semibold text-white/55 hover:text-white">Reset browser sample</button>
             </section>
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card">
