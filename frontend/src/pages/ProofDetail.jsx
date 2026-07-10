@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { proofPackets } from "@/data/mockData";
+import { proofPackets, routeExceptionQueue } from "@/data/mockData";
 
 const statusConfig = {
   ready: {
@@ -138,31 +138,46 @@ function PacketHero({ packet }) {
   );
 }
 
-function ActionCard({ packet }) {
+function ActionCard({ packet, relatedException }) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-navy-950 p-4 text-white shadow-premium">
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-300">Next office action</p>
       <h2 className="mt-2 font-display text-xl font-semibold text-white">{packet.nextOfficeAction}</h2>
-      <Link to="/closeout-check" className="mt-4 inline-flex items-center gap-1 rounded-full bg-white px-3 py-2 text-xs font-semibold text-navy-950">
-        Run another check <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-      </Link>
+      {relatedException ? (
+        <Link
+          to={`/exceptions/${relatedException.id}`}
+          data-testid="proof-resolve-related-exception"
+          className="mt-4 inline-flex items-center gap-1 rounded-full bg-white px-3 py-2 text-xs font-semibold text-navy-950"
+        >
+          Resolve {relatedException.ticketId} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      ) : (
+        <Link to="/closeout-check" className="mt-4 inline-flex items-center gap-1 rounded-full bg-white px-3 py-2 text-xs font-semibold text-navy-950">
+          Run another check <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      )}
     </section>
   );
 }
 
-function MobileNav() {
+function MobileNav({ relatedException }) {
   return (
     <nav className="fixed bottom-3 left-3 right-3 z-50 rounded-3xl border border-slate-200 bg-white p-2 shadow-premium lg:hidden" aria-label="Proof packet navigation">
       <div className="grid grid-cols-3 gap-1">
         <Link to="/proof" className="rounded-2xl px-2 py-2 text-center text-[10px] font-semibold text-slate-600">Board</Link>
         <span className="rounded-2xl bg-navy-950 px-2 py-2 text-center text-[10px] font-semibold text-white">Packet</span>
-        <Link to="/closeout-check" className="rounded-2xl px-2 py-2 text-center text-[10px] font-semibold text-slate-600">Free Check</Link>
+        <Link
+          to={relatedException ? `/exceptions/${relatedException.id}` : "/closeout-check"}
+          className="rounded-2xl px-2 py-2 text-center text-[10px] font-semibold text-slate-600"
+        >
+          {relatedException ? "Resolve" : "Free Check"}
+        </Link>
       </div>
     </nav>
   );
 }
 
-function PacketLayout({ packet }) {
+function PacketLayout({ packet, relatedException }) {
   return (
     <div className="min-h-screen bg-offwhite pb-24 lg:pb-0">
       <TopBar />
@@ -181,7 +196,7 @@ function PacketLayout({ packet }) {
           </section>
         </div>
         <aside className="space-y-4">
-          <ActionCard packet={packet} />
+          <ActionCard packet={packet} relatedException={relatedException} />
           <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-card">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Record details</p>
             <div className="mt-3 space-y-3 text-sm">
@@ -193,7 +208,7 @@ function PacketLayout({ packet }) {
           </section>
         </aside>
       </main>
-      <MobileNav />
+      <MobileNav relatedException={relatedException} />
     </div>
   );
 }
@@ -216,5 +231,6 @@ export default function ProofDetail() {
   const { id } = useParams();
   const packet = proofPackets.find((item) => item.id === id);
   if (!packet) return <MissingPacket />;
-  return <PacketLayout packet={packet} />;
+  const relatedException = routeExceptionQueue.find((item) => item.recordId === packet.id);
+  return <PacketLayout packet={packet} relatedException={relatedException} />;
 }

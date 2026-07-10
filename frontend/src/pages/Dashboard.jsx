@@ -45,7 +45,7 @@ function QueueRow({ exception }) {
   return (
     <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70">
       <td className="px-5 py-4 align-top">
-        <Link to={`/proof/${exception.recordId}`} data-testid={`dashboard-exception-${exception.id}`} className="font-semibold text-navy-950 hover:underline">
+        <Link to={`/exceptions/${exception.id}`} data-testid={`dashboard-exception-${exception.id}`} className="font-semibold text-navy-950 hover:underline">
           {exception.ticketId}
         </Link>
         <p className="mt-1 text-xs leading-5 text-slate-500">{exception.customer}</p>
@@ -104,11 +104,11 @@ function NextActionPanel({ priority }) {
       </div>
 
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <Link to="/recovery" data-testid="dashboard-open-exception-queue">
-          <Button className="w-full bg-white text-navy-950 hover:bg-slate-100 sm:w-auto">Open Exception Queue</Button>
+        <Link to={`/exceptions/${priority.id}`} data-testid="dashboard-resolve-priority-exception">
+          <Button className="w-full bg-white text-navy-950 hover:bg-slate-100 sm:w-auto">Resolve Exception</Button>
         </Link>
-        <Link to={`/proof/${priority.recordId}`} data-testid="dashboard-open-priority-record">
-          <Button variant="outline" className="w-full border-white/25 text-white hover:bg-white hover:text-navy-950 sm:w-auto">View Record</Button>
+        <Link to="/recovery" data-testid="dashboard-open-exception-queue">
+          <Button variant="outline" className="w-full border-white/25 text-white hover:bg-white hover:text-navy-950 sm:w-auto">Work Queue</Button>
         </Link>
       </div>
     </div>
@@ -233,3 +233,4 @@ export default function Dashboard() {
     </Layout>
   );
 }
+
