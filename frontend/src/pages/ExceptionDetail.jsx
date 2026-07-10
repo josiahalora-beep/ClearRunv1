@@ -23,6 +23,90 @@ const statusClass = {
   Released: "border-status-complete/30 bg-status-complete-bg text-status-complete",
 };
 
+const contextByException = {
+  "EX-1048": {
+    route: "Perry Route C",
+    truck: "Truck 12",
+    technician: "T. Okafor",
+    disposalLoad: "Load MG-221",
+    disposalStatus: "Disposal backup missing",
+    disposalDetail: "No job-level or route/load-level disposal backup is attached in this fictional sample.",
+    economicImpacts: [
+      ["Invoice support at risk", "Ticket remains held until the missing backup is resolved."],
+      ["Driver follow-up required", "Dispatch must request the signed ticket and stop photo."],
+      ["Route closeout blocked", "This record prevents a clean closeout for the sample route."],
+      ["Record aging", "The exception has remained open for two demo days."],
+    ],
+    repeatSignal: "Observed in 4 of the last 9 fictional sample records on this route.",
+    repeatDetail: "Missing signatures or stop photos appear repeatedly. This is an operational pattern signal, not a compliance score.",
+  },
+  "EX-1052": {
+    route: "Warner Robins Route B",
+    truck: "Truck 08",
+    technician: "M. Chen",
+    disposalLoad: "Load WR-118",
+    disposalStatus: "Receipt present but unmatched",
+    disposalDetail: "A route/load receipt is present, but the quantity relationship is unclear and needs office review.",
+    economicImpacts: [
+      ["Invoice support needs review", "The record should not be treated as fully supported until the match is clarified."],
+      ["Disposal backup unclear", "The receipt exists but does not clearly connect to the recorded gallons."],
+      ["Billing review required", "Billing must compare the service record and disposal backup."],
+      ["Route closeout delayed", "The sample route remains partially unresolved."],
+    ],
+    repeatSignal: "Observed in 3 of the last 11 fictional sample records tied to this disposal load pattern.",
+    repeatDetail: "Unclear gallon-to-receipt relationships are recurring in the sample. ClearRun does not verify disposal.",
+  },
+  "EX-1061": {
+    route: "Macon Route B",
+    truck: "Truck 05",
+    technician: "D. Alvarez",
+    disposalLoad: "Load MC-304",
+    disposalStatus: "Attached at route/load level",
+    disposalDetail: "Disposal backup is present at the route/load level; the remaining issue is customer-safe packet assembly.",
+    economicImpacts: [
+      ["Customer response delayed", "Customer service is waiting for an organized packet."],
+      ["Office assembly required", "Internal notes must be separated from the customer-safe proof view."],
+      ["Repeat paperwork effort", "The same packet assembly work is being recreated manually."],
+      ["Response aging", "The customer request has been open for four demo hours."],
+    ],
+    repeatSignal: "Observed in 5 of the last 14 fictional customer-proof requests.",
+    repeatDetail: "Customer-safe packet assembly is being repeated manually across the sample set.",
+  },
+  "EX-1067": {
+    route: "Macon Route A",
+    truck: "Truck 03",
+    technician: "J. Reyes",
+    disposalLoad: "Load MC-299",
+    disposalStatus: "Attached at job level",
+    disposalDetail: "Job-level disposal backup is present; the unresolved issue is the missing stop photo.",
+    economicImpacts: [
+      ["Customer proof weakened", "The packet lacks the visual evidence expected for this sample record."],
+      ["Technician follow-up required", "The route desk must request or disposition the missing photo."],
+      ["Route closeout blocked", "The record remains held until the photo issue is resolved."],
+      ["Office time consumed", "The route desk must reopen work after service completion."],
+    ],
+    repeatSignal: "Observed in 2 of the last 8 fictional sample records for this technician.",
+    repeatDetail: "Missing stop photos recur in the sample, but the count is not a quality or compliance score.",
+  },
+};
+
+function getExceptionContext(exception) {
+  return contextByException[exception.id] || {
+    route: exception.routeName,
+    truck: "Not assigned in demo",
+    technician: "Not assigned in demo",
+    disposalLoad: "Not linked in demo",
+    disposalStatus: "Office review required",
+    disposalDetail: "Disposal backup status has not been classified in this fictional sample.",
+    economicImpacts: [
+      ["Office follow-up required", exception.impact],
+      ["Record aging", `Open for ${exception.ageLabel} in the demo queue.`],
+    ],
+    repeatSignal: "Not enough fictional sample records to identify a recurring pattern.",
+    repeatDetail: "ClearRun should show observed counts without turning them into a score.",
+  };
+}
+
 function loadDemoState(exception) {
   const initialChecks = Object.fromEntries(exception.proofNeeded.map((item) => [item, false]));
   const fallback = {
@@ -72,6 +156,76 @@ function MissingException() {
   );
 }
 
+function EconomicImpactPanel({ context }) {
+  return (
+    <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-editorial" data-testid="exception-economic-impact">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Economic impact</p>
+          <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">Why the office should work this exception now</h2>
+        </div>
+        <span className="rounded-full border border-slate-200 bg-offwhite px-3 py-1 text-xs font-semibold text-slate-600">Operational labels, not estimated dollars</span>
+      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {context.economicImpacts.map(([label, detail]) => (
+          <div key={label} className="rounded-2xl border border-slate-200 bg-offwhite p-4">
+            <p className="text-sm font-semibold text-navy-950">{label}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{detail}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ContextPanels({ exception, context }) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="exception-route-context">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Route context</p>
+        <h2 className="mt-2 font-display text-xl font-semibold text-navy-950">Where this exception belongs</h2>
+        <div className="mt-5 grid gap-3 text-sm">
+          {[
+            ["Route", context.route],
+            ["Truck", context.truck],
+            ["Technician", context.technician],
+            ["Service date", exception.serviceDate],
+            ["Disposal load", context.disposalLoad],
+            ["Customer / record", exception.customer],
+          ].map(([label, value]) => (
+            <div key={label} className="flex items-start justify-between gap-4 border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+              <span className="text-slate-500">{label}</span>
+              <span className="text-right font-semibold text-navy-950">{value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="exception-disposal-status">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Disposal backup status</p>
+        <h2 className="mt-2 font-display text-xl font-semibold text-navy-950">{context.disposalStatus}</h2>
+        <p className="mt-3 text-sm leading-6 text-slate-600">{context.disposalDetail}</p>
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-offwhite p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Safe interpretation</p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-navy-950">
+            ClearRun records whether backup is attached, missing, or ambiguous. It does not verify disposal or expose facility pricing.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function RepeatSignal({ context }) {
+  return (
+    <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card" data-testid="exception-repeat-signal">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Recurring proof gap</p>
+      <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">{context.repeatSignal}</h2>
+      <p className="mt-3 text-sm leading-6 text-slate-600">{context.repeatDetail}</p>
+    </section>
+  );
+}
+
 export default function ExceptionDetail() {
   const { id } = useParams();
   const exception = routeExceptionQueue.find((item) => item.id === id);
@@ -89,23 +243,20 @@ export default function ExceptionDetail() {
 
   if (!exception || !demoState) return <MissingException />;
 
+  const context = getExceptionContext(exception);
   const currentStatus = demoState.released ? "Released" : exception.status;
   const releaseReady = Boolean(demoState.owner) && allProofReady;
 
-  const addActivity = (label, note) => {
+  const handleOwnerChange = (event) => {
+    const owner = event.target.value;
     setDemoState((current) => ({
       ...current,
+      owner,
       activity: [
-        { id: `${Date.now()}-${label}`, label, note },
+        { id: `${Date.now()}-owner`, label: `Assigned to ${owner}`, note: "Demo assignment updated in this browser." },
         ...current.activity,
       ],
     }));
-  };
-
-  const handleOwnerChange = (event) => {
-    const owner = event.target.value;
-    setDemoState((current) => ({ ...current, owner }));
-    addActivity(`Assigned to ${owner}`, "Demo assignment updated in this browser.");
   };
 
   const handleProofToggle = (item) => {
@@ -129,11 +280,7 @@ export default function ExceptionDetail() {
       ...current,
       followUpSent: true,
       activity: [
-        {
-          id: `${Date.now()}-followup`,
-          label: "Follow-up prepared",
-          note: current.followUpText,
-        },
+        { id: `${Date.now()}-followup`, label: "Follow-up prepared", note: current.followUpText },
         ...current.activity,
       ],
     }));
@@ -145,11 +292,7 @@ export default function ExceptionDetail() {
       ...current,
       released: true,
       activity: [
-        {
-          id: `${Date.now()}-released`,
-          label: "Ticket released",
-          note: "All demo release requirements were confirmed.",
-        },
+        { id: `${Date.now()}-released`, label: "Ticket released", note: "All demo release requirements were confirmed." },
         ...current.activity,
       ],
     }));
@@ -256,6 +399,10 @@ export default function ExceptionDetail() {
               </div>
             </section>
 
+            <EconomicImpactPanel context={context} />
+            <ContextPanels exception={exception} context={context} />
+            <RepeatSignal context={context} />
+
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-editorial" data-testid="exception-followup-panel">
               <div className="flex items-start gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-900/5 text-navy-900">
@@ -276,15 +423,8 @@ export default function ExceptionDetail() {
               />
 
               <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs leading-5 text-slate-500">
-                  Demo only. This records a prepared follow-up in the browser; it does not send a real message.
-                </p>
-                <Button
-                  type="button"
-                  onClick={handleFollowUp}
-                  data-testid="exception-followup-button"
-                  className="shrink-0"
-                >
+                <p className="text-xs leading-5 text-slate-500">Demo only. This records a prepared follow-up in the browser; it does not send a real message.</p>
+                <Button type="button" onClick={handleFollowUp} data-testid="exception-followup-button" className="shrink-0">
                   {demoState.followUpSent ? "Follow-Up Prepared" : "Prepare Follow-Up"}
                 </Button>
               </div>
@@ -332,10 +472,10 @@ export default function ExceptionDetail() {
             </section>
 
             <section className="rounded-premium border border-slate-200 bg-white p-5 shadow-card">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Modeled office value</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Manual office-time estimate</p>
               <p className="mt-3 font-display text-4xl font-semibold text-navy-950">{exception.estimatedMinutesSaved}m</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Illustrative time saved when the blocker, owner, follow-up, and release condition are already organized.
+                Illustrative estimate for this fictional record. ClearRun should use measured or user-entered time before making ROI claims.
               </p>
             </section>
 
@@ -358,7 +498,7 @@ export default function ExceptionDetail() {
         </div>
 
         <p className="mt-8 max-w-4xl text-xs leading-5 text-slate-500">
-          {brand.disclaimer} This resolution workspace uses fictional demo data and browser-only state. It does not send messages, store customer records, verify disposal, or authorize billing.
+          {brand.disclaimer} This resolution workspace uses fictional demo data and browser-only state. It does not send messages, store customer records, verify disposal, expose facility pricing, or authorize billing.
         </p>
       </section>
     </Layout>
