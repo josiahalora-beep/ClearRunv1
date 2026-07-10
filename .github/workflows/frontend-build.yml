@@ -37,5 +37,10 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Run route intelligence model tests
+        env:
+          CI: "true"
+        run: npm test -- --watchAll=false --runInBand
+
       - name: Build frontend
         run: npm run build
