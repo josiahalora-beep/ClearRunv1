@@ -12,7 +12,7 @@ import Proof from "@/pages/Proof";
 import ProofDetail from "@/pages/ProofDetail";
 import Recovery from "@/pages/Recovery";
 import ExceptionRouter from "@/pages/ExceptionRouter";
-import RouteIntelligence from "@/pages/RouteIntelligence";
+import RouteReview from "@/pages/RouteReview";
 import Import from "@/pages/Import";
 import Export from "@/pages/Export";
 import Pilot from "@/pages/Pilot";
@@ -54,8 +54,11 @@ function App() {
         <Route path="/proof/:id" element={<ProofDetail />} />
         <Route path="/recovery" element={<Recovery />} />
         <Route path="/exceptions/:id" element={<ExceptionRouter />} />
-        <Route path="/route-intelligence/:routeId" element={<RouteIntelligence />} />
-        <Route path="/route-intelligence" element={<RouteIntelligence />} />
+        <Route path="/issues/:id" element={<ExceptionRouter />} />
+        <Route path="/route-review/:routeId" element={<RouteReview />} />
+        <Route path="/route-review" element={<RouteReview />} />
+        <Route path="/route-intelligence/:routeId" element={<RouteReview />} />
+        <Route path="/route-intelligence" element={<RouteReview />} />
         <Route path="/import" element={<Import />} />
         <Route path="/export" element={<Export />} />
         <Route path="/pilot" element={<Pilot />} />
