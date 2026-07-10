@@ -137,9 +137,9 @@ function getInitialDispatchStatus(issue) {
 function getInitialCustomerStatus(issue) {
   const value = `${issue.customerNotification || ""}`.toLowerCase();
   if (value.includes("not required")) return "Not Needed";
+  if (value.includes("not sent") || value.includes("needed") || value.includes("review")) return "Needed";
   if (value.includes("attempted")) return "Attempted";
-  if (value.includes("reached") || value.includes("sent")) return "Reached";
-  if (value.includes("needed") || value.includes("not sent") || value.includes("review")) return "Needed";
+  if (value.includes("reached") || value === "sent") return "Reached";
   return issue.lane === "active" ? "Needed" : "Not Needed";
 }
 
