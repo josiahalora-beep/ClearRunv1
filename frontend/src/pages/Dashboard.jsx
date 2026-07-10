@@ -161,9 +161,14 @@ export default function Dashboard() {
               ClearRun turns messy after-route review into a queue: blocker, owner, age, follow-up, release condition, and customer-proof status.
             </p>
           </div>
-          <Link to="/proof-snapshot" data-testid="dashboard-request-snapshot-link" className="shrink-0">
-            <Button variant="secondary">Review One Route Ticket</Button>
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link to="/route-intelligence/warner-robins-route-b" data-testid="dashboard-route-intelligence-link" className="shrink-0">
+              <Button>View Route Intelligence</Button>
+            </Link>
+            <Link to="/proof-snapshot" data-testid="dashboard-request-snapshot-link" className="shrink-0">
+              <Button variant="secondary">Review One Route Ticket</Button>
+            </Link>
+          </div>
         </div>
 
         <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -182,9 +187,14 @@ export default function Dashboard() {
                 <p className="text-xs font-semibold uppercase text-slate-500">Exception queue</p>
                 <h2 className="mt-1 font-display font-semibold text-navy-950">Tickets that need action before release</h2>
               </div>
-              <Link to="/recovery" data-testid="dashboard-proof-table-link" className="text-sm font-semibold text-navy-800 hover:underline">
-                Work queue
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link to="/route-intelligence/warner-robins-route-b" className="text-sm font-semibold text-navy-800 hover:underline">
+                  Route view
+                </Link>
+                <Link to="/recovery" data-testid="dashboard-proof-table-link" className="text-sm font-semibold text-navy-800 hover:underline">
+                  Work queue
+                </Link>
+              </div>
             </div>
             <div className="table-scroll">
               <table data-testid="dashboard-exception-table" className="w-full min-w-[980px] text-sm">
@@ -233,4 +243,3 @@ export default function Dashboard() {
     </Layout>
   );
 }
-
