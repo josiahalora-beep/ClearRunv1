@@ -1,21 +1,25 @@
 # PR15: Route-Level Exception Intelligence
 
-## Objective
+## Internal objective
 
-Build the route-level decision page that combines active operational exceptions and closeout exceptions without turning ClearRun into routing, telematics, fleet-maintenance, or disposal-facility software.
+Build the route-level decision layer that combines active operating problems and after-service ticket problems without turning ClearRun into routing, GPS, telematics, fleet-maintenance, billing, or disposal-facility software.
 
-The page must answer:
+The internal architecture is called **Route-Level Exception Intelligence**.
 
-1. Which route records cannot be closed?
-2. Which active disruptions need office action now?
-3. Which exception pattern keeps repeating?
-4. Which office action should happen first?
-5. Is disposal backup attached, missing, or ambiguous?
-6. Which observed problems may delay service, closeout, invoice support, or customer response?
+The visible operator screen is called **Route Review**.
+
+The product must answer:
+
+1. Which stops need dispatch or customer action now?
+2. Which completed tickets still need office review?
+3. Which tickets are not ready to close?
+4. Which issue should the office work first?
+5. Is the disposal receipt attached, missing, or in need of matching?
+6. Which issue has repeated enough times to deserve a process change?
 
 ## Product boundary
 
-ClearRun is the intelligence and resolution layer for route exceptions that prevent service records, routes, and invoices from being cleanly closed.
+ClearRun organizes route issues, ticket backup, ownership, follow-up, and ready-to-close status beside the operator’s existing routing, dispatch, driver, accounting, and billing tools.
 
 PR15 does not add:
 
@@ -25,56 +29,102 @@ PR15 does not add:
 - automatic rerouting;
 - telematics;
 - driver capture;
-- ROI forms;
+- real message delivery;
+- ROI input forms;
 - disposal verification;
+- disposal pricing or margins;
 - employee scores;
 - final billing judgments.
 
-## Two connected lanes
+## Internal two-lane model
 
-### Active Route Exceptions
+The data model maintains two connected internal lanes.
 
-Operational disruptions that may require same-day action while the route is operating:
+### Active route lane
 
-- blocked or unsafe access;
+Problems that may require action while the route is still operating:
+
+- locked or unsafe access;
 - customer unavailable;
 - insufficient truck capacity;
 - partial or failed service;
-- customer or dispatch action required.
+- customer contact needed;
+- dispatch action needed;
+- same-day rescheduling.
 
-### Closeout Exceptions
+### Closeout lane
 
-Evidence and review problems discovered after or near service completion:
+Problems found after or near service completion:
 
 - missing signature;
 - weak or missing photo;
 - missing gallons;
 - unmatched disposal receipt;
 - incomplete invoice support;
-- office review required.
+- office review required;
+- customer-ready record not assembled.
 
-Both lanes feed the final closeout question: can the stop and route be cleanly closed?
+Both lanes feed the final question: **Is this stop and ticket ready to close?**
 
-## Route intelligence model
+## Visible language contract
+
+The working product must use operator language rather than internal product-category language.
+
+Visible labels include:
+
+- Route Review
+- Needs Dispatch
+- Needs Office Review
+- Ticket Issue
+- Route Issue
+- What Needs Attention First
+- Disposal Receipt Status
+- Repeat Issue
+- Assigned To
+- Open For
+- Next Step
+- Before This Can Close
+- Ready to Close
+- Work History
+
+Visible product copy must not expose:
+
+- Route Exception Intelligence
+- Active Route Exceptions
+- Closeout Exceptions
+- Economic Impact Layer
+- Operational Consequence
+- Closeout Consequence
+- Primary Office Action
+- Resolution Gate
+- Commercial Interpretation
+- Disposal Backup Matrix
+- Recurring Exception Pattern
+- Claim-Safe Language
+
+The complete rule is defined in `docs/customer-facing-language-contract.md`.
+
+## Route data model
 
 The model includes:
 
 - route definition;
 - scheduled stops;
-- clean completed stops;
-- active and closeout exceptions;
+- completed stops without an issue;
+- active-route issues;
+- ticket closeout issues;
 - service outcome;
-- resolution status;
+- work status;
 - priority label;
-- owner;
-- evidence summary;
-- customer-notification status;
-- recorded delay minutes;
-- closeout consequence;
-- potentially-unbillable operational flag;
-- disposal documentation status;
-- recurring-pattern sample;
-- recommended intervention.
+- assigned person;
+- ticket backup summary;
+- customer-contact status;
+- logged delay minutes;
+- ready-to-close status;
+- billing-review flag;
+- disposal receipt status;
+- repeat-issue sample;
+- recommended follow-up.
 
 ## Transparent priority order
 
@@ -87,116 +137,176 @@ The model includes:
 7. Internal Review
 8. Resolved
 
-No unexplained score is used.
+No unexplained numerical score is used.
 
-## Recurring-pattern rule
+## Repeat-issue rule
 
-A recurring pattern must have:
+A repeat issue appears only when the selected sample has:
 
 - at least 3 observations; and
-- at least 20% of the relevant sample.
+- at least 20% of the relevant records.
 
-The interface displays numerator, denominator, percentage, sample window, affected entities, and recommended intervention.
+The interface displays:
+
+- numerator;
+- denominator;
+- percentage;
+- sample window;
+- affected route, customer, truck, driver, or issue group;
+- recommended follow-up.
 
 The signal is not a compliance, risk, technician-quality, or employee-performance score.
 
-## Route page
+## Operator-facing routes
 
-Routes:
+Primary routes:
 
-- `/route-intelligence`
-- `/route-intelligence/:routeId`
+- `/route-review`
+- `/route-review/:routeId`
+- `/issues/:id`
+- `/exceptions/:id` for existing ticket issues
 
-The page contains:
+Compatibility aliases may preserve older internal URLs, but customer-facing links must use the operator-facing routes.
 
-- route header;
-- reconciled operational counts;
-- recorded-consequence strip;
-- one dominant primary office action;
-- Active Route lane;
-- Closeout lane;
+## Route Review screen
+
+The route page contains:
+
 - route selector;
-- lane filters;
-- disposal-status filtering;
-- recurring-pattern module;
-- disposal-backup matrix;
-- route-closeout summary;
-- direct links to exception resolution.
+- route status using Action Needed Now, Needs Follow-Up, or Ready to Close;
+- scheduled-stop count;
+- completed-cleanly count;
+- Needs Dispatch count;
+- Needs Office Review count;
+- logged delay;
+- tickets not ready to close;
+- one dominant “What needs attention first” action;
+- Needs Dispatch work section;
+- Needs Office Review work section;
+- All Issues, Dispatch, and Office Review filters;
+- disposal receipt status filter;
+- Repeat Issue section;
+- Disposal Receipt Status section;
+- Route Closeout section;
+- direct links to Route Issue details.
 
-## Exception resolution integration
+## Route Issue screen
 
-Route-intelligence exceptions use the existing `/exceptions/:id` URL through an exception router.
+The route-issue detail includes:
 
-Existing PR14 proof exceptions continue using the original exception workspace.
+- what happened;
+- route, truck, driver, customer, and reported time;
+- service result;
+- ticket status;
+- logged delay;
+- customer-contact status;
+- ticket backup available;
+- disposal receipt status;
+- assigned person;
+- next step;
+- requirements before closeout;
+- Ready to Close gate;
+- work history;
+- browser-only sample state.
 
-Route exceptions use a matching resolution workspace with:
+The screen does not send a message, reroute a truck, confirm disposal, or make a final billing decision.
 
-- owner assignment;
-- evidence requirements;
-- editable next action;
-- release gate;
-- activity history;
-- browser-only demo state;
-- route and commercial context;
-- claim-safe disclosures.
+## Existing Ticket Issue screen
+
+Existing PR14 ticket issues now use the same market-language standard:
+
+- Ticket Follow-Up;
+- What Is Missing;
+- Billing Review;
+- Customer Record;
+- Assigned To;
+- Ready-to-Close Requirement;
+- Why This Ticket Needs Attention;
+- Service Details;
+- Disposal Receipt;
+- Repeat Paperwork Issue;
+- What Needs to Happen Next;
+- Ready to Close?;
+- Work History.
+
+The older internal-language page is retained only as an unknown-ID fallback and is not used for normal ticket records.
+
+## Dashboard integration
+
+The dashboard presents:
+
+- Office Closeout;
+- tickets needing attention;
+- held-from-billing count;
+- oldest open issue;
+- next steps ready;
+- first issue to work;
+- clear table columns using ticket, assigned person, open time, status, and ready-to-close requirement;
+- a Route Review entry point;
+- example office-time assumptions that are clearly labeled as examples.
 
 ## Automated QA
 
 ### Model tests
 
-The Frontend Build workflow now runs Jest before compilation.
+The Frontend Build workflow runs Jest before compilation.
 
 Tests enforce:
 
 - scheduled-stop reconciliation;
-- clean stops plus exception stops equals scheduled stops;
-- closeout-state counts equal scheduled stops;
-- disposal-matrix counts equal scheduled stops;
-- records-not-ready calculation;
+- completed-cleanly plus issue stops equals scheduled stops;
+- route-closeout counts equal scheduled stops;
+- disposal receipt counts equal scheduled stops;
+- tickets-not-ready calculation;
 - priority ordering;
-- recurring threshold;
+- repeat-issue threshold;
 - numerator, denominator, and percentage;
-- disposal filtering.
+- receipt-status filtering.
 
 ### Playwright and visual QA
 
 Playwright captures desktop, tablet, and mobile screenshots for:
 
-- route intelligence;
-- route exception detail.
+- dashboard;
+- Route Review;
+- Route Issue detail;
+- Ticket Issue detail;
+- existing proof surfaces.
 
 It verifies:
 
 - business-critical visual anchors;
-- both lanes;
+- Needs Dispatch and Needs Office Review sections;
 - route selector;
-- lane filtering;
-- disposal filtering;
+- work filtering;
+- disposal receipt filtering;
 - route switching;
 - detail click-through;
-- release gating;
-- activity history;
-- claim-safe language;
+- ready-to-close gating;
+- work history;
 - no page-level horizontal overflow;
-- blocking WCAG A/AA checks.
+- blocking WCAG A/AA checks;
+- visible product copy does not contain banned internal phrases.
 
 ### Lighthouse
 
-The automated Lighthouse route list now includes:
+The automated Lighthouse route list includes:
 
-- `/route-intelligence/warner-robins-route-b`;
-- `/exceptions/EX-2101`.
+- `/route-review/warner-robins-route-b`;
+- `/issues/EX-2101`;
+- dashboard and existing core product pages.
 
 ## Guardrails
 
-- All route data is fictional and labeled.
-- Recorded delay is not claimed as saved time.
-- Potentially unbillable is an operational review flag, not a final billing judgment.
-- Disposal status describes documentation only.
-- No disposal verification or pricing exposure.
+- All route data is fictional and labeled as sample or example data.
+- Logged delay is not claimed as saved time.
+- Billing-review status is not a final billing judgment.
+- Disposal receipt status describes documentation only.
+- No disposal verification or facility-pricing exposure.
 - No employee or compliance scoring.
 - No routing or telematics claims.
 - No real messages, production storage, or automatic customer notifications.
+- Internal strategy language stays in code and documentation, not visible product copy.
 
 ## Stop condition
 
