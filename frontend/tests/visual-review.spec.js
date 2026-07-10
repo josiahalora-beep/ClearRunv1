@@ -7,7 +7,16 @@ const routes = [
   { name: "home", path: "/" },
   { name: "closeout-check", path: "/closeout-check" },
   { name: "proof-snapshot", path: "/proof-snapshot" },
-  { name: "dashboard", path: "/dashboard" },
+  {
+    name: "dashboard",
+    path: "/dashboard",
+    requiredTestIds: ["dashboard-priority-exception", "dashboard-exception-table", "dashboard-value-math"],
+  },
+  {
+    name: "recovery",
+    path: "/recovery",
+    requiredTestIds: ["recovery-item-EX-1048", "recovery-request-btn-EX-1048"],
+  },
   { name: "proof-list", path: "/proof" },
   { name: "proof-detail", path: "/proof/PP-10234" },
 ];
@@ -28,10 +37,23 @@ function formatAxeViolations(violations) {
     .join("\n\n");
 }
 
+async function expectBusinessVisualAnchors(page, route) {
+  const requiredTestIds = route.requiredTestIds || [];
+
+  for (const testId of requiredTestIds) {
+    await expect(
+      page.getByTestId(testId),
+      `${route.path} is missing business-critical visual anchor: ${testId}`
+    ).toBeVisible();
+  }
+}
+
 for (const route of routes) {
-  test(`${route.name} renders, screenshots, and passes blocking axe checks`, async ({ page }, testInfo) => {
+  test(`${route.name} renders, screenshots, passes business anchors, and passes blocking axe checks`, async ({ page }, testInfo) => {
     await page.goto(route.path, { waitUntil: "networkidle" });
     await expect(page.locator("body")).toBeVisible();
+    await expect(page.locator("h1").first(), `${route.path} must keep a clear designer-visible H1`).toBeVisible();
+    await expectBusinessVisualAnchors(page, route);
 
     const projectName = testInfo.project.name;
     const screenshotDir = path.join("test-results", "screenshots", projectName);
